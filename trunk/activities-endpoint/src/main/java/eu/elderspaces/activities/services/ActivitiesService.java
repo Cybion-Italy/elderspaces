@@ -32,9 +32,11 @@ public class ActivitiesService extends JsonService {
         if (activityContent == null || activityContent.length() == 0) {
             return error("empty parameter");
         } else {
+            final String message = "received activity content: '" + activityContent + "'";
+            LOGGER.debug(message);
+
             Response.ResponseBuilder rb = Response.ok().type(MediaType.APPLICATION_JSON);
-            rb.entity(new StringResponse(ResponseStatus.OK,
-                    "received activity content: '" + activityContent + "'"));
+            rb.entity(new StringResponse(ResponseStatus.OK, message));
             return rb.build();
         }
     }
