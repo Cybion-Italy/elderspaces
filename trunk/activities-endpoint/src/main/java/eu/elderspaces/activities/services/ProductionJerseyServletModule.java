@@ -43,6 +43,7 @@ public class ProductionJerseyServletModule  extends JerseyServletModule {
 
         //bind services classes
         bind(StatusService.class);
+        bind(ActivitiesService.class);
 
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
