@@ -36,7 +36,7 @@ public class ActivitiesService extends JsonService {
             LOGGER.debug(message);
 
             Response.ResponseBuilder rb = Response.ok().type(MediaType.APPLICATION_JSON);
-            rb.entity(new StringResponse(ResponseStatus.OK, message));
+            rb.entity(new StringResponse(ResponseStatus.OK, "received activity"));
             return rb.build();
         }
     }
