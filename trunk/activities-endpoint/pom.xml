@@ -14,7 +14,7 @@
     <artifactId>activities-endpoint</artifactId>
     <packaging>war</packaging>
 
-    <name>Elderspaces - activities-endpoint Maven Webapp</name>
+    <name>Elderspaces - activities-endpoint</name>
 
     <url></url>
 
@@ -26,12 +26,32 @@
         <dependency>
             <groupId>it.cybion.commons</groupId>
             <artifactId>web</artifactId>
-            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.cybion.commons</groupId>
+            <artifactId>utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.cybion.commons</groupId>
+            <artifactId>test-utils</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>activities-endpoint</finalName>
+        <finalName>activities</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -56,6 +76,13 @@
                         <include>**/*TestCase.java</include>
                         <include>**/*Test.java</include>
                     </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>

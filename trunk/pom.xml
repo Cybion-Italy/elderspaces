@@ -20,15 +20,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.6</java.version>
 
+        <commons.version>1.0-SNAPSHOT</commons.version>
+
         <log4j.version>1.2.16</log4j.version>
         <testng.version>6.3.1</testng.version>
-        <jsp-api.version>2.0</jsp-api.version>
+        <joda-time.version>2.1</joda-time.version>
         <gson.version>2.2.2</gson.version>
         <slf4j-api.version>1.6.6</slf4j-api.version>
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
         <maven-resources-plugin.version>2.4</maven-resources-plugin.version>
         <maven-surefire-plugin.version>2.4.3</maven-surefire-plugin.version>
+        <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
 
     </properties>
 
@@ -36,9 +39,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>${jsp-api.version}</version>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
             </dependency>
             <dependency>
                 <groupId>log4j</groupId>
@@ -59,6 +62,21 @@
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.cybion.commons</groupId>
+                <artifactId>web</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.cybion.commons</groupId>
+                <artifactId>utils</artifactId>
+                <version>${commons.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.cybion.commons</groupId>
+                <artifactId>test-utils</artifactId>
+                <version>${commons.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -100,6 +118,12 @@
                             <include>**/*Test.java</include>
                         </includes>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+
                 </plugin>
             </plugins>
         </pluginManagement>
