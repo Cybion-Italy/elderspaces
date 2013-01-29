@@ -35,6 +35,7 @@ public class ActivitiesService extends JsonService {
             final String message = "received activity content: '" + activityContent + "'";
             LOGGER.debug(message);
 
+            //TODO use created(...) instead of ok()
             Response.ResponseBuilder rb = Response.ok().type(MediaType.APPLICATION_JSON);
             rb.entity(new StringResponse(ResponseStatus.OK, "received activity"));
             return rb.build();
