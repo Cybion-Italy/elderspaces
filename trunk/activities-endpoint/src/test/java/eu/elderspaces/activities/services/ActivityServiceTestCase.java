@@ -9,7 +9,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
-public class ActivityServiceTestCase {
+public class ActivityServiceTestCase extends BaseServiceTestCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityServiceTestCase.class);
 
@@ -17,5 +17,8 @@ public class ActivityServiceTestCase {
     public void shouldBeGreen() {
         LOGGER.debug("it runs");
         assertTrue(true);
+
+
+
     }
 }

@@ -2,8 +2,6 @@ package eu.elderspaces.activities.services;
 
 import com.google.common.collect.Maps;
 import eu.elderspaces.activities.ActivitiesEndpoint;
-import eu.elderspaces.activities.TestServiceConfig;
-import it.cybion.commons.AbstractJerseyRESTTestCase;
 import it.cybion.commons.web.http.CybionHttpClient;
 import it.cybion.commons.web.responses.ExternalStringResponse;
 import it.cybion.commons.web.responses.ResponseStatus;
@@ -20,13 +18,9 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
-public class StatusServiceTestCase extends AbstractJerseyRESTTestCase {
+public class StatusServiceTestCase extends BaseServiceTestCase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusServiceTestCase.class);
-
-    public StatusServiceTestCase() {
-        super(AbstractJerseyRESTTestCase.PORT, TestServiceConfig.class.getName());
-    }
 
     @Test
     public void servicesShouldBeUpAndRunning() throws CybionHttpException {
