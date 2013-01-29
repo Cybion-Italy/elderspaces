@@ -20,7 +20,7 @@ import javax.ws.rs.core.Response;
  *
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
-@Path(ActivitiesEndpoint.STATUS_RADIX)
+@Path(ActivitiesEndpoint.STATUS)
 @Produces(MediaType.APPLICATION_JSON)
 public class StatusService extends JsonService {
 

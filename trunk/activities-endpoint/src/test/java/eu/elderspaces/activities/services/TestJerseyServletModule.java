@@ -44,6 +44,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
 
         // bind REST services
         bind(StatusService.class);
+        bind(ActivitiesService.class);
 
         // add bindings for Jackson json serialization
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();

@@ -25,7 +25,7 @@ public class StatusServiceTestCase extends BaseServiceTestCase {
     @Test
     public void servicesShouldBeUpAndRunning() throws CybionHttpException {
 
-        final String url = super.base_uri + ActivitiesEndpoint.STATUS_RADIX + ActivitiesEndpoint.NOW;
+        final String url = super.base_uri + ActivitiesEndpoint.STATUS + ActivitiesEndpoint.NOW;
 
         ExternalStringResponse stringResponse = null;
 
