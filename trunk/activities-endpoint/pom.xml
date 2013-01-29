@@ -14,9 +14,9 @@
     <artifactId>activities-endpoint</artifactId>
     <packaging>war</packaging>
 
-    <name>Elderspaces - activities-endpoint</name>
+    <name>Elderspaces - Activities Endpoint</name>
 
-    <url></url>
+    <url>http://www.cybion.it</url>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
