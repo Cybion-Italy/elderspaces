@@ -26,22 +26,23 @@ import eu.elderspaces.activities.ActivitiesEndpoint;
 @Produces(MediaType.APPLICATION_JSON)
 public class ActivitiesService extends JsonService {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatusService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActivitiesService.class);
     
     @Inject
     public ActivitiesService() {
+    
     }
     
     @POST
     public Response createActivity(final String activityContent) {
-        
+    
         if (activityContent == null || activityContent.length() == 0) {
             return error("empty parameter");
         } else {
             final String message = "received activity content: '" + activityContent + "'";
             LOGGER.debug(message);
             
-            //TODO use created(...) instead of ok()
+            // TODO use created(...) instead of ok()
             final Response.ResponseBuilder rb = Response.ok().type(MediaType.APPLICATION_JSON);
             rb.entity(new StringResponse(ResponseStatus.OK, "received activity"));
             return rb.build();
