@@ -37,6 +37,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
             IOException {
     
         final RecommendationReport recommendationReport = getRecommendationReport(GET_FRIENDS);
+        
     }
     
     @Test
