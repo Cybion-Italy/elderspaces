@@ -32,6 +32,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
         
         // bind REST services
         bind(RecommendationService.class);
+        bind(Recommender.class).to(RandomRecommender.class).asEagerSingleton();
         
         // add bindings for Jackson json serialization
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
