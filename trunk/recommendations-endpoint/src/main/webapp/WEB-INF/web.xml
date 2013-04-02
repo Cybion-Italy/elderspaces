@@ -7,7 +7,7 @@
     <display-name>Elderspaces - Recommendations Endpoint</display-name>
 
     <listener>
-        <listener-class>eu.elderspaces.recommendations.ProductionServiceConfig</listener-class>
+        <listener-class>eu.elderspaces.recommendations.services.ProductionServiceConfig</listener-class>
     </listener>
 
     <filter>
