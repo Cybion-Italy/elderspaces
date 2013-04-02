@@ -19,8 +19,13 @@ import com.google.inject.Inject;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
 import eu.elderspaces.recommendations.Recommender;
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
-import eu.elderspaces.recommendations.responses.RecommendationReport;
-import eu.elderspaces.recommendations.responses.RecommendationResponse;
+import eu.elderspaces.recommendations.responses.ClubEntry;
+import eu.elderspaces.recommendations.responses.ClubRecommendationResponse;
+import eu.elderspaces.recommendations.responses.EventEntry;
+import eu.elderspaces.recommendations.responses.EventRecommendationResponse;
+import eu.elderspaces.recommendations.responses.FriendEntry;
+import eu.elderspaces.recommendations.responses.FriendRecommendationResponse;
+import eu.elderspaces.recommendations.responses.PaginatedResult;
 
 /**
  * 
@@ -28,7 +33,7 @@ import eu.elderspaces.recommendations.responses.RecommendationResponse;
  * 
  */
 
-@Path(RecommendationsEndpoint.RECOMMENDATIONS)
+@Path(RecommendationsEndpoint.REST_RADIX + RecommendationsEndpoint.RECOMMENDATIONS)
 @Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.APPLICATION_JSON)
 public class RecommendationService {
@@ -50,7 +55,7 @@ public class RecommendationService {
         LOGGER.info("Friends recommendation service called with userId: " + userId);
         ResponseBuilder rb = null;
         
-        final RecommendationReport recommendationReport;
+        final PaginatedResult<FriendEntry> recommendationReport;
         
         try {
             recommendationReport = recommender.getFriends(userId);
@@ -60,10 +65,10 @@ public class RecommendationService {
         
         rb = Response.ok();
         
-        rb.entity(new RecommendationResponse(ResponseStatus.OK, "Friends recommendations",
+        rb.entity(new FriendRecommendationResponse(ResponseStatus.OK, "Friends recommendations",
                 recommendationReport));
         
-        LOGGER.info("Friends recommendations retrieved");
+        LOGGER.info("Friend recommendations retrieved");
         
         return rb.build();
     }
@@ -73,7 +78,24 @@ public class RecommendationService {
     public Response getEvents(@PathParam("userId") final String userId) {
     
         LOGGER.info("Events recommendation service called with userId: " + userId);
-        return null;
+        ResponseBuilder rb = null;
+        
+        final PaginatedResult<EventEntry> recommendationReport;
+        
+        try {
+            recommendationReport = recommender.getEvents(userId);
+        } catch (final RecommenderException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        
+        rb = Response.ok();
+        
+        rb.entity(new EventRecommendationResponse(ResponseStatus.OK, "Events recommendations",
+                recommendationReport));
+        
+        LOGGER.info("Event recommendations retrieved");
+        
+        return rb.build();
     }
     
     @GET
@@ -81,7 +103,24 @@ public class RecommendationService {
     public Response getClubs(@PathParam("userId") final String userId) {
     
         LOGGER.info("Clubs recommendation service called with userId: " + userId);
-        return null;
+        ResponseBuilder rb = null;
+        
+        final PaginatedResult<ClubEntry> recommendationReport;
+        
+        try {
+            recommendationReport = recommender.getClubs(userId);
+        } catch (final RecommenderException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        
+        rb = Response.ok();
+        
+        rb.entity(new ClubRecommendationResponse(ResponseStatus.OK, "Clubs recommendations",
+                recommendationReport));
+        
+        LOGGER.info("Club recommendations retrieved");
+        
+        return rb.build();
     }
     
 }

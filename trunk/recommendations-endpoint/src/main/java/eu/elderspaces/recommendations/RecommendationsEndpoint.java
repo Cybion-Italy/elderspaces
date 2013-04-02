@@ -6,9 +6,10 @@ package eu.elderspaces.recommendations;
  */
 final public class RecommendationsEndpoint {
     
-    public static final String STATUS = "rest/status";
+    public static final String REST_RADIX = "rest";
+    public static final String STATUS = "/status";
     public static final String NOW = "/now";
-    public static final String RECOMMENDATIONS = "rest/recommendations";
+    public static final String RECOMMENDATIONS = "/recommendations";
     public static final String FRIENDS = "/friends";
     public static final String EVENTS = "/events";
     public static final String CLUBS = "/clubs";

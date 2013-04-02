@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.google.common.base.Objects;
 
-public class RecommendationReport {
+public class PaginatedResult<T> {
     
     private int startIndex;
     private int totalResults;
-    private List<RecommendationEntry> entries;
+    private List<T> entries;
     
     public int getStartIndex() {
     
@@ -30,12 +30,12 @@ public class RecommendationReport {
         this.totalResults = totalResults;
     }
     
-    public List<RecommendationEntry> getEntries() {
+    public List<T> getEntries() {
     
         return entries;
     }
     
-    public void setEntries(final List<RecommendationEntry> entries) {
+    public void setEntries(final List<T> entries) {
     
         this.entries = entries;
     }
@@ -47,7 +47,7 @@ public class RecommendationReport {
             return false;
         }
         
-        final RecommendationReport that = (RecommendationReport) o;
+        final PaginatedResult that = (PaginatedResult) o;
         
         return Objects.equal(startIndex, that.startIndex)
                 && Objects.equal(totalResults, that.totalResults)

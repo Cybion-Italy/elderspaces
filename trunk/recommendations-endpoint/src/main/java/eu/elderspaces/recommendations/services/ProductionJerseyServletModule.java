@@ -15,7 +15,7 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
-import eu.elderspaces.recommendations.RandomRecommender;
+import eu.elderspaces.recommendations.FakeStaticRecommender;
 import eu.elderspaces.recommendations.Recommender;
 
 /**
@@ -35,7 +35,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         
         // bind REST services
         bind(RecommendationService.class);
-        bind(Recommender.class).to(RandomRecommender.class).asEagerSingleton();
+        bind(Recommender.class).to(FakeStaticRecommender.class).asEagerSingleton();
         
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();

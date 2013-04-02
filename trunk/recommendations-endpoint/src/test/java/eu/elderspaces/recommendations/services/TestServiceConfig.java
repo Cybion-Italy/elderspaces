@@ -1,4 +1,4 @@
-package eu.elderspaces.recommendations;
+package eu.elderspaces.recommendations.services;
 
 import javax.servlet.ServletContextEvent;
 

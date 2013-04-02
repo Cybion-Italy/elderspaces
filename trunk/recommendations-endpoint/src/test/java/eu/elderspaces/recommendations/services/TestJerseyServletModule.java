@@ -1,4 +1,4 @@
-package eu.elderspaces.recommendations;
+package eu.elderspaces.recommendations.services;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +14,8 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
+import eu.elderspaces.recommendations.FakeStaticRecommender;
+import eu.elderspaces.recommendations.Recommender;
 import eu.elderspaces.recommendations.services.RecommendationService;
 
 /**
@@ -32,7 +34,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
         
         // bind REST services
         bind(RecommendationService.class);
-        bind(Recommender.class).to(RandomRecommender.class).asEagerSingleton();
+        bind(Recommender.class).to(FakeStaticRecommender.class).asEagerSingleton();
         
         // add bindings for Jackson json serialization
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
