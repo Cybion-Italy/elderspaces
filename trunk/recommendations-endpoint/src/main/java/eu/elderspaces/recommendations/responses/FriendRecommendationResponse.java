@@ -2,33 +2,35 @@ package eu.elderspaces.recommendations.responses;
 
 import it.cybion.commons.web.responses.ResponseStatus;
 import it.cybion.commons.web.responses.ServiceResponse;
+import eu.elderspaces.recommendations.model.FriendEntry;
+import eu.elderspaces.recommendations.model.PaginatedResult;
 
 public class FriendRecommendationResponse extends
-        ServiceResponse<PaginatedResult<FriendEntry>> {
+ServiceResponse<PaginatedResult<FriendEntry>> {
     
-    private PaginatedResult<FriendEntry> friendRecommendationReport;
+    private PaginatedResult<FriendEntry> friendPaginatedResult;
     
     public FriendRecommendationResponse() {
-    
+        
     }
     
     public FriendRecommendationResponse(final ResponseStatus status, final String message,
-            final PaginatedResult<FriendEntry> friendRecommendationReport) {
-    
+            final PaginatedResult<FriendEntry> friendPaginatedResult) {
+        
         super(status, message);
-        this.friendRecommendationReport = friendRecommendationReport;
+        this.friendPaginatedResult = friendPaginatedResult;
     }
     
     @Override
     public PaginatedResult<FriendEntry> getObject() {
-    
-        return this.friendRecommendationReport;
+        
+        return this.friendPaginatedResult;
     }
     
     @Override
-    public void setObject(final PaginatedResult<FriendEntry> friendRecommendationReport) {
-    
-        this.friendRecommendationReport = friendRecommendationReport;
+    public void setObject(final PaginatedResult<FriendEntry> friendPaginatedResult) {
+        
+        this.friendPaginatedResult = friendPaginatedResult;
     }
     
 }

@@ -1,4 +1,4 @@
-package eu.elderspaces.recommendations.responses;
+package eu.elderspaces.recommendations.model;
 
 import java.util.List;
 

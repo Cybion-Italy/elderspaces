@@ -15,8 +15,8 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
-import eu.elderspaces.recommendations.FakeStaticRecommender;
-import eu.elderspaces.recommendations.Recommender;
+import eu.elderspaces.recommendations.core.FakeStaticRecommender;
+import eu.elderspaces.recommendations.core.Recommender;
 
 /**
  * @author micheleminno
@@ -27,7 +27,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
     
     @Override
     protected void configureServlets() {
-    
+        
         final Map<String, String> initParams = new HashMap<String, String>();
         
         initParams.put(ServletContainer.RESOURCE_CONFIG_CLASS,

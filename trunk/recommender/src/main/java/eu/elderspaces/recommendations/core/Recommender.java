@@ -1,10 +1,10 @@
-package eu.elderspaces.recommendations;
+package eu.elderspaces.recommendations.core;
 
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
-import eu.elderspaces.recommendations.responses.ClubEntry;
-import eu.elderspaces.recommendations.responses.EventEntry;
-import eu.elderspaces.recommendations.responses.FriendEntry;
-import eu.elderspaces.recommendations.responses.PaginatedResult;
+import eu.elderspaces.recommendations.model.ClubEntry;
+import eu.elderspaces.recommendations.model.EventEntry;
+import eu.elderspaces.recommendations.model.FriendEntry;
+import eu.elderspaces.recommendations.model.PaginatedResult;
 
 public interface Recommender {
     

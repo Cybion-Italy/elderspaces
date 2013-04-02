@@ -17,15 +17,15 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
-import eu.elderspaces.recommendations.Recommender;
+import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
-import eu.elderspaces.recommendations.responses.ClubEntry;
+import eu.elderspaces.recommendations.model.ClubEntry;
+import eu.elderspaces.recommendations.model.EventEntry;
+import eu.elderspaces.recommendations.model.FriendEntry;
+import eu.elderspaces.recommendations.model.PaginatedResult;
 import eu.elderspaces.recommendations.responses.ClubRecommendationResponse;
-import eu.elderspaces.recommendations.responses.EventEntry;
 import eu.elderspaces.recommendations.responses.EventRecommendationResponse;
-import eu.elderspaces.recommendations.responses.FriendEntry;
 import eu.elderspaces.recommendations.responses.FriendRecommendationResponse;
-import eu.elderspaces.recommendations.responses.PaginatedResult;
 
 /**
  * 
@@ -44,14 +44,14 @@ public class RecommendationService {
     
     @Inject
     public RecommendationService(final Recommender recommender) {
-    
+        
         this.recommender = recommender;
     }
     
     @GET
     @Path(RecommendationsEndpoint.FRIENDS + "/{userId}")
     public Response getFriends(@PathParam("userId") final String userId) {
-    
+        
         LOGGER.info("Friends recommendation service called with userId: " + userId);
         ResponseBuilder rb = null;
         
@@ -76,7 +76,7 @@ public class RecommendationService {
     @GET
     @Path(RecommendationsEndpoint.EVENTS + "/{userId}")
     public Response getEvents(@PathParam("userId") final String userId) {
-    
+        
         LOGGER.info("Events recommendation service called with userId: " + userId);
         ResponseBuilder rb = null;
         
@@ -101,7 +101,7 @@ public class RecommendationService {
     @GET
     @Path(RecommendationsEndpoint.CLUBS + "/{userId}")
     public Response getClubs(@PathParam("userId") final String userId) {
-    
+        
         LOGGER.info("Clubs recommendation service called with userId: " + userId);
         ResponseBuilder rb = null;
         

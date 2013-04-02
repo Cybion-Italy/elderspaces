@@ -14,9 +14,8 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
-import eu.elderspaces.recommendations.FakeStaticRecommender;
-import eu.elderspaces.recommendations.Recommender;
-import eu.elderspaces.recommendations.services.RecommendationService;
+import eu.elderspaces.recommendations.core.FakeStaticRecommender;
+import eu.elderspaces.recommendations.core.Recommender;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -25,7 +24,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
     
     @Override
     protected void configureServlets() {
-    
+        
         final Map<String, String> initParams = new HashMap<String, String>();
         // TODO check if jersey wadl can be configured here
         

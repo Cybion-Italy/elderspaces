@@ -1,13 +1,13 @@
-package eu.elderspaces.recommendations;
+package eu.elderspaces.recommendations.core;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import eu.elderspaces.recommendations.responses.ClubEntry;
-import eu.elderspaces.recommendations.responses.EventEntry;
-import eu.elderspaces.recommendations.responses.FriendEntry;
-import eu.elderspaces.recommendations.responses.PaginatedResult;
+import eu.elderspaces.recommendations.model.ClubEntry;
+import eu.elderspaces.recommendations.model.EventEntry;
+import eu.elderspaces.recommendations.model.FriendEntry;
+import eu.elderspaces.recommendations.model.PaginatedResult;
 
 public class FakeStaticRecommender implements Recommender {
     
@@ -52,7 +52,7 @@ public class FakeStaticRecommender implements Recommender {
     
     @Override
     public PaginatedResult<FriendEntry> getFriends(final String userId) {
-    
+        
         final PaginatedResult<FriendEntry> recommendationReport = new PaginatedResult<FriendEntry>();
         recommendationReport.setStartIndex(START_INDEX);
         recommendationReport.setTotalResults(TOTAL_RESULTS);
@@ -74,7 +74,7 @@ public class FakeStaticRecommender implements Recommender {
     
     @Override
     public PaginatedResult<EventEntry> getEvents(final String userId) {
-    
+        
         final PaginatedResult<EventEntry> recommendationReport = new PaginatedResult<EventEntry>();
         recommendationReport.setStartIndex(START_INDEX);
         recommendationReport.setTotalResults(TOTAL_RESULTS);
@@ -96,7 +96,7 @@ public class FakeStaticRecommender implements Recommender {
     
     @Override
     public PaginatedResult<ClubEntry> getClubs(final String userId) {
-    
+        
         final PaginatedResult<ClubEntry> recommendationReport = new PaginatedResult<ClubEntry>();
         recommendationReport.setStartIndex(START_INDEX);
         recommendationReport.setTotalResults(TOTAL_RESULTS);
