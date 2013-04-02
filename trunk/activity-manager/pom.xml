@@ -8,16 +8,34 @@
 		<artifactId>parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>activity-manager</artifactId>
 	<name>activity-manager</name>
-	
+
 	<url>http://www.cybion.it</url>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<dependencies>
 
+		<elasticsearch.version>0.20.6</elasticsearch.version>
+		<jackson-xc.version>1.9.9</jackson-xc.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>${elasticsearch.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+			<version>${jackson-xc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>${jackson-xc.version}</version>
+		</dependency>
 	</dependencies>
 </project>
