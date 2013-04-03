@@ -79,6 +79,11 @@
 				<version>${elderspaces.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>eu.elderspaces</groupId>
+				<artifactId>activity-manager</artifactId>
+				<version>${elderspaces.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>it.cybion.commons</groupId>
 				<artifactId>test-utils</artifactId>
 				<version>${commons.version}</version>

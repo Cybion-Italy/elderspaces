@@ -1,7 +1,5 @@
 package eu.elderspaces.activities.services;
 
-import it.cybion.commons.web.responses.ResponseStatus;
-import it.cybion.commons.web.responses.StringResponse;
 import it.cybion.commons.web.services.base.JsonService;
 
 import javax.ws.rs.Consumes;
@@ -17,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
+import eu.elderspaces.activities.core.ActivityManager;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -28,25 +27,30 @@ public class ActivitiesService extends JsonService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivitiesService.class);
     
-    @Inject
-    public ActivitiesService() {
+    private final ActivityManager activityManager;
     
+    @Inject
+    public ActivitiesService(final ActivityManager activityManager) {
+    
+        this.activityManager = activityManager;
     }
     
     @POST
-    public Response createActivity(final String activityContent) {
+    @Path(ActivitiesEndpoint.STORE_ACTIVITY)
+    public Response storeActivity(final String activityContent) {
     
+        LOGGER.debug("Store activity service called");
+        
         if (activityContent == null || activityContent.length() == 0) {
             return error("empty parameter");
+        }
+        
+        final boolean stored = activityManager.storeActivity(activityContent);
+        
+        if (stored) {
+            return success("Activity: '" + activityContent + "' stored");
         } else {
-            final String message = "received activity content: '" + activityContent + "'";
-            LOGGER.debug(message);
-            
-            // TODO use created(...) instead of ok()
-            final Response.ResponseBuilder rb = Response.ok().type(MediaType.APPLICATION_JSON);
-            rb.entity(new StringResponse(ResponseStatus.OK, "received activity"));
-            return rb.build();
+            return error("Activity: '" + activityContent + "' not stored");
         }
     }
-    
 }
