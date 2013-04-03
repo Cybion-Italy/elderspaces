@@ -20,6 +20,9 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
+import eu.elderspaces.activities.core.ActivityManager;
+import eu.elderspaces.activities.core.SimpleActivityManager;
+
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
@@ -29,6 +32,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
     
     @Override
     protected void configureServlets() {
+    
         LOGGER.debug("configuring servlets");
         final Map<String, String> initParams = new HashMap<String, String>();
         // TODO check if jersey wadl can be configured here
@@ -48,6 +52,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
         // bind REST services
         bind(StatusService.class);
         bind(ActivitiesService.class);
+        bind(ActivityManager.class).to(SimpleActivityManager.class);
         
         // add bindings for Jackson json serialization
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();

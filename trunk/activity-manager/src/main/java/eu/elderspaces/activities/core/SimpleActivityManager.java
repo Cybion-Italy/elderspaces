@@ -18,6 +18,6 @@ public class SimpleActivityManager implements ActivityManager {
             throw new InvalidUserActivity(e);
         }
         
-        return false;
+        return true;
     }
 }

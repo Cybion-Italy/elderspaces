@@ -24,43 +24,43 @@ import eu.elderspaces.activities.ActivitiesEndpoint;
  */
 public class ActivitiesServiceTestCase extends BaseServiceTestCase {
     
+    private static final String ACTIVITY = "{\"activityContent\" : \"not-empty-entity\"}";
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivitiesServiceTestCase.class);
     
     @Test
     public void givenOneEmptyActivityShouldGetNOKStatus() throws CybionHttpException {
-        
-        final String url = super.base_uri + ActivitiesEndpoint.ACTIVITY;
+    
+        final String url = super.base_uri + ActivitiesEndpoint.ACTIVITY
+                + ActivitiesEndpoint.STORE_ACTIVITY;
         
         final Map<String, String> requestHeaderMap = Maps.newHashMap();
         requestHeaderMap.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-        requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);
+        requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         final String emptyRequestEntity = "";
-        final ExternalStringResponse stringResponse = CybionHttpClient.performPost(
-                url,
-                requestHeaderMap,
-                emptyRequestEntity);
+        final ExternalStringResponse stringResponse = CybionHttpClient.performPost(url,
+                requestHeaderMap, emptyRequestEntity);
         
-        LOGGER.debug("response body: " + stringResponse.getObject());
-        assertTrue(ResponseStatus.NOK == stringResponse.getStatus(),
-                "Unexpected result: " + stringResponse.getMessage());
+        final String responseObject = stringResponse.getObject();
+        LOGGER.debug("response body: " + responseObject);
+        assertTrue(ResponseStatus.NOK == stringResponse.getStatus(), "Unexpected result: "
+                + stringResponse.getMessage());
     }
     
     @Test
     public void givenOneActivityShouldGetOKStatus() throws CybionHttpException {
-        
-        final String url = super.base_uri + ActivitiesEndpoint.ACTIVITY;
+    
+        final String url = super.base_uri + ActivitiesEndpoint.ACTIVITY
+                + ActivitiesEndpoint.STORE_ACTIVITY;
         
         final Map<String, String> requestHeaderMap = Maps.newHashMap();
         requestHeaderMap.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-        requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN);
-        final String requestEntity = "not-empty-entity";
-        final ExternalStringResponse stringResponse = CybionHttpClient.performPost(
-                url,
-                requestHeaderMap,
-                requestEntity);
+        requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        final String requestEntity = ACTIVITY;
+        final ExternalStringResponse stringResponse = CybionHttpClient.performPost(url,
+                requestHeaderMap, requestEntity);
         
         LOGGER.debug("response body: " + stringResponse.getObject());
-        assertTrue(ResponseStatus.OK == stringResponse.getStatus(),
-                "Unexpected result: " + stringResponse.getMessage());
+        assertTrue(ResponseStatus.OK == stringResponse.getStatus(), "Unexpected result: "
+                + stringResponse.getMessage());
     }
 }

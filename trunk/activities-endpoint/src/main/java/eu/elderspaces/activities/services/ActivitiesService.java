@@ -16,12 +16,12 @@ import com.google.inject.Inject;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
 import eu.elderspaces.activities.core.ActivityManager;
+import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
 @Path(ActivitiesEndpoint.ACTIVITY)
-@Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.APPLICATION_JSON)
 public class ActivitiesService extends JsonService {
     
@@ -36,6 +36,7 @@ public class ActivitiesService extends JsonService {
     }
     
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path(ActivitiesEndpoint.STORE_ACTIVITY)
     public Response storeActivity(final String activityContent) {
     
@@ -45,7 +46,12 @@ public class ActivitiesService extends JsonService {
             return error("empty parameter");
         }
         
-        final boolean stored = activityManager.storeActivity(activityContent);
+        boolean stored;
+        try {
+            stored = activityManager.storeActivity(activityContent);
+        } catch (final InvalidUserActivity e) {
+            return error(Response.Status.NOT_ACCEPTABLE, e.getMessage());
+        }
         
         if (stored) {
             return success("Activity: '" + activityContent + "' stored");

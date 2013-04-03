@@ -20,33 +20,41 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
+import eu.elderspaces.activities.core.ActivityManager;
+import eu.elderspaces.activities.core.SimpleActivityManager;
+
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
-public class ProductionJerseyServletModule  extends JerseyServletModule {
+public class ProductionJerseyServletModule extends JerseyServletModule {
     
     public Properties properties;
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProductionJerseyServletModule.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(ProductionJerseyServletModule.class);
     
     @Override
     protected void configureServlets() {
+    
         LOGGER.debug("configuring servlets");
         
         final Map<String, String> initParams = new HashMap<String, String>();
         
-        initParams.put(ServletContainer.RESOURCE_CONFIG_CLASS, ClasspathResourceConfig.class.getName());
+        initParams.put(ServletContainer.RESOURCE_CONFIG_CLASS,
+                ClasspathResourceConfig.class.getName());
         
-        final Properties properties = PropertiesHelper.readFromClasspath("/activities-endpoint.properties");
-        //binds the keynames as @Named annotations
+        final Properties properties = PropertiesHelper
+                .readFromClasspath("/activities-endpoint.properties");
+        // binds the keynames as @Named annotations
         Names.bindProperties(binder(), properties);
         this.properties = properties;
         
         // add bindings of backend classes
         
-        //bind services classes
+        // bind services classes
         bind(StatusService.class);
         bind(ActivitiesService.class);
+        bind(ActivityManager.class).to(SimpleActivityManager.class);
         
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
