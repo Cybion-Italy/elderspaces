@@ -1,17 +1,17 @@
-package eu.elderspaces.recommendations.model;
+package eu.elderspaces.model;
 
 import com.google.common.base.Objects;
 
-public class FriendEntry extends RecommendationEntry {
+public class Person extends Entity {
     
     private String displayName;
     private String thumbnailUrl;
     
-    public FriendEntry() {
+    public Person() {
     
     }
     
-    public FriendEntry(final String id, final String displayName, final String thumbnailUrl) {
+    public Person(final String id, final String displayName, final String thumbnailUrl) {
     
         super(id);
         this.displayName = displayName;
@@ -45,7 +45,7 @@ public class FriendEntry extends RecommendationEntry {
             return false;
         }
         
-        final FriendEntry that = (FriendEntry) o;
+        final Person that = (Person) o;
         
         return Objects.equal(displayName, that.displayName)
                 && Objects.equal(thumbnailUrl, that.thumbnailUrl);

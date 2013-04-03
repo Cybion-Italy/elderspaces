@@ -37,5 +37,9 @@
 			<artifactId>jackson-jaxrs</artifactId>
 			<version>${jackson-xc.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>model</artifactId>
+		</dependency>
 	</dependencies>
 </project>

@@ -1,19 +1,19 @@
-package eu.elderspaces.recommendations.model;
+package eu.elderspaces.model;
 
 import com.google.common.base.Objects;
 
-public class ClubEntry extends RecommendationEntry {
+public class Club extends Entity {
     
     private String name;
     private String description;
     private String shortDescription;
     private String category;
     
-    public ClubEntry() {
+    public Club() {
     
     }
     
-    public ClubEntry(final String id, final String name, final String description,
+    public Club(final String id, final String name, final String description,
             final String shortDescription, final String category) {
     
         super(id);
@@ -70,7 +70,7 @@ public class ClubEntry extends RecommendationEntry {
             return false;
         }
         
-        final ClubEntry that = (ClubEntry) o;
+        final Club that = (Club) o;
         
         return Objects.equal(description, that.description)
                 && Objects.equal(shortDescription, that.shortDescription)

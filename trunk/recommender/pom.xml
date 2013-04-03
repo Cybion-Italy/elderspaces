@@ -21,6 +21,9 @@
 	</properties>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>model</artifactId>
+		</dependency>
 	</dependencies>
 </project>

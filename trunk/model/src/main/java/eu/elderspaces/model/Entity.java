@@ -1,16 +1,16 @@
-package eu.elderspaces.recommendations.model;
+package eu.elderspaces.model;
 
 import com.google.common.base.Objects;
 
-public class RecommendationEntry {
+public class Entity {
     
     private String id;
     
-    public RecommendationEntry() {
+    public Entity() {
     
     }
     
-    public RecommendationEntry(final String id) {
+    public Entity(final String id) {
     
         this.id = id;
     }
@@ -32,7 +32,7 @@ public class RecommendationEntry {
             return false;
         }
         
-        final RecommendationEntry that = (RecommendationEntry) o;
+        final Entity that = (Entity) o;
         
         return Objects.equal(id, that.id);
         

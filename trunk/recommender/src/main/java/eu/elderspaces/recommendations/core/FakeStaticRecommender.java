@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import eu.elderspaces.recommendations.model.ClubEntry;
-import eu.elderspaces.recommendations.model.EventEntry;
-import eu.elderspaces.recommendations.model.FriendEntry;
-import eu.elderspaces.recommendations.model.PaginatedResult;
+import eu.elderspaces.model.Club;
+import eu.elderspaces.model.Event;
+import eu.elderspaces.model.Person;
+import eu.elderspaces.model.recommendations.PaginatedResult;
 
 public class FakeStaticRecommender implements Recommender {
     
@@ -51,20 +51,17 @@ public class FakeStaticRecommender implements Recommender {
     private static final String CLUB_CATEGORY_3 = "MUSIC";
     
     @Override
-    public PaginatedResult<FriendEntry> getFriends(final String userId) {
-        
-        final PaginatedResult<FriendEntry> recommendationReport = new PaginatedResult<FriendEntry>();
+    public PaginatedResult<Person> getFriends(final String userId) {
+    
+        final PaginatedResult<Person> recommendationReport = new PaginatedResult<Person>();
         recommendationReport.setStartIndex(START_INDEX);
         recommendationReport.setTotalResults(TOTAL_RESULTS);
         
-        final FriendEntry firstFriendEntry = new FriendEntry(FRIEND_ID_1, DISPLAY_NAME_1,
-                THUMBNAIL_URL_1);
-        final FriendEntry secondFriendEntry = new FriendEntry(FRIEND_ID_2, DISPLAY_NAME_2,
-                THUMBNAIL_URL_2);
-        final FriendEntry thirdFriendEntry = new FriendEntry(FRIEND_ID_3, DISPLAY_NAME_3,
-                THUMBNAIL_URL_3);
+        final Person firstFriendEntry = new Person(FRIEND_ID_1, DISPLAY_NAME_1, THUMBNAIL_URL_1);
+        final Person secondFriendEntry = new Person(FRIEND_ID_2, DISPLAY_NAME_2, THUMBNAIL_URL_2);
+        final Person thirdFriendEntry = new Person(FRIEND_ID_3, DISPLAY_NAME_3, THUMBNAIL_URL_3);
         
-        final List<FriendEntry> entries = Lists.newArrayList(firstFriendEntry, secondFriendEntry,
+        final List<Person> entries = Lists.newArrayList(firstFriendEntry, secondFriendEntry,
                 thirdFriendEntry);
         
         recommendationReport.setEntries(entries);
@@ -73,20 +70,18 @@ public class FakeStaticRecommender implements Recommender {
     }
     
     @Override
-    public PaginatedResult<EventEntry> getEvents(final String userId) {
-        
-        final PaginatedResult<EventEntry> recommendationReport = new PaginatedResult<EventEntry>();
+    public PaginatedResult<Event> getEvents(final String userId) {
+    
+        final PaginatedResult<Event> recommendationReport = new PaginatedResult<Event>();
         recommendationReport.setStartIndex(START_INDEX);
         recommendationReport.setTotalResults(TOTAL_RESULTS);
         
-        final EventEntry firstEventEntry = new EventEntry(EVENT_ID_1, EVENT_NAME_1,
-                EVENT_SHORT_DESCRIPTION_1);
-        final EventEntry secondEventEntry = new EventEntry(EVENT_ID_2, EVENT_NAME_2,
+        final Event firstEventEntry = new Event(EVENT_ID_1, EVENT_NAME_1, EVENT_SHORT_DESCRIPTION_1);
+        final Event secondEventEntry = new Event(EVENT_ID_2, EVENT_NAME_2,
                 EVENT_SHORT_DESCRIPTION_2);
-        final EventEntry thirdEventEntry = new EventEntry(EVENT_ID_3, EVENT_NAME_3,
-                EVENT_SHORT_DESCRIPTION_3);
+        final Event thirdEventEntry = new Event(EVENT_ID_3, EVENT_NAME_3, EVENT_SHORT_DESCRIPTION_3);
         
-        final List<EventEntry> entries = Lists.newArrayList(firstEventEntry, secondEventEntry,
+        final List<Event> entries = Lists.newArrayList(firstEventEntry, secondEventEntry,
                 thirdEventEntry);
         
         recommendationReport.setEntries(entries);
@@ -95,20 +90,20 @@ public class FakeStaticRecommender implements Recommender {
     }
     
     @Override
-    public PaginatedResult<ClubEntry> getClubs(final String userId) {
-        
-        final PaginatedResult<ClubEntry> recommendationReport = new PaginatedResult<ClubEntry>();
+    public PaginatedResult<Club> getClubs(final String userId) {
+    
+        final PaginatedResult<Club> recommendationReport = new PaginatedResult<Club>();
         recommendationReport.setStartIndex(START_INDEX);
         recommendationReport.setTotalResults(TOTAL_RESULTS);
         
-        final ClubEntry firstClubEntry = new ClubEntry(CLUB_ID_1, CLUB_NAME_1, CLUB_DESCRIPTION_1,
+        final Club firstClubEntry = new Club(CLUB_ID_1, CLUB_NAME_1, CLUB_DESCRIPTION_1,
                 CLUB_SHORT_DESCRIPTION_1, CLUB_CATEGORY_1);
-        final ClubEntry secondClubEntry = new ClubEntry(CLUB_ID_2, CLUB_NAME_2, CLUB_DESCRIPTION_2,
+        final Club secondClubEntry = new Club(CLUB_ID_2, CLUB_NAME_2, CLUB_DESCRIPTION_2,
                 CLUB_SHORT_DESCRIPTION_2, CLUB_CATEGORY_2);
-        final ClubEntry thirdClubEntry = new ClubEntry(CLUB_ID_3, CLUB_NAME_3, CLUB_DESCRIPTION_3,
+        final Club thirdClubEntry = new Club(CLUB_ID_3, CLUB_NAME_3, CLUB_DESCRIPTION_3,
                 CLUB_SHORT_DESCRIPTION_3, CLUB_CATEGORY_3);
         
-        final List<ClubEntry> entries = Lists.newArrayList(firstClubEntry, secondClubEntry,
+        final List<Club> entries = Lists.newArrayList(firstClubEntry, secondClubEntry,
                 thirdClubEntry);
         
         recommendationReport.setEntries(entries);

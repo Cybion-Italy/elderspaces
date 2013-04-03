@@ -16,13 +16,13 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+import eu.elderspaces.model.Club;
+import eu.elderspaces.model.Event;
+import eu.elderspaces.model.Person;
+import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
 import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
-import eu.elderspaces.recommendations.model.ClubEntry;
-import eu.elderspaces.recommendations.model.EventEntry;
-import eu.elderspaces.recommendations.model.FriendEntry;
-import eu.elderspaces.recommendations.model.PaginatedResult;
 import eu.elderspaces.recommendations.responses.ClubRecommendationResponse;
 import eu.elderspaces.recommendations.responses.EventRecommendationResponse;
 import eu.elderspaces.recommendations.responses.FriendRecommendationResponse;
@@ -55,7 +55,7 @@ public class RecommendationService {
         LOGGER.info("Friends recommendation service called with userId: " + userId);
         ResponseBuilder rb = null;
         
-        final PaginatedResult<FriendEntry> recommendationReport;
+        final PaginatedResult<Person> recommendationReport;
         
         try {
             recommendationReport = recommender.getFriends(userId);
@@ -80,7 +80,7 @@ public class RecommendationService {
         LOGGER.info("Events recommendation service called with userId: " + userId);
         ResponseBuilder rb = null;
         
-        final PaginatedResult<EventEntry> recommendationReport;
+        final PaginatedResult<Event> recommendationReport;
         
         try {
             recommendationReport = recommender.getEvents(userId);
@@ -105,7 +105,7 @@ public class RecommendationService {
         LOGGER.info("Clubs recommendation service called with userId: " + userId);
         ResponseBuilder rb = null;
         
-        final PaginatedResult<ClubEntry> recommendationReport;
+        final PaginatedResult<Club> recommendationReport;
         
         try {
             recommendationReport = recommender.getClubs(userId);

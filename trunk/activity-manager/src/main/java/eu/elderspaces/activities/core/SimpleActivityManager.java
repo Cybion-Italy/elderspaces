@@ -3,7 +3,7 @@ package eu.elderspaces.activities.core;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import eu.elderspaces.activities.exceptions.InvalidUserActivity;
-import eu.elderspaces.activities.model.Activity;
+import eu.elderspaces.model.Activity;
 
 public class SimpleActivityManager implements ActivityManager {
     
