@@ -22,6 +22,8 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 import eu.elderspaces.activities.core.ActivityManager;
 import eu.elderspaces.activities.core.SimpleActivityManager;
+import eu.elderspaces.activities.persistence.ActivityRepository;
+import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -53,6 +55,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
         bind(StatusService.class);
         bind(ActivitiesService.class);
         bind(ActivityManager.class).to(SimpleActivityManager.class);
+        bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
         
         // add bindings for Jackson json serialization
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();

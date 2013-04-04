@@ -23,7 +23,8 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean store(final Call call, final String userId) {
     
-        return userCalls.put(userId, call) != null;
+        userCalls.put(userId, call);
+        return true;
     }
     
     @Override

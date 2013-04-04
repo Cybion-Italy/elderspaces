@@ -10,7 +10,7 @@ import eu.elderspaces.model.Call;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Person;
 
-public class AbstractActivityRepositoryTestCase {
+public abstract class AbstractActivityRepositoryTestCase {
     
     private static final String PUBLISHED = "2013-03-29T3:41:48+0100";
     private static final String VERB = "create";
