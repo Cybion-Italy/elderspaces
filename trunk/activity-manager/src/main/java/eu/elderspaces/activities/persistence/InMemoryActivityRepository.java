@@ -1,14 +1,18 @@
 package eu.elderspaces.activities.persistence;
 
-import java.util.List;
+import java.util.Map;
 
-import com.google.common.collect.Lists;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import com.google.inject.internal.Maps;
+
+import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Call;
 
 public class InMemoryActivityRepository implements ActivityRepository {
     
-    List<Call> calls = Lists.newLinkedList();
+    private final Map<String, Call> userCalls = Maps.newHashMap();
+    private final ObjectMapper mapper = new ObjectMapper();
     
     @Override
     public void shutDownRepository() {
@@ -17,9 +21,23 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean store(final Call call) {
+    public boolean store(final Call call, final String userId) {
     
-        return calls.add(call);
+        return userCalls.put(userId, call) != null;
+    }
+    
+    @Override
+    public boolean store(final String callString, final String userId)
+            throws ActivityRepositoryException {
+    
+        Call call = null;
+        try {
+            call = mapper.readValue(callString, Call.class);
+        } catch (final Exception e) {
+            throw new ActivityRepositoryException(e);
+        }
+        
+        return store(call, userId);
     }
     
 }

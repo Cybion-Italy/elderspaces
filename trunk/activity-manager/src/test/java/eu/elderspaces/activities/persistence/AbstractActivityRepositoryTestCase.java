@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Call;
 import eu.elderspaces.model.Entity;
@@ -24,13 +25,13 @@ public class AbstractActivityRepositoryTestCase {
     protected ActivityRepository activityRepository;
     
     @Test
-    public void store() {
+    public void store() throws ActivityRepositoryException {
     
         final Entity activityObject = new Activity(ACTIVITY_BODY, ACTIVITY_TITLE);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         final Call call = new Call(VERB, activityObject, actor, PUBLISHED);
         
-        final boolean stored = activityRepository.store(call);
+        final boolean stored = activityRepository.store(call, PERSON_ID);
         LOGGER.info("Storing call: " + call);
         Assert.assertTrue(stored);
     }

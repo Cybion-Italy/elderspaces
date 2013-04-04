@@ -4,6 +4,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.inject.Inject;
 
+import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.activities.exceptions.InvalidUserCall;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.model.Call;
@@ -20,7 +21,8 @@ public class SimpleActivityManager implements ActivityManager {
     }
     
     @Override
-    public boolean storeCall(final String callContent) throws InvalidUserCall {
+    public boolean storeCall(final String callContent) throws InvalidUserCall,
+            ActivityRepositoryException {
     
         final Call call;
         try {
@@ -33,8 +35,9 @@ public class SimpleActivityManager implements ActivityManager {
     }
     
     @Override
-    public boolean storeCall(final Call call) throws InvalidUserCall {
+    public boolean storeCall(final Call call) throws InvalidUserCall, ActivityRepositoryException {
     
-        return activityRepository.store(call);
+        final String userId = call.getActor().getId();
+        return activityRepository.store(call, userId);
     }
 }

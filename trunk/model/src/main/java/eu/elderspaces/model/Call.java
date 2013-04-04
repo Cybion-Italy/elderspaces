@@ -2,6 +2,7 @@ package eu.elderspaces.model;
 
 public class Call {
     
+    private String id;
     private String verb;
     private Entity object;
     private Person actor;
@@ -14,6 +15,7 @@ public class Call {
     public Call(final String verb, final Entity callObject, final Person actor,
             final String published) {
     
+        this.id = actor.getId() + "_" + verb + "_" + callObject.getId();
         this.verb = verb;
         this.object = callObject;
         this.actor = actor;
@@ -58,5 +60,15 @@ public class Call {
     public void setPublished(final String published) {
     
         this.published = published;
+    }
+    
+    public String getId() {
+    
+        return id;
+    }
+    
+    public void setId(final String id) {
+    
+        this.id = id;
     }
 }
