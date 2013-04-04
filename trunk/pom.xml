@@ -33,6 +33,8 @@
 		<jersey.version>1.16</jersey.version>
 		<guice.version>2.0</guice.version>
 		<jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
+		<elasticsearch.version>0.20.6</elasticsearch.version>
+		<jackson-xc.version>1.9.9</jackson-xc.version>
 
 		<!-- Plugin versions -->
 
@@ -106,6 +108,22 @@
 				<artifactId>jackson-mapper-asl</artifactId>
 				<version>${jackson-mapper-asl.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>${elasticsearch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-xc</artifactId>
+				<version>${jackson-xc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-jaxrs</artifactId>
+				<version>${jackson-xc.version}</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>

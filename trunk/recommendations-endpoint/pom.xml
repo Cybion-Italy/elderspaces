@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>recommendations-endpoint</artifactId>
-	<name>recommendations-endpoint</name>
+	<name>Elderspaces - Recommendation Endpoint</name>
 	<packaging>war</packaging>
 
 	<url>http://www.cybion.it</url>
@@ -33,8 +33,12 @@
 			<groupId>it.cybion.commons</groupId>
 			<artifactId>test-utils</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>elderspaces-recommendations-endpoint</finalName>
 		<plugins>

@@ -24,7 +24,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
     
     @Override
     protected void configureServlets() {
-        
+    
         final Map<String, String> initParams = new HashMap<String, String>();
         // TODO check if jersey wadl can be configured here
         
@@ -33,7 +33,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
         
         // bind REST services
         bind(RecommendationService.class);
-        bind(Recommender.class).to(FakeStaticRecommender.class).asEagerSingleton();
+        bind(Recommender.class).to(FakeStaticRecommender.class);
         
         // add bindings for Jackson json serialization
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();

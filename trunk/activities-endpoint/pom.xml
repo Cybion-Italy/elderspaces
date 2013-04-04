@@ -13,7 +13,7 @@
 	<artifactId>activities-endpoint</artifactId>
 	<packaging>war</packaging>
 
-	<name>Elderspaces - Activities Endpoint</name>
+	<name>Elderspaces - Activity Endpoint</name>
 
 	<url>http://www.cybion.it</url>
 

@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>recommender</artifactId>
-	<name>recommender</name>
+	<name>Elderspaces - Recommender</name>
 
 	<url>http://www.cybion.it</url>
 
@@ -24,6 +24,14 @@
 		<dependency>
 			<groupId>eu.elderspaces</groupId>
 			<artifactId>model</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
 		</dependency>
 	</dependencies>
 </project>

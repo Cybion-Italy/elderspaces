@@ -48,6 +48,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     
         final PaginatedResult<Person> recommendationReport = getFriendRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_FRIENDS);
+        LOGGER.info("Recommendations computed: " + recommendationReport);
         Assert.assertEquals(ENTRIES_SIZE, recommendationReport.getEntries().size());
         
     }
@@ -58,6 +59,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     
         final PaginatedResult<Event> recommendationReport = getEventRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_EVENTS);
+        LOGGER.info("Recommendations computed: " + recommendationReport);
         Assert.assertEquals(ENTRIES_SIZE, recommendationReport.getEntries().size());
         
     }
@@ -68,6 +70,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     
         final PaginatedResult<Club> recommendationReport = getClubRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_CLUBS);
+        LOGGER.info("Recommendations computed: " + recommendationReport);
         Assert.assertEquals(ENTRIES_SIZE, recommendationReport.getEntries().size());
         
     }
@@ -75,8 +78,8 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     private PaginatedResult<Person> getFriendRecommendations(final String serviceCall)
             throws CybionHttpException, JsonParseException, JsonMappingException, IOException {
     
-        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(base_uri
-                + serviceCall, null);
+        final String url = base_uri + serviceCall;
+        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(url, null);
         
         final String responseObject = getReportResponse.getObject();
         
@@ -89,8 +92,8 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     private PaginatedResult<Event> getEventRecommendations(final String serviceCall)
             throws CybionHttpException, JsonParseException, JsonMappingException, IOException {
     
-        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(base_uri
-                + serviceCall, null);
+        final String url = base_uri + serviceCall;
+        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(url, null);
         
         final String responseObject = getReportResponse.getObject();
         
@@ -103,8 +106,8 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     private PaginatedResult<Club> getClubRecommendations(final String serviceCall)
             throws CybionHttpException, JsonParseException, JsonMappingException, IOException {
     
-        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(base_uri
-                + serviceCall, null);
+        final String url = base_uri + serviceCall;
+        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(url, null);
         
         final String responseObject = getReportResponse.getObject();
         

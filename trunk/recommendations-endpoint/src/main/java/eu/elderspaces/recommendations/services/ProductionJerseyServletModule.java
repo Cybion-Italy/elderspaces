@@ -27,7 +27,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
     
     @Override
     protected void configureServlets() {
-        
+    
         final Map<String, String> initParams = new HashMap<String, String>();
         
         initParams.put(ServletContainer.RESOURCE_CONFIG_CLASS,
@@ -35,7 +35,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         
         // bind REST services
         bind(RecommendationService.class);
-        bind(Recommender.class).to(FakeStaticRecommender.class).asEagerSingleton();
+        bind(Recommender.class).to(FakeStaticRecommender.class);
         
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
