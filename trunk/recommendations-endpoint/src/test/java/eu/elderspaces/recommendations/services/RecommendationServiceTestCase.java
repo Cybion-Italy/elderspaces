@@ -7,12 +7,12 @@ import it.cybion.commons.web.responses.ExternalStringResponse;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
-
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import eu.elderspaces.model.Club;
@@ -34,7 +34,8 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     
     private final ObjectMapper mapper = new ObjectMapper();
     
-    private static final Logger LOGGER = Logger.getLogger(RecommendationServiceTestCase.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(RecommendationServiceTestCase.class);
     
     public RecommendationServiceTestCase() {
     

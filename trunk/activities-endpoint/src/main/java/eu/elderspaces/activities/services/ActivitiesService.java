@@ -16,7 +16,7 @@ import com.google.inject.Inject;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
 import eu.elderspaces.activities.core.ActivityManager;
-import eu.elderspaces.activities.exceptions.InvalidUserActivity;
+import eu.elderspaces.activities.exceptions.InvalidUserCall;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -48,8 +48,8 @@ public class ActivitiesService extends JsonService {
         
         boolean stored;
         try {
-            stored = activityManager.storeActivity(activityContent);
-        } catch (final InvalidUserActivity e) {
+            stored = activityManager.storeCall(activityContent);
+        } catch (final InvalidUserCall e) {
             return error(Response.Status.NOT_ACCEPTABLE, e.getMessage());
         }
         

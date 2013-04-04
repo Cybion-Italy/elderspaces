@@ -1,7 +1,10 @@
 package eu.elderspaces.model;
 
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
 import com.google.common.base.Objects;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "objectType")
 public class Event extends Entity {
     
     private String shortDescription;

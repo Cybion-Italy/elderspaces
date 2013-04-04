@@ -7,6 +7,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
+import eu.elderspaces.model.Call;
+
 public class ElasticSearchActivityRepository implements ActivityRepository {
     
     private static final Logger logger = Logger.getLogger(ElasticSearchActivityRepository.class);
@@ -30,6 +32,13 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     
         client.close();
         node.close();
+    }
+    
+    @Override
+    public boolean store(final Call call) {
+    
+        // TODO Auto-generated method stub
+        return false;
     }
     
 }

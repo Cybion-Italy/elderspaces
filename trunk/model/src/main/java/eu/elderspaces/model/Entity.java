@@ -1,7 +1,15 @@
 package eu.elderspaces.model;
 
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonSubTypes.Type;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
 import com.google.common.base.Objects;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "objectType")
+@JsonSubTypes({ @Type(value = Activity.class, name = "activity"),
+        @Type(value = Person.class, name = "person"), @Type(value = Event.class, name = "event"),
+        @Type(value = Club.class, name = "club") })
 public class Entity {
     
     private String id;

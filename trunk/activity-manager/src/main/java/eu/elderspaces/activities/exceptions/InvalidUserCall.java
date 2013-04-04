@@ -1,28 +1,28 @@
 package eu.elderspaces.activities.exceptions;
 
-public class InvalidUserActivity extends Exception {
+public class InvalidUserCall extends Exception {
     
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     
-    public InvalidUserActivity() {
+    public InvalidUserCall() {
     
         super();
     }
     
-    public InvalidUserActivity(final String message, final Throwable cause) {
+    public InvalidUserCall(final String message, final Throwable cause) {
     
         super(message, cause);
     }
     
-    public InvalidUserActivity(final String message) {
+    public InvalidUserCall(final String message) {
     
         super(message);
     }
     
-    public InvalidUserActivity(final Throwable cause) {
+    public InvalidUserCall(final Throwable cause) {
     
         super(cause);
     }

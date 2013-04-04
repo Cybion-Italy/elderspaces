@@ -1,62 +1,38 @@
 package eu.elderspaces.model;
 
-public class Activity {
+public class Activity extends Entity {
     
-    private String verb;
-    private ActivityObject object;
-    private Person actor;
-    private String published;
+    private String body;
+    private String title;
     
     public Activity() {
     
     }
     
-    public Activity(final String verb, final ActivityObject activityObject, final Person actor,
-            final String published) {
+    public Activity(final String body, final String title) {
     
-        this.verb = verb;
-        this.object = activityObject;
-        this.actor = actor;
-        this.published = published;
+        this.body = body;
+        this.title = title;
     }
     
-    public String getVerb() {
+    public String getBody() {
     
-        return verb;
+        return body;
     }
     
-    public void setVerb(final String verb) {
+    public void setBody(final String body) {
     
-        this.verb = verb;
+        this.body = body;
     }
     
-    public ActivityObject getObject() {
+    public String getTitle() {
     
-        return object;
+        return title;
     }
     
-    public void setObject(final ActivityObject object) {
+    public void setTitle(final String title) {
     
-        this.object = object;
+        this.title = title;
     }
     
-    public Person getActor() {
-    
-        return actor;
-    }
-    
-    public void setActor(final Person actor) {
-    
-        this.actor = actor;
-    }
-    
-    public String getPublished() {
-    
-        return published;
-    }
-    
-    public void setPublished(final String published) {
-    
-        this.published = published;
-    }
 }
