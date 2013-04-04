@@ -1,5 +1,7 @@
 package eu.elderspaces.model;
 
+import com.google.common.base.Objects;
+
 public class Activity extends Entity {
     
     private String body;
@@ -33,6 +35,31 @@ public class Activity extends Entity {
     public void setTitle(final String title) {
     
         this.title = title;
+    }
+    
+    @Override
+    public boolean equals(final Object o) {
+    
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        
+        final Activity that = (Activity) o;
+        
+        return Objects.equal(body, that.body) && Objects.equal(title, that.title);
+        
+    }
+    
+    @Override
+    public int hashCode() {
+    
+        return Objects.hashCode(body, title);
+    }
+    
+    @Override
+    public String toString() {
+    
+        return Objects.toStringHelper(this).addValue(body).addValue(title).toString();
     }
     
 }

@@ -51,6 +51,10 @@
 			<groupId>eu.elderspaces</groupId>
 			<artifactId>activity-manager</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

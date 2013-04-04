@@ -1,5 +1,7 @@
 package eu.elderspaces.model;
 
+import com.google.common.base.Objects;
+
 public class Call {
     
     private String id;
@@ -71,4 +73,33 @@ public class Call {
     
         this.id = id;
     }
+    
+    @Override
+    public boolean equals(final Object o) {
+    
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        
+        final Call that = (Call) o;
+        
+        return Objects.equal(id, that.id) && Objects.equal(verb, that.verb)
+                && Objects.equal(object, that.object) && Objects.equal(actor, that.actor)
+                && Objects.equal(published, that.published);
+        
+    }
+    
+    @Override
+    public int hashCode() {
+    
+        return Objects.hashCode(id, verb, object, actor, published);
+    }
+    
+    @Override
+    public String toString() {
+    
+        return Objects.toStringHelper(this).addValue(id).addValue(verb).addValue(object)
+                .addValue(actor).addValue(published).toString();
+    }
+    
 }

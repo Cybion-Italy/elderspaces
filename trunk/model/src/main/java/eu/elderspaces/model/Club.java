@@ -90,5 +90,4 @@ public class Club extends Entity {
         return Objects.toStringHelper(this).addValue(description).addValue(shortDescription)
                 .addValue(name).addValue(category).toString();
     }
-    
 }
