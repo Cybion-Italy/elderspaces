@@ -162,4 +162,17 @@ public abstract class AbstractActivityRepositoryTestCase {
         final boolean modified = activityRepository.modifyEvent(user, modifiedEvent);
         Assert.assertTrue(modified);
     }
+    
+    @Test
+    public void deleteEvent() {
+    
+        LOGGER.info("Deleting non-existent event");
+        boolean deleted = activityRepository.deleteEvent(user, event);
+        Assert.assertFalse(deleted);
+        
+        activityRepository.createEvent(user, event);
+        LOGGER.info("Deleting existing event");
+        deleted = activityRepository.deleteEvent(user, event);
+        Assert.assertTrue(deleted);
+    }
 }

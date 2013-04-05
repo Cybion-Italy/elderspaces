@@ -211,8 +211,12 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean deleteEvent(final Person user, final Event eventObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, false);
+        final boolean eventRemoved = userProfile.getEvents().remove(eventObject);
+        profiles.put(user.getId(), userProfile);
+        
+        return eventRemoved;
     }
     
     @Override
