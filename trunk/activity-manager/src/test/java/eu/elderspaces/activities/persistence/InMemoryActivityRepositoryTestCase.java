@@ -4,20 +4,20 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 @Test
-public class ElasticSearchActivityRepositoryTestCase extends AbstractActivityRepositoryTestCase {
+public class InMemoryActivityRepositoryTestCase extends AbstractActivityRepositoryTestCase {
     
     @Override
     protected void specificImplementationInitialize() {
     
-        activityRepository = new ElasticSearchActivityRepository();
-        LOGGER = LoggerFactory.getLogger(ElasticSearchActivityRepositoryTestCase.class);
+        activityRepository = new InMemoryActivityRepository();
+        LOGGER = LoggerFactory.getLogger(InMemoryActivityRepositoryTestCase.class);
         
     }
     
     @Override
     protected void specificImplementationShutDown() {
     
-        activityRepository.shutDownRepository();
+        // Do nothing
         
     }
 }

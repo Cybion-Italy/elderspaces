@@ -2,6 +2,8 @@ package eu.elderspaces.activities.persistence;
 
 import org.slf4j.Logger;
 import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
@@ -15,24 +17,57 @@ public abstract class AbstractActivityRepositoryTestCase {
     private static final String PUBLISHED = "2013-03-29T3:41:48+0100";
     private static final String VERB = "create";
     private static final String PERSON_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
-    private static final String PERSON_DISPLAY_NAME = "Mr. Ederly Hans";
-    private static final String PERSON_ID = "13913365:elderspaces.iwiw.hu";
+    private static final String USER_DISPLAY_NAME = "Mr. Ederly Hans";
+    private static final String USER_ID = "13913365:elderspaces.iwiw.hu";
+    
+    private static final String FRIEND_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913366_1301469612927_tn1";
+    private static final String FRIEND_DISPLAY_NAME = "Mr. Matt Eldy";
+    private static final String FRIEND_ID = "13913366:elderspaces.iwiw.hu";
+    
     private static final String ACTIVITY_TITLE = "said :";
     private static final String ACTIVITY_BODY = "Hello from Athens!";
+    
+    private Person user;
+    private Person friend;
     
     protected static Logger LOGGER;
     
     protected ActivityRepository activityRepository;
     
+    @BeforeClass
+    public void initialize() {
+    
+        user = new Person(USER_ID, USER_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
+        friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
+        specificImplementationInitialize();
+    }
+    
+    protected abstract void specificImplementationInitialize();
+    
+    @AfterClass
+    public void shutDown() {
+    
+        specificImplementationShutDown();
+    }
+    
+    protected abstract void specificImplementationShutDown();
+    
     @Test
     public void store() throws ActivityRepositoryException {
     
         final Entity activityObject = new Post(ACTIVITY_BODY, ACTIVITY_TITLE);
-        final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
-        final Call call = new Call(VERB, activityObject, null, actor, PUBLISHED);
+        final Call call = new Call(VERB, activityObject, null, user, PUBLISHED);
         
-        final boolean stored = activityRepository.store(call, PERSON_ID);
+        final boolean stored = activityRepository.store(call, USER_ID);
         LOGGER.info("Storing call: " + call);
         Assert.assertTrue(stored);
+    }
+    
+    @Test
+    public void addFriend() {
+    
+        LOGGER.info("adding friend");
+        final boolean added = activityRepository.addFriend(user, friend);
+        Assert.assertTrue(added);
     }
 }

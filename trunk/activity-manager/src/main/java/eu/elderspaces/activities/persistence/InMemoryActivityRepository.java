@@ -1,10 +1,14 @@
 package eu.elderspaces.activities.persistence;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
+import com.google.inject.internal.Sets;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Call;
@@ -12,10 +16,15 @@ import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Post;
+import eu.elderspaces.model.profile.UserHistory;
+import eu.elderspaces.model.profile.UserProfile;
 
 public class InMemoryActivityRepository implements ActivityRepository {
     
-    private final Map<String, Call> userCalls = Maps.newHashMap();
+    private final Map<String, List<Call>> calls = Maps.newHashMap();
+    private final Map<String, UserHistory> histories = Maps.newHashMap();
+    private final Map<String, UserProfile> profiles = Maps.newHashMap();
+    
     private final ObjectMapper mapper = new ObjectMapper();
     
     @Override
@@ -27,7 +36,17 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean store(final Call call, final String userId) {
     
-        userCalls.put(userId, call);
+        List<Call> userCalls = calls.get(userId);
+        
+        if (userCalls == null) {
+            
+            userCalls = Lists.newArrayList(call);
+            
+        } else {
+            userCalls.add(call);
+        }
+        calls.put(userId, userCalls);
+        
         return true;
     }
     
@@ -48,8 +67,24 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean addFriend(final Person user, final Person personObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final UserProfile userProfile = getUserProfile(user);
+        final boolean friendsUpdated = userProfile.getFriends().add(personObject);
+        
+        return friendsUpdated;
+    }
+    
+    private UserProfile getUserProfile(final Person user) {
+    
+        UserProfile userProfile = profiles.get(user.getId());
+        
+        if (userProfile == null) {
+            final Set<Person> friends = Sets.newHashSet();
+            final Set<Event> events = Sets.newHashSet();
+            final Set<Club> clubs = Sets.newHashSet();
+            userProfile = new UserProfile(user, friends, events, clubs);
+        }
+        
+        return userProfile;
     }
     
     @Override

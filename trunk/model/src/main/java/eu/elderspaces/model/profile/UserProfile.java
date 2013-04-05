@@ -1,6 +1,6 @@
 package eu.elderspaces.model.profile;
 
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Objects;
 
@@ -11,16 +11,16 @@ import eu.elderspaces.model.Person;
 public class UserProfile {
     
     private Person user;
-    private List<Person> friends;
-    private List<Event> events;
-    private List<Club> clubs;
+    private Set<Person> friends;
+    private Set<Event> events;
+    private Set<Club> clubs;
     
     public UserProfile() {
     
     }
     
-    public UserProfile(final Person user, final List<Person> friends, final List<Event> events,
-            final List<Club> clubs) {
+    public UserProfile(final Person user, final Set<Person> friends, final Set<Event> events,
+            final Set<Club> clubs) {
     
         this.user = user;
         this.friends = friends;
@@ -38,32 +38,32 @@ public class UserProfile {
         this.user = user;
     }
     
-    public List<Person> getFriends() {
+    public Set<Person> getFriends() {
     
         return friends;
     }
     
-    public void setFriends(final List<Person> friends) {
+    public void setFriends(final Set<Person> friends) {
     
         this.friends = friends;
     }
     
-    public List<Event> getEvents() {
+    public Set<Event> getEvents() {
     
         return events;
     }
     
-    public void setEvents(final List<Event> events) {
+    public void setEvents(final Set<Event> events) {
     
         this.events = events;
     }
     
-    public List<Club> getClubs() {
+    public Set<Club> getClubs() {
     
         return clubs;
     }
     
-    public void setClubs(final List<Club> clubs) {
+    public void setClubs(final Set<Club> clubs) {
     
         this.clubs = clubs;
     }
