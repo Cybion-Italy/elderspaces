@@ -108,8 +108,12 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean addPost(final Person user, final Post postObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserHistory userHistory = getUserHistory(userId, user);
+        final boolean added = userHistory.getPosts().add(postObject);
+        histories.put(userId, userHistory);
+        
+        return added;
     }
     
     @Override
@@ -224,6 +228,17 @@ public class InMemoryActivityRepository implements ActivityRepository {
         }
         
         return userProfile;
+    }
+    
+    private UserHistory getUserHistory(final String userId, final Person user) {
+    
+        UserHistory userHistory = histories.get(userId);
+        if (userHistory == null) {
+            final List<Post> posts = Lists.newArrayList();
+            userHistory = new UserHistory(user, posts);
+        }
+        
+        return userHistory;
     }
     
 }

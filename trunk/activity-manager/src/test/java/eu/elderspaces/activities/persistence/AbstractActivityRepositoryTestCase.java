@@ -25,11 +25,12 @@ public abstract class AbstractActivityRepositoryTestCase {
     private static final String FRIEND_DISPLAY_NAME = "Mr. Matt Eldy";
     private static final String FRIEND_ID = "13913366:elderspaces.iwiw.hu";
     
-    private static final String ACTIVITY_TITLE = "said :";
-    private static final String ACTIVITY_BODY = "Hello from Athens!";
+    private static final String POST_TITLE = "said :";
+    private static final String POST_BODY = "Hello from Athens!";
     
     private Person user;
     private Person friend;
+    private Post post;
     
     protected static Logger LOGGER;
     
@@ -46,6 +47,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     
         user = new Person(USER_ID, USER_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
+        post = new Post(POST_BODY, POST_TITLE);
         specificImplementationClassInitialize();
     }
     
@@ -64,7 +66,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     @Test
     public void store() throws ActivityRepositoryException {
     
-        final Entity activityObject = new Post(ACTIVITY_BODY, ACTIVITY_TITLE);
+        final Entity activityObject = new Post(POST_BODY, POST_TITLE);
         final Call call = new Call(VERB, activityObject, null, user, PUBLISHED);
         
         final boolean stored = activityRepository.store(call, USER_ID);
@@ -109,5 +111,13 @@ public abstract class AbstractActivityRepositoryTestCase {
         LOGGER.info("Deleting user");
         final boolean deleted = activityRepository.deleteUser(user);
         Assert.assertTrue(deleted);
+    }
+    
+    @Test
+    public void addPost() {
+    
+        LOGGER.info("Creating post");
+        final boolean added = activityRepository.addPost(user, post);
+        Assert.assertTrue(added);
     }
 }
