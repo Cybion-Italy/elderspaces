@@ -96,7 +96,7 @@ public class SimpleActivityManager implements ActivityManager {
             
         } else if (verb.equals(Verbs.DELETE)) {
             
-            personObjectHandled = activityRepository.deleteUser(user, personObject);
+            personObjectHandled = activityRepository.deleteUser(user);
             
         } else {
             throw new InvalidUserCall("Invalid verb");

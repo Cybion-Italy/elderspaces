@@ -91,7 +91,7 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean deleteUser(final Person user, final Person personObject) {
+    public boolean deleteUser(final Person user) {
     
         // TODO Auto-generated method stub
         return false;

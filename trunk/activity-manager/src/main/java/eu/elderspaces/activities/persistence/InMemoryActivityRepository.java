@@ -96,10 +96,13 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean deleteUser(final Person user, final Person personObject) {
+    public boolean deleteUser(final Person user) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        profiles.remove(userId);
+        histories.remove(userId);
+        
+        return true;
     }
     
     @Override

@@ -21,7 +21,7 @@ public interface ActivityRepository {
     
     public boolean updateUser(Person user, Person personObject);
     
-    public boolean deleteUser(Person user, Person personObject);
+    public boolean deleteUser(Person user);
     
     public boolean addPost(Person user, Post postObject);
     

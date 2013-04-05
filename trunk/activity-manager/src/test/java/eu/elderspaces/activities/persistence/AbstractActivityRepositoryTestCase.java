@@ -102,4 +102,12 @@ public abstract class AbstractActivityRepositoryTestCase {
         final boolean updated = activityRepository.updateUser(user, updatedUser);
         Assert.assertTrue(updated);
     }
+    
+    @Test
+    public void deleteUser() {
+    
+        LOGGER.info("Deleting user");
+        final boolean deleted = activityRepository.deleteUser(user);
+        Assert.assertTrue(deleted);
+    }
 }
