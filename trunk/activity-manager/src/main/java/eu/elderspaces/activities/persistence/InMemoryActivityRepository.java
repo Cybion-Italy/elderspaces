@@ -67,7 +67,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean addFriend(final Person user, final Person personObject) {
     
-        final UserProfile userProfile = getUserProfile(user);
+        final UserProfile userProfile = getUserProfile(user, false);
         final boolean friendAdded = userProfile.getFriends().add(personObject);
         profiles.put(user.getId(), userProfile);
         
@@ -77,7 +77,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean removeFriend(final Person user, final Person personObject) {
     
-        final UserProfile userProfile = getUserProfile(user);
+        final UserProfile userProfile = getUserProfile(user, false);
         final boolean friendRemoved = userProfile.getFriends().remove(personObject);
         profiles.put(user.getId(), userProfile);
         
@@ -87,8 +87,9 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean updateUser(final Person user, final Person personObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final UserProfile userProfile = getUserProfile(user, true);
+        profiles.put(user.getId(), userProfile);
+        return true;
     }
     
     @Override
@@ -203,7 +204,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
         return false;
     }
     
-    private UserProfile getUserProfile(final Person user) {
+    private UserProfile getUserProfile(final Person user, final boolean update) {
     
         UserProfile userProfile = profiles.get(user.getId());
         
@@ -212,6 +213,8 @@ public class InMemoryActivityRepository implements ActivityRepository {
             final Set<Event> events = Sets.newHashSet();
             final Set<Club> clubs = Sets.newHashSet();
             userProfile = new UserProfile(user, friends, events, clubs);
+        } else if (update) {
+            userProfile.setUser(user);
         }
         
         return userProfile;

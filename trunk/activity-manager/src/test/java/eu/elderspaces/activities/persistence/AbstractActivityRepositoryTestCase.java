@@ -92,4 +92,14 @@ public abstract class AbstractActivityRepositoryTestCase {
         removed = activityRepository.removeFriend(user, friend);
         Assert.assertTrue(removed);
     }
+    
+    @Test
+    public void updateUser() {
+    
+        LOGGER.info("Updating user");
+        final Person updatedUser = user;
+        updatedUser.setDisplayName("New display name");
+        final boolean updated = activityRepository.updateUser(updatedUser, null);
+        Assert.assertTrue(updated);
+    }
 }
