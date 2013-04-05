@@ -5,7 +5,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.Post;
 import eu.elderspaces.model.Call;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Person;
@@ -27,7 +27,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     @Test
     public void store() throws ActivityRepositoryException {
     
-        final Entity activityObject = new Activity(ACTIVITY_BODY, ACTIVITY_TITLE);
+        final Entity activityObject = new Post(ACTIVITY_BODY, ACTIVITY_TITLE);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         final Call call = new Call(VERB, activityObject, actor, PUBLISHED);
         

@@ -2,16 +2,16 @@ package eu.elderspaces.model;
 
 import com.google.common.base.Objects;
 
-public class Activity extends Entity {
+public class Post extends Entity {
     
     private String body;
     private String title;
     
-    public Activity() {
+    public Post() {
     
     }
     
-    public Activity(final String body, final String title) {
+    public Post(final String body, final String title) {
     
         this.body = body;
         this.title = title;
@@ -44,7 +44,7 @@ public class Activity extends Entity {
             return false;
         }
         
-        final Activity that = (Activity) o;
+        final Post that = (Post) o;
         
         return Objects.equal(body, that.body) && Objects.equal(title, that.title);
         

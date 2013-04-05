@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Maps;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
-import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.Post;
 import eu.elderspaces.model.Call;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Person;
@@ -71,7 +71,7 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
         final Map<String, String> requestHeaderMap = Maps.newHashMap();
         requestHeaderMap.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        final Entity activityObject = new Activity(ACTIVITY_BODY, ACTIVITY_TITLE);
+        final Entity activityObject = new Post(ACTIVITY_BODY, ACTIVITY_TITLE);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         final Call call = new Call(VERB, activityObject, actor, PUBLISHED);
         final String callString = mapper.writeValueAsString(call);

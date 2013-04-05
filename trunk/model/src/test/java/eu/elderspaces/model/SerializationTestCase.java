@@ -27,7 +27,7 @@ public class SerializationTestCase {
     public void serializeActivity() throws JsonGenerationException, JsonMappingException,
             IOException {
     
-        final Entity activityObject = new Activity(ACTIVITY_BODY, ACTIVITY_TITLE);
+        final Entity activityObject = new Post(ACTIVITY_BODY, ACTIVITY_TITLE);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         final Call activity = new Call(VERB, activityObject, actor, PUBLISHED);
         

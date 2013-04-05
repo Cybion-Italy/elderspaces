@@ -8,6 +8,8 @@ import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.activities.exceptions.InvalidUserCall;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.model.Call;
+import eu.elderspaces.model.Entity;
+import eu.elderspaces.model.Person;
 
 public class SimpleActivityManager implements ActivityManager {
     
@@ -31,7 +33,13 @@ public class SimpleActivityManager implements ActivityManager {
             throw new InvalidUserCall(e);
         }
         
-        return storeCall(call);
+        final boolean callStored = storeCall(call);
+        
+        final Person user = call.getActor();
+        final String verb = call.getVerb();
+        final Entity entity = call.getObject();
+        
+        return callStored;
     }
     
     @Override
