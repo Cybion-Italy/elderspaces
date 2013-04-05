@@ -69,6 +69,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     
         final UserProfile userProfile = getUserProfile(user);
         final boolean friendsUpdated = userProfile.getFriends().add(personObject);
+        profiles.put(user.getId(), userProfile);
         
         return friendsUpdated;
     }
