@@ -7,6 +7,7 @@ public class Call {
     private String id;
     private String verb;
     private Entity object;
+    private Entity target;
     private Person actor;
     private String published;
     
@@ -14,12 +15,13 @@ public class Call {
     
     }
     
-    public Call(final String verb, final Entity callObject, final Person actor,
+    public Call(final String verb, final Entity object, final Entity target, final Person actor,
             final String published) {
     
-        this.id = actor.getId() + "_" + verb + "_" + callObject.getId();
+        this.id = actor.getId() + "_" + verb + "_" + object.getId();
         this.verb = verb;
-        this.object = callObject;
+        this.object = object;
+        this.setTarget(target);
         this.actor = actor;
         this.published = published;
     }
@@ -42,6 +44,16 @@ public class Call {
     public void setObject(final Entity object) {
     
         this.object = object;
+    }
+    
+    public Entity getTarget() {
+    
+        return target;
+    }
+    
+    public void setTarget(final Entity target) {
+    
+        this.target = target;
     }
     
     public Person getActor() {
@@ -84,22 +96,22 @@ public class Call {
         final Call that = (Call) o;
         
         return Objects.equal(id, that.id) && Objects.equal(verb, that.verb)
-                && Objects.equal(object, that.object) && Objects.equal(actor, that.actor)
-                && Objects.equal(published, that.published);
+                && Objects.equal(object, that.object) && Objects.equal(target, that.target)
+                && Objects.equal(actor, that.actor) && Objects.equal(published, that.published);
         
     }
     
     @Override
     public int hashCode() {
     
-        return Objects.hashCode(id, verb, object, actor, published);
+        return Objects.hashCode(id, verb, object, target, actor, published);
     }
     
     @Override
     public String toString() {
     
         return Objects.toStringHelper(this).addValue(id).addValue(verb).addValue(object)
-                .addValue(actor).addValue(published).toString();
+                .addValue(target).addValue(actor).addValue(published).toString();
     }
     
 }

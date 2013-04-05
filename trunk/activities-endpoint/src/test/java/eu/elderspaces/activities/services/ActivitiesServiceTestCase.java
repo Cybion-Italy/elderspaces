@@ -22,10 +22,10 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Maps;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
-import eu.elderspaces.model.Post;
 import eu.elderspaces.model.Call;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Person;
+import eu.elderspaces.model.Post;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -37,8 +37,8 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
     private static final String PERSON_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
     private static final String PERSON_DISPLAY_NAME = "Mr. Ederly Hans";
     private static final String PERSON_ID = "13913365:elderspaces.iwiw.hu";
-    private static final String ACTIVITY_TITLE = "said :";
-    private static final String ACTIVITY_BODY = "Hello from Athens!";
+    private static final String POST_TITLE = "said :";
+    private static final String POST_BODY = "Hello from Athens!";
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivitiesServiceTestCase.class);
     private final ObjectMapper mapper = new ObjectMapper();
     
@@ -71,9 +71,9 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
         final Map<String, String> requestHeaderMap = Maps.newHashMap();
         requestHeaderMap.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        final Entity activityObject = new Post(ACTIVITY_BODY, ACTIVITY_TITLE);
+        final Entity activityObject = new Post(POST_BODY, POST_TITLE);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
-        final Call call = new Call(VERB, activityObject, actor, PUBLISHED);
+        final Call call = new Call(VERB, activityObject, null, actor, PUBLISHED);
         final String callString = mapper.writeValueAsString(call);
         final String requestEntity = callString;
         final ExternalStringResponse stringResponse = CybionHttpClient.performPost(url,
