@@ -169,8 +169,12 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean createEvent(final Person user, final Event eventObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, true);
+        final boolean created = userProfile.getEvents().add(eventObject);
+        profiles.put(userId, userProfile);
+        
+        return created;
     }
     
     @Override

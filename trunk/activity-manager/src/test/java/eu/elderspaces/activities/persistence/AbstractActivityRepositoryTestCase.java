@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Call;
 import eu.elderspaces.model.Entity;
+import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Post;
 
@@ -28,9 +29,14 @@ public abstract class AbstractActivityRepositoryTestCase {
     private static final String POST_TITLE = "said :";
     private static final String POST_BODY = "Hello from Athens!";
     
+    private static final String EVENT_ID = "Event id";
+    private static final String EVENT_NAME = "Event name";
+    private static final String EVENT_SHORT_DESCRIPTION = "Event short description";
+    
     private Person user;
     private Person friend;
     private Post post;
+    private Event event;
     
     protected static Logger LOGGER;
     
@@ -50,6 +56,7 @@ public abstract class AbstractActivityRepositoryTestCase {
         user = new Person(USER_ID, USER_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         activityRepository.addUser(user);
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
+        event = new Event(EVENT_ID, EVENT_NAME, EVENT_SHORT_DESCRIPTION);
         post = new Post(POST_BODY, POST_TITLE);
     }
     
@@ -135,5 +142,13 @@ public abstract class AbstractActivityRepositoryTestCase {
         LOGGER.info("Deleting post");
         deleted = activityRepository.deletePost(user, post);
         Assert.assertTrue(deleted);
+    }
+    
+    @Test
+    public void createEvent() {
+    
+        LOGGER.info("Creating event");
+        final boolean added = activityRepository.createEvent(user, event);
+        Assert.assertTrue(added);
     }
 }
