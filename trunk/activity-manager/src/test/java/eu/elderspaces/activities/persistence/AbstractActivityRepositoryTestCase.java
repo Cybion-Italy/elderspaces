@@ -151,4 +151,15 @@ public abstract class AbstractActivityRepositoryTestCase {
         final boolean added = activityRepository.createEvent(user, event);
         Assert.assertTrue(added);
     }
+    
+    @Test
+    public void modifyEvent() {
+    
+        activityRepository.createEvent(user, event);
+        
+        LOGGER.info("Modifying event");
+        final Event modifiedEvent = new Event(event.getId(), "New name", "New short description");
+        final boolean modified = activityRepository.modifyEvent(user, modifiedEvent);
+        Assert.assertTrue(modified);
+    }
 }

@@ -6,6 +6,9 @@ import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
 import com.google.inject.internal.Sets;
@@ -180,8 +183,29 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean modifyEvent(final Person user, final Event eventObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, true);
+        final String eventId = eventObject.getId();
+        
+        final Optional<Event> event = Iterables.tryFind(userProfile.getEvents(),
+                new Predicate<Event>() {
+                    
+                    @Override
+                    public boolean apply(final Event event) {
+                    
+                        return event.getId().equals(eventId);
+                    }
+                });
+        
+        boolean removed = false;
+        boolean added = false;
+        
+        if (event.isPresent()) {
+            removed = userProfile.getEvents().remove(event.get());
+            added = userProfile.getEvents().add(eventObject);
+        }
+        
+        return removed && added;
     }
     
     @Override
