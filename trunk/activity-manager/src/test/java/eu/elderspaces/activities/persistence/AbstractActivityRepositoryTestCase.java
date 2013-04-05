@@ -99,7 +99,7 @@ public abstract class AbstractActivityRepositoryTestCase {
         LOGGER.info("Updating user");
         final Person updatedUser = user;
         updatedUser.setDisplayName("New display name");
-        final boolean updated = activityRepository.updateUser(updatedUser, null);
+        final boolean updated = activityRepository.updateUser(user, updatedUser);
         Assert.assertTrue(updated);
     }
 }

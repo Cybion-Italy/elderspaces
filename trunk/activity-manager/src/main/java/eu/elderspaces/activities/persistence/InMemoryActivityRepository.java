@@ -67,9 +67,10 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean addFriend(final Person user, final Person personObject) {
     
-        final UserProfile userProfile = getUserProfile(user, false);
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, false);
         final boolean friendAdded = userProfile.getFriends().add(personObject);
-        profiles.put(user.getId(), userProfile);
+        profiles.put(userId, userProfile);
         
         return friendAdded;
     }
@@ -77,7 +78,8 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean removeFriend(final Person user, final Person personObject) {
     
-        final UserProfile userProfile = getUserProfile(user, false);
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, false);
         final boolean friendRemoved = userProfile.getFriends().remove(personObject);
         profiles.put(user.getId(), userProfile);
         
@@ -87,7 +89,8 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean updateUser(final Person user, final Person personObject) {
     
-        final UserProfile userProfile = getUserProfile(user, true);
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, personObject, true);
         profiles.put(user.getId(), userProfile);
         return true;
     }
@@ -204,9 +207,9 @@ public class InMemoryActivityRepository implements ActivityRepository {
         return false;
     }
     
-    private UserProfile getUserProfile(final Person user, final boolean update) {
+    private UserProfile getUserProfile(final String userId, final Person user, final boolean update) {
     
-        UserProfile userProfile = profiles.get(user.getId());
+        UserProfile userProfile = profiles.get(userId);
         
         if (userProfile == null) {
             final Set<Person> friends = Sets.newHashSet();
