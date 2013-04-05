@@ -45,10 +45,12 @@ public abstract class AbstractActivityRepositoryTestCase {
     @BeforeClass
     public void initialize() {
     
+        specificImplementationClassInitialize();
+        
         user = new Person(USER_ID, USER_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
+        activityRepository.addUser(user);
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
         post = new Post(POST_BODY, POST_TITLE);
-        specificImplementationClassInitialize();
     }
     
     protected abstract void specificImplementationClassInitialize();
@@ -119,5 +121,19 @@ public abstract class AbstractActivityRepositoryTestCase {
         LOGGER.info("Creating post");
         final boolean added = activityRepository.addPost(user, post);
         Assert.assertTrue(added);
+    }
+    
+    @Test
+    public void deletePost() {
+    
+        LOGGER.info("Deleting non-existent post");
+        boolean deleted = activityRepository.deletePost(user, post);
+        Assert.assertFalse(deleted);
+        
+        activityRepository.addPost(user, post);
+        
+        LOGGER.info("Deleting post");
+        deleted = activityRepository.deletePost(user, post);
+        Assert.assertTrue(deleted);
     }
 }

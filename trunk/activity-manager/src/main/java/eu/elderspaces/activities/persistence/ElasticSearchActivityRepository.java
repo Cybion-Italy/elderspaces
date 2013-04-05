@@ -84,6 +84,13 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
+    public void addUser(final Person user) {
+    
+        // TODO Auto-generated method stub
+        
+    }
+    
+    @Override
     public boolean updateUser(final Person user, final Person personObject) {
     
         // TODO Auto-generated method stub

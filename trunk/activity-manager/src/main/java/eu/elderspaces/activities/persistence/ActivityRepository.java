@@ -53,4 +53,6 @@ public interface ActivityRepository {
     
     public boolean leaveClub(Person user, Club clubObject);
     
+    public void addUser(Person user);
+    
 }
