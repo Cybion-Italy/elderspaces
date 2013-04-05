@@ -68,31 +68,20 @@ public class InMemoryActivityRepository implements ActivityRepository {
     public boolean addFriend(final Person user, final Person personObject) {
     
         final UserProfile userProfile = getUserProfile(user);
-        final boolean friendsUpdated = userProfile.getFriends().add(personObject);
+        final boolean friendAdded = userProfile.getFriends().add(personObject);
         profiles.put(user.getId(), userProfile);
         
-        return friendsUpdated;
-    }
-    
-    private UserProfile getUserProfile(final Person user) {
-    
-        UserProfile userProfile = profiles.get(user.getId());
-        
-        if (userProfile == null) {
-            final Set<Person> friends = Sets.newHashSet();
-            final Set<Event> events = Sets.newHashSet();
-            final Set<Club> clubs = Sets.newHashSet();
-            userProfile = new UserProfile(user, friends, events, clubs);
-        }
-        
-        return userProfile;
+        return friendAdded;
     }
     
     @Override
     public boolean removeFriend(final Person user, final Person personObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final UserProfile userProfile = getUserProfile(user);
+        final boolean friendRemoved = userProfile.getFriends().remove(personObject);
+        profiles.put(user.getId(), userProfile);
+        
+        return friendRemoved;
     }
     
     @Override
@@ -212,6 +201,20 @@ public class InMemoryActivityRepository implements ActivityRepository {
     
         // TODO Auto-generated method stub
         return false;
+    }
+    
+    private UserProfile getUserProfile(final Person user) {
+    
+        UserProfile userProfile = profiles.get(user.getId());
+        
+        if (userProfile == null) {
+            final Set<Person> friends = Sets.newHashSet();
+            final Set<Event> events = Sets.newHashSet();
+            final Set<Club> clubs = Sets.newHashSet();
+            userProfile = new UserProfile(user, friends, events, clubs);
+        }
+        
+        return userProfile;
     }
     
 }

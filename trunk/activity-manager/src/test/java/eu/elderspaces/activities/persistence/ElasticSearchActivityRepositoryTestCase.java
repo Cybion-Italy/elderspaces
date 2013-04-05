@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 public class ElasticSearchActivityRepositoryTestCase extends AbstractActivityRepositoryTestCase {
     
     @Override
-    protected void specificImplementationInitialize() {
+    protected void specificImplementationClassInitialize() {
     
         activityRepository = new ElasticSearchActivityRepository();
         LOGGER = LoggerFactory.getLogger(ElasticSearchActivityRepositoryTestCase.class);
@@ -18,6 +18,13 @@ public class ElasticSearchActivityRepositoryTestCase extends AbstractActivityRep
     protected void specificImplementationShutDown() {
     
         activityRepository.shutDownRepository();
+        
+    }
+    
+    @Override
+    protected void specificImplementationMethodInitialize() {
+    
+        activityRepository = new ElasticSearchActivityRepository();
         
     }
 }

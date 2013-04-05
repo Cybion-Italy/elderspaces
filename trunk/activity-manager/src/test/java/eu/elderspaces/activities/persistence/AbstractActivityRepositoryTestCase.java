@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
@@ -34,15 +35,23 @@ public abstract class AbstractActivityRepositoryTestCase {
     
     protected ActivityRepository activityRepository;
     
+    @BeforeMethod
+    public void initializeDataStructures() {
+    
+        specificImplementationMethodInitialize();
+    }
+    
     @BeforeClass
     public void initialize() {
     
         user = new Person(USER_ID, USER_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
-        specificImplementationInitialize();
+        specificImplementationClassInitialize();
     }
     
-    protected abstract void specificImplementationInitialize();
+    protected abstract void specificImplementationClassInitialize();
+    
+    protected abstract void specificImplementationMethodInitialize();
     
     @AfterClass
     public void shutDown() {
@@ -66,8 +75,21 @@ public abstract class AbstractActivityRepositoryTestCase {
     @Test
     public void addFriend() {
     
-        LOGGER.info("adding friend");
+        LOGGER.info("Adding friend");
         final boolean added = activityRepository.addFriend(user, friend);
         Assert.assertTrue(added);
+    }
+    
+    @Test
+    public void removeFriend() {
+    
+        LOGGER.info("Removing non-existent friend");
+        boolean removed = activityRepository.removeFriend(user, friend);
+        Assert.assertFalse(removed);
+        
+        activityRepository.addFriend(user, friend);
+        LOGGER.info("Removing existing friend");
+        removed = activityRepository.removeFriend(user, friend);
+        Assert.assertTrue(removed);
     }
 }

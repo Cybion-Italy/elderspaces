@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 public class InMemoryActivityRepositoryTestCase extends AbstractActivityRepositoryTestCase {
     
     @Override
-    protected void specificImplementationInitialize() {
+    protected void specificImplementationClassInitialize() {
     
         activityRepository = new InMemoryActivityRepository();
         LOGGER = LoggerFactory.getLogger(InMemoryActivityRepositoryTestCase.class);
@@ -18,6 +18,13 @@ public class InMemoryActivityRepositoryTestCase extends AbstractActivityReposito
     protected void specificImplementationShutDown() {
     
         // Do nothing
+        
+    }
+    
+    @Override
+    protected void specificImplementationMethodInitialize() {
+    
+        activityRepository = new InMemoryActivityRepository();
         
     }
 }
