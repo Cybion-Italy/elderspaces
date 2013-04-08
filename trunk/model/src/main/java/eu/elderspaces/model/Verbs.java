@@ -13,7 +13,9 @@ public class Verbs {
     public static final String REMOVE_FRIEND = "remove-friend";
     
     // object: Event
-    public static final String RSVP_RESPONSE_TO_EVENT = "rsvp-yes/rsvp-no/rsvp-maybe";
+    public static final String YES_RSVP_RESPONSE_TO_EVENT = "rsvp-yes";
+    public static final String NO_RSVP_RESPONSE_TO_EVENT = "rsvp-no";
+    public static final String MAYBE_RSVP_RESPONSE_TO_EVENT = "rsvp-maybe";
     
     // object: Club
     public static final String JOIN = "join";

@@ -8,7 +8,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.model.Call;
+import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
@@ -33,10 +34,17 @@ public abstract class AbstractActivityRepositoryTestCase {
     private static final String EVENT_NAME = "Event name";
     private static final String EVENT_SHORT_DESCRIPTION = "Event short description";
     
+    private static final String CLUB_ID = "Club id";
+    private static final String CLUB_NAME = "Club name";
+    private static final String CLUB_DESCRIPTION = "Club description";
+    private static final String CLUB_SHORT_DESCRIPTION = "Club short description";
+    private static final String CLUB_CATEGORY = "Club category";
+    
     private Person user;
     private Person friend;
     private Post post;
     private Event event;
+    private Club club;
     
     protected static Logger LOGGER;
     
@@ -57,6 +65,7 @@ public abstract class AbstractActivityRepositoryTestCase {
         activityRepository.addUser(user);
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
         event = new Event(EVENT_ID, EVENT_NAME, EVENT_SHORT_DESCRIPTION);
+        club = new Club(CLUB_ID, CLUB_NAME, CLUB_DESCRIPTION, CLUB_SHORT_DESCRIPTION, CLUB_CATEGORY);
         post = new Post(POST_BODY, POST_TITLE);
     }
     
@@ -76,7 +85,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     public void store() throws ActivityRepositoryException {
     
         final Entity activityObject = new Post(POST_BODY, POST_TITLE);
-        final Call call = new Call(VERB, activityObject, null, user, PUBLISHED);
+        final Activity call = new Activity(VERB, activityObject, null, user, PUBLISHED);
         
         final boolean stored = activityRepository.store(call, USER_ID);
         LOGGER.info("Storing call: " + call);
@@ -175,4 +184,59 @@ public abstract class AbstractActivityRepositoryTestCase {
         deleted = activityRepository.deleteEvent(user, event);
         Assert.assertTrue(deleted);
     }
+    
+    @Test
+    public void createCLub() {
+    
+        LOGGER.info("Creating club");
+        final boolean added = activityRepository.createClub(user, club);
+        Assert.assertTrue(added);
+    }
+    
+    @Test
+    public void modifyClub() {
+    
+        activityRepository.createClub(user, club);
+        
+        LOGGER.info("Modifying club");
+        final Club modifiedClub = new Club(club.getId(), "New name", CLUB_DESCRIPTION,
+                "New short description", CLUB_CATEGORY);
+        final boolean modified = activityRepository.modifyClub(user, modifiedClub);
+        Assert.assertTrue(modified);
+    }
+    
+    @Test
+    public void deleteClub() {
+    
+        LOGGER.info("Deleting non-existent club");
+        boolean deleted = activityRepository.deleteClub(user, club);
+        Assert.assertFalse(deleted);
+        
+        activityRepository.createClub(user, club);
+        LOGGER.info("Deleting existing club");
+        deleted = activityRepository.deleteClub(user, club);
+        Assert.assertTrue(deleted);
+    }
+    
+    @Test
+    public void joinClub() {
+    
+        LOGGER.info("Joining club");
+        final boolean joined = activityRepository.joinClub(user, club);
+        Assert.assertTrue(joined);
+    }
+    
+    @Test
+    public void leaveClub() {
+    
+        LOGGER.info("Leaving non-existent club");
+        boolean left = activityRepository.leaveClub(user, club);
+        Assert.assertFalse(left);
+        
+        activityRepository.joinClub(user, club);
+        LOGGER.info("Leaving existing club");
+        left = activityRepository.leaveClub(user, club);
+        Assert.assertTrue(left);
+    }
+    
 }

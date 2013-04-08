@@ -14,7 +14,7 @@ import com.google.inject.internal.Maps;
 import com.google.inject.internal.Sets;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.model.Call;
+import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
@@ -24,8 +24,8 @@ import eu.elderspaces.model.profile.UserProfile;
 
 public class InMemoryActivityRepository implements ActivityRepository {
     
-    private final Map<String, List<Call>> calls = Maps.newHashMap();
-    private final Map<String, UserHistory> histories = Maps.newHashMap();
+    private final Map<String, List<Activity>> activities = Maps.newHashMap();
+    private final Map<String, UserHistory> userHistories = Maps.newHashMap();
     private final Map<String, UserProfile> profiles = Maps.newHashMap();
     
     private final ObjectMapper mapper = new ObjectMapper();
@@ -37,34 +37,34 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean store(final Call call, final String userId) {
+    public boolean store(final Activity activity, final String userId) {
     
-        List<Call> userCalls = calls.get(userId);
+        List<Activity> userActivities = activities.get(userId);
         
-        if (userCalls == null) {
+        if (userActivities == null) {
             
-            userCalls = Lists.newArrayList(call);
+            userActivities = Lists.newArrayList(activity);
             
         } else {
-            userCalls.add(call);
+            userActivities.add(activity);
         }
-        calls.put(userId, userCalls);
+        activities.put(userId, userActivities);
         
         return true;
     }
     
     @Override
-    public boolean store(final String callString, final String userId)
+    public boolean store(final String activityString, final String userId)
             throws ActivityRepositoryException {
     
-        Call call = null;
+        Activity activity = null;
         try {
-            call = mapper.readValue(callString, Call.class);
+            activity = mapper.readValue(activityString, Activity.class);
         } catch (final Exception e) {
             throw new ActivityRepositoryException(e);
         }
         
-        return store(call, userId);
+        return store(activity, userId);
     }
     
     @Override
@@ -97,7 +97,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
         profiles.put(userId, userProfile);
         
         final UserHistory userHistory = getUserHistory(userId, user);
-        histories.put(userId, userHistory);
+        userHistories.put(userId, userHistory);
     }
     
     @Override
@@ -114,7 +114,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     
         final String userId = user.getId();
         profiles.remove(userId);
-        histories.remove(userId);
+        userHistories.remove(userId);
         
         return true;
     }
@@ -125,7 +125,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
         final String userId = user.getId();
         final UserHistory userHistory = getUserHistory(userId, user);
         final boolean added = userHistory.getPosts().add(postObject);
-        histories.put(userId, userHistory);
+        userHistories.put(userId, userHistory);
         
         return added;
     }
@@ -150,7 +150,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
         final String userId = user.getId();
         final UserHistory userHistory = getUserHistory(userId, user);
         final boolean deleted = userHistory.getPosts().remove(postObject);
-        histories.put(userId, userHistory);
+        userHistories.put(userId, userHistory);
         
         return deleted;
     }
@@ -220,7 +220,8 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean createRSVPResponseToEvent(final Person user, final Event eventObject) {
+    public boolean createRSVPResponseToEvent(final Person user, final String verb,
+            final Event eventObject) {
     
         // TODO Auto-generated method stub
         return false;
@@ -229,36 +230,73 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean createClub(final Person user, final Club clubObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, true);
+        final boolean created = userProfile.getClubs().add(clubObject);
+        profiles.put(userId, userProfile);
+        
+        return created;
     }
     
     @Override
     public boolean modifyClub(final Person user, final Club clubObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, true);
+        final String clubId = clubObject.getId();
+        
+        final Optional<Club> club = Iterables.tryFind(userProfile.getClubs(),
+                new Predicate<Club>() {
+                    
+                    @Override
+                    public boolean apply(final Club club) {
+                    
+                        return club.getId().equals(clubId);
+                    }
+                });
+        
+        boolean removed = false;
+        boolean added = false;
+        
+        if (club.isPresent()) {
+            removed = userProfile.getClubs().remove(club.get());
+            added = userProfile.getClubs().add(clubObject);
+        }
+        
+        return removed && added;
     }
     
     @Override
     public boolean deleteClub(final Person user, final Club clubObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, false);
+        final boolean clubRemoved = userProfile.getClubs().remove(clubObject);
+        profiles.put(user.getId(), userProfile);
+        
+        return clubRemoved;
     }
     
     @Override
     public boolean joinClub(final Person user, final Club clubObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, false);
+        final boolean clubJoined = userProfile.getClubs().add(clubObject);
+        profiles.put(userId, userProfile);
+        
+        return clubJoined;
     }
     
     @Override
     public boolean leaveClub(final Person user, final Club clubObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserProfile userProfile = getUserProfile(userId, user, false);
+        final boolean clubLeft = userProfile.getClubs().remove(clubObject);
+        profiles.put(user.getId(), userProfile);
+        
+        return clubLeft;
     }
     
     private UserProfile getUserProfile(final String userId, final Person user, final boolean update) {
@@ -279,7 +317,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     
     private UserHistory getUserHistory(final String userId, final Person user) {
     
-        UserHistory userHistory = histories.get(userId);
+        UserHistory userHistory = userHistories.get(userId);
         if (userHistory == null) {
             final List<Post> posts = Lists.newArrayList();
             userHistory = new UserHistory(user, posts);

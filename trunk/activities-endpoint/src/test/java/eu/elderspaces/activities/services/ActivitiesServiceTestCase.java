@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Maps;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
-import eu.elderspaces.model.Call;
+import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Post;
@@ -73,7 +73,7 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
         requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         final Entity activityObject = new Post(POST_BODY, POST_TITLE);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
-        final Call call = new Call(VERB, activityObject, null, actor, PUBLISHED);
+        final Activity call = new Activity(VERB, activityObject, null, actor, PUBLISHED);
         final String callString = mapper.writeValueAsString(call);
         final String requestEntity = callString;
         final ExternalStringResponse stringResponse = CybionHttpClient.performPost(url,

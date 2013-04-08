@@ -1,13 +1,13 @@
 package eu.elderspaces.activities.core;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.activities.exceptions.InvalidUserCall;
-import eu.elderspaces.model.Call;
+import eu.elderspaces.activities.exceptions.InvalidUserActivity;
+import eu.elderspaces.model.Activity;
 
 public interface ActivityManager {
     
-    boolean storeCall(String callContent) throws InvalidUserCall, ActivityRepositoryException;
+    boolean storeActivity(String callContent) throws InvalidUserActivity, ActivityRepositoryException;
     
-    boolean storeCall(Call call) throws InvalidUserCall, ActivityRepositoryException;
+    boolean storeActivity(Activity call) throws InvalidUserActivity, ActivityRepositoryException;
     
 }

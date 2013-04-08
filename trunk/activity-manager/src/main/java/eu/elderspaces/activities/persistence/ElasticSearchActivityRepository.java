@@ -9,7 +9,7 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.model.Call;
+import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
@@ -18,8 +18,8 @@ import eu.elderspaces.model.Post;
 public class ElasticSearchActivityRepository implements ActivityRepository {
     
     private static final Logger LOGGER = Logger.getLogger(ElasticSearchActivityRepository.class);
-    private static final String CALL_INDEX = "user-";
-    private static final String CALL_TYPE = "call";
+    private static final String ACTIVITY_INDEX = "user-";
+    private static final String ACTIVITY_TYPE = "activity";
     
     private final Node node;
     private final Client client;
@@ -43,18 +43,19 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean store(final Call call, final String userId) throws ActivityRepositoryException {
+    public boolean store(final Activity activity, final String userId)
+            throws ActivityRepositoryException {
     
-        String callJson;
+        String activityJson;
         try {
-            callJson = mapper.writeValueAsString(call);
+            activityJson = mapper.writeValueAsString(activity);
         } catch (final Exception e) {
             throw new ActivityRepositoryException(e);
         }
         
         final IndexResponse indexResponse = client
-                .prepareIndex(CALL_INDEX + userId, CALL_TYPE, call.getId()).setSource(callJson)
-                .execute().actionGet();
+                .prepareIndex(ACTIVITY_INDEX + userId, ACTIVITY_TYPE, activity.getId())
+                .setSource(activityJson).execute().actionGet();
         LOGGER.info("tweet stored with index: " + indexResponse.getId());
         
         node.client().admin().indices().prepareRefresh().execute().actionGet();
@@ -63,7 +64,7 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean store(final String callString, final String userId) {
+    public boolean store(final String activityString, final String userId) {
     
         // TODO Auto-generated method stub
         return false;
@@ -168,7 +169,8 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean createRSVPResponseToEvent(final Person user, final Event eventObject) {
+    public boolean createRSVPResponseToEvent(final Person user, final String verb,
+            final Event eventObject) {
     
         // TODO Auto-generated method stub
         return false;

@@ -5,9 +5,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import com.google.inject.Inject;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.activities.exceptions.InvalidUserCall;
+import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 import eu.elderspaces.activities.persistence.ActivityRepository;
-import eu.elderspaces.model.Call;
+import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
@@ -27,22 +27,22 @@ public class SimpleActivityManager implements ActivityManager {
     }
     
     @Override
-    public boolean storeCall(final String callContent) throws InvalidUserCall,
+    public boolean storeActivity(final String activityContent) throws InvalidUserActivity,
             ActivityRepositoryException {
     
-        final Call call;
+        final Activity activity;
         try {
-            call = mapper.readValue(callContent, Call.class);
+            activity = mapper.readValue(activityContent, Activity.class);
         } catch (final Exception e) {
-            throw new InvalidUserCall(e);
+            throw new InvalidUserActivity(e);
         }
         
-        final boolean callStored = storeCall(call);
+        final boolean activityStored = storeActivity(activity);
         
-        final Person user = call.getActor();
-        final String verb = call.getVerb();
-        final Entity object = call.getObject();
-        final Entity target = call.getTarget();
+        final Person user = activity.getActor();
+        final String verb = activity.getVerb();
+        final Entity object = activity.getObject();
+        final Entity target = activity.getTarget();
         
         boolean profileUpdated = false;
         
@@ -67,14 +67,14 @@ public class SimpleActivityManager implements ActivityManager {
             profileUpdated = handleClubObject(user, verb, clubObject);
             
         } else {
-            throw new InvalidUserCall("Invalid Object type");
+            throw new InvalidUserActivity("Invalid Object type");
         }
         
-        return profileUpdated && callStored;
+        return profileUpdated && activityStored;
     }
     
     private boolean handlePersonObject(final Person user, final String verb,
-            final Person personObject) throws InvalidUserCall {
+            final Person personObject) throws InvalidUserActivity {
     
         boolean personObjectHandled = false;
         
@@ -99,14 +99,14 @@ public class SimpleActivityManager implements ActivityManager {
             personObjectHandled = activityRepository.deleteUser(user);
             
         } else {
-            throw new InvalidUserCall("Invalid verb");
+            throw new InvalidUserActivity("Invalid verb");
         }
         
         return personObjectHandled;
     }
     
     private boolean handlePostObject(final Person user, final String verb, final Post postObject,
-            final Entity target) throws InvalidUserCall {
+            final Entity target) throws InvalidUserActivity {
     
         boolean postObjectHandled = false;
         
@@ -128,7 +128,7 @@ public class SimpleActivityManager implements ActivityManager {
                 
             } else {
                 
-                throw new InvalidUserCall("Invalid Target type");
+                throw new InvalidUserActivity("Invalid Target type");
             }
             
         } else if (verb.equals(Verbs.DELETE)) {
@@ -149,18 +149,18 @@ public class SimpleActivityManager implements ActivityManager {
                 
             } else {
                 
-                throw new InvalidUserCall("Invalid Target type");
+                throw new InvalidUserActivity("Invalid Target type");
             }
             
         } else {
-            throw new InvalidUserCall("Invalid verb");
+            throw new InvalidUserActivity("Invalid verb");
         }
         
         return postObjectHandled;
     }
     
     private boolean handleEventObject(final Person user, final String verb, final Event eventObject)
-            throws InvalidUserCall {
+            throws InvalidUserActivity {
     
         boolean eventObjectHandled = false;
         
@@ -176,19 +176,22 @@ public class SimpleActivityManager implements ActivityManager {
             
             eventObjectHandled = activityRepository.deleteEvent(user, eventObject);
             
-        } else if (verb.equals(Verbs.RSVP_RESPONSE_TO_EVENT)) {
+        } else if (verb.equals(Verbs.YES_RSVP_RESPONSE_TO_EVENT)
+                || verb.equals(Verbs.NO_RSVP_RESPONSE_TO_EVENT)
+                || verb.equals(Verbs.MAYBE_RSVP_RESPONSE_TO_EVENT)) {
             
-            eventObjectHandled = activityRepository.createRSVPResponseToEvent(user, eventObject);
+            eventObjectHandled = activityRepository.createRSVPResponseToEvent(user, verb,
+                    eventObject);
             
         } else {
-            throw new InvalidUserCall("Invalid verb");
+            throw new InvalidUserActivity("Invalid verb");
         }
         
         return eventObjectHandled;
     }
     
     private boolean handleClubObject(final Person user, final String verb, final Club clubObject)
-            throws InvalidUserCall {
+            throws InvalidUserActivity {
     
         boolean clubObjectHandled = false;
         
@@ -213,16 +216,17 @@ public class SimpleActivityManager implements ActivityManager {
             clubObjectHandled = activityRepository.leaveClub(user, clubObject);
             
         } else {
-            throw new InvalidUserCall("Invalid verb");
+            throw new InvalidUserActivity("Invalid verb");
         }
         
         return clubObjectHandled;
     }
     
     @Override
-    public boolean storeCall(final Call call) throws InvalidUserCall, ActivityRepositoryException {
+    public boolean storeActivity(final Activity activity) throws InvalidUserActivity,
+            ActivityRepositoryException {
     
-        final String userId = call.getActor().getId();
-        return activityRepository.store(call, userId);
+        final String userId = activity.getActor().getId();
+        return activityRepository.store(activity, userId);
     }
 }

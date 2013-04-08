@@ -2,7 +2,7 @@ package eu.elderspaces.model;
 
 import com.google.common.base.Objects;
 
-public class Call {
+public class Activity {
     
     private String id;
     private String verb;
@@ -11,11 +11,11 @@ public class Call {
     private Person actor;
     private String published;
     
-    public Call() {
+    public Activity() {
     
     }
     
-    public Call(final String verb, final Entity object, final Entity target, final Person actor,
+    public Activity(final String verb, final Entity object, final Entity target, final Person actor,
             final String published) {
     
         this.id = actor.getId() + "_" + verb + "_" + object.getId();
@@ -93,7 +93,7 @@ public class Call {
             return false;
         }
         
-        final Call that = (Call) o;
+        final Activity that = (Activity) o;
         
         return Objects.equal(id, that.id) && Objects.equal(verb, that.verb)
                 && Objects.equal(object, that.object) && Objects.equal(target, that.target)
