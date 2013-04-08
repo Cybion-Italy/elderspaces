@@ -4,6 +4,7 @@ import it.cybion.commons.AbstractJerseyRESTTestCase;
 import it.cybion.commons.web.http.CybionHttpClient;
 import it.cybion.commons.web.http.exceptions.CybionHttpException;
 import it.cybion.commons.web.responses.ExternalStringResponse;
+import it.cybion.commons.web.responses.ResponseStatus;
 
 import java.io.IOException;
 
@@ -17,6 +18,7 @@ import org.testng.annotations.Test;
 
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
+import eu.elderspaces.recommendations.exceptions.RecommenderException;
 import eu.elderspaces.recommendations.responses.EntityRecommendationResponse;
 
 @Test
@@ -39,7 +41,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     
     @Test
     public void getFriends() throws JsonParseException, JsonMappingException, CybionHttpException,
-            IOException {
+            IOException, RecommenderException {
     
         final PaginatedResult recommendationReport = getEntityRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_FRIENDS);
@@ -50,7 +52,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     
     @Test
     public void getEvents() throws JsonParseException, JsonMappingException, CybionHttpException,
-            IOException {
+            IOException, RecommenderException {
     
         final PaginatedResult recommendationReport = getEntityRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_EVENTS);
@@ -61,7 +63,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     
     @Test
     public void getClubs() throws JsonParseException, JsonMappingException, CybionHttpException,
-            IOException {
+            IOException, RecommenderException {
     
         final PaginatedResult recommendationReport = getEntityRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_CLUBS);
@@ -71,12 +73,17 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     }
     
     private PaginatedResult getEntityRecommendations(final String serviceCall)
-            throws CybionHttpException, JsonParseException, JsonMappingException, IOException {
+            throws CybionHttpException, JsonParseException, JsonMappingException, IOException,
+            RecommenderException {
     
         final String url = base_uri + serviceCall;
         final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(url, null);
         
         final String responseObject = getReportResponse.getObject();
+        
+        if (getReportResponse.getStatus() == ResponseStatus.NOK) {
+            throw new RecommenderException(responseObject);
+        }
         
         return mapper.readValue(responseObject, EntityRecommendationResponse.class).getObject();
     }

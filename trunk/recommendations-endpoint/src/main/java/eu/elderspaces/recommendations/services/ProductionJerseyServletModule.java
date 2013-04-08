@@ -15,8 +15,12 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
-import eu.elderspaces.recommendations.core.FakeStaticRecommender;
+import eu.elderspaces.activities.core.ActivityManager;
+import eu.elderspaces.activities.core.SimpleActivityManager;
+import eu.elderspaces.activities.persistence.ActivityRepository;
+import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.recommendations.core.Recommender;
+import eu.elderspaces.recommendations.core.SimpleRecommender;
 
 /**
  * @author micheleminno
@@ -35,7 +39,9 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         
         // bind REST services
         bind(RecommendationService.class);
-        bind(Recommender.class).to(FakeStaticRecommender.class);
+        bind(Recommender.class).to(SimpleRecommender.class);
+        bind(ActivityManager.class).to(SimpleActivityManager.class);
+        bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
         
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
