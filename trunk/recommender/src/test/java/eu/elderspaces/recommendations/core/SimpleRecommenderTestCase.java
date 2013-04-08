@@ -13,6 +13,7 @@ import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Verbs;
@@ -51,6 +52,18 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     private static final String EVENT2_NAME = "Event 2 name";
     private static final String EVENT2_SHORT_DESCRIPTION = "Event 2 short description";
     
+    private static final String CLUB1_ID = "Club 1 id";
+    private static final String CLUB1_NAME = "Club 1 name";
+    private static final String CLUB1_DESCRIPTION = "Club 1 description";
+    private static final String CLUB1_SHORT_DESCRIPTION = "Club 1 short description";
+    private static final String CLUB1_CATEGORY = "Club 1 category";
+    
+    private static final String CLUB2_ID = "Club 2 id";
+    private static final String CLUB2_NAME = "Club 2 name";
+    private static final String CLUB2_DESCRIPTION = "Club 2 description";
+    private static final String CLUB2_SHORT_DESCRIPTION = "Club 2 short description";
+    private static final String CLUB2_CATEGORY = "Club 2 category";
+    
     private Person user;
     private Person user2;
     private Person friend1;
@@ -59,6 +72,8 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     private Person friend21;
     private Event event1;
     private Event event2;
+    private Club club1;
+    private Club club2;
     
     @Override
     protected void specificImplementationClassInitialize() throws InvalidUserActivity,
@@ -73,6 +88,10 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         friend21 = new Person(FRIEND21_ID, FRIEND21_DISPLAY_NAME, FRIEND21_THUMBNAIL_URL);
         event1 = new Event(EVENT1_ID, EVENT1_NAME, EVENT1_SHORT_DESCRIPTION);
         event2 = new Event(EVENT2_ID, EVENT2_NAME, EVENT2_SHORT_DESCRIPTION);
+        club1 = new Club(CLUB1_ID, CLUB1_NAME, CLUB1_DESCRIPTION, CLUB1_SHORT_DESCRIPTION,
+                CLUB1_CATEGORY);
+        club2 = new Club(CLUB2_ID, CLUB2_NAME, CLUB2_DESCRIPTION, CLUB2_SHORT_DESCRIPTION,
+                CLUB2_CATEGORY);
         
         activityRepository.addUser(user);
         activityRepository.addUser(friend1);
@@ -105,6 +124,14 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         final Activity partecipateEvent2Activity2 = new Activity(friend2,
                 Verbs.YES_RSVP_RESPONSE_TO_EVENT, event2, null, null);
         
+        final Activity createClub1Activity = new Activity(user2, Verbs.CREATE, club1, null, null);
+        
+        final Activity joinClub1Activity = new Activity(friend1, Verbs.JOIN, club1, null, null);
+        
+        final Activity createClub2Activity = new Activity(friend2, Verbs.CREATE, club2, null, null);
+        
+        final Activity joinClub1Activity2 = new Activity(friend2, Verbs.JOIN, club1, null, null);
+        
         final List<Activity> activities = Lists.newArrayList();
         
         activities.add(friendActivity1);
@@ -117,6 +144,10 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         activities.add(createEvent2Activity);
         activities.add(partecipateEvent2Activity);
         activities.add(partecipateEvent2Activity2);
+        activities.add(createClub1Activity);
+        activities.add(joinClub1Activity);
+        activities.add(createClub2Activity);
+        activities.add(joinClub1Activity2);
         
         for (final Activity activity : activities) {
             activityManager.storeActivity(activity);
