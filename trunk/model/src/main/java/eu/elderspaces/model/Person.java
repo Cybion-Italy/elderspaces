@@ -2,7 +2,7 @@ package eu.elderspaces.model;
 
 import com.google.common.base.Objects;
 
-public class Person extends Entity implements Comparable<Person> {
+public class Person extends Entity {
     
     private String displayName;
     private String thumbnailUrl;
@@ -63,11 +63,4 @@ public class Person extends Entity implements Comparable<Person> {
     
         return Objects.toStringHelper(this).addValue(displayName).addValue(thumbnailUrl).toString();
     }
-    
-    @Override
-    public int compareTo(final Person otherPerson) {
-    
-        return this.getId().compareTo(otherPerson.getId());
-    }
-    
 }

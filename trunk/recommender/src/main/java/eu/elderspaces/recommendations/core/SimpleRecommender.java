@@ -15,7 +15,7 @@ import com.google.inject.internal.Maps;
 
 import eu.elderspaces.activities.core.ActivityManager;
 import eu.elderspaces.activities.exceptions.NonExistentUser;
-import eu.elderspaces.model.Club;
+import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
@@ -35,59 +35,57 @@ public class SimpleRecommender implements Recommender {
     }
     
     @Override
-    public PaginatedResult<Person> getFriends(final String userId) throws RecommenderException,
-            NonExistentUser {
+    public PaginatedResult getRecommendedEntities(final String userId,
+            final Class<? extends Entity> type) throws RecommenderException, NonExistentUser {
     
         final Set<Person> userFriends = activitymanager.getFriends(userId);
-        final Map<Person, Integer> indirectFriendConnectionMap = Maps.newHashMap();
+        
+        final Map<Entity, Integer> indirectEntityConnectionMap = Maps.newHashMap();
         for (final Person userFriend : userFriends) {
-            final Set<Person> friendsOfFriend = activitymanager.getFriends(userFriend.getId());
-            for (final Person friendOfFriend : friendsOfFriend) {
-                Integer connectionStrength = indirectFriendConnectionMap.get(friendOfFriend);
+            final Set<? extends Entity> relatedEntities = getEntities(userFriend.getId(), type);
+            for (final Entity relatedEntity : relatedEntities) {
+                Integer connectionStrength = indirectEntityConnectionMap.get(relatedEntity);
                 if (connectionStrength != null) {
-                    indirectFriendConnectionMap.put(friendOfFriend, ++connectionStrength);
+                    indirectEntityConnectionMap.put(relatedEntity, ++connectionStrength);
                 } else {
-                    indirectFriendConnectionMap.put(friendOfFriend, 1);
+                    indirectEntityConnectionMap.put(relatedEntity, 1);
                 }
             }
         }
         
-        final Ordering<Person> valueComparator = Ordering.natural().reverse()
-                .onResultOf(Functions.forMap(indirectFriendConnectionMap))
+        final Ordering<Entity> valueComparator = Ordering.natural().reverse()
+                .onResultOf(Functions.forMap(indirectEntityConnectionMap))
                 .compound(Ordering.natural().reverse());
         
-        final SortedMap<Person, Integer> sortedResult = ImmutableSortedMap.copyOf(
-                indirectFriendConnectionMap, valueComparator);
+        final SortedMap<Entity, Integer> sortedResult = ImmutableSortedMap.copyOf(
+                indirectEntityConnectionMap, valueComparator);
         
-        final Set<Person> sortedRecommendedFriends = sortedResult.keySet();
+        final Set<Entity> sortedRecommendedEntities = sortedResult.keySet();
         int resultsSize = 0;
-        if (sortedRecommendedFriends.size() < TOTAL_RESULTS) {
-            resultsSize = sortedRecommendedFriends.size();
+        if (sortedRecommendedEntities.size() < TOTAL_RESULTS) {
+            resultsSize = sortedRecommendedEntities.size();
         } else {
             resultsSize = TOTAL_RESULTS;
         }
         
-        final List<Person> recommendedFriends = Lists.newArrayList();
+        final List<Entity> result = Lists.newArrayList();
         for (int i = 0; i < resultsSize; i++) {
-            recommendedFriends.add(Iterables.get(sortedRecommendedFriends, i));
+            result.add(Iterables.get(sortedRecommendedEntities, i));
         }
         
-        return new PaginatedResult<Person>(START_INDEX, TOTAL_RESULTS, recommendedFriends);
-        
+        return new PaginatedResult(START_INDEX, TOTAL_RESULTS, result);
     }
     
-    @Override
-    public PaginatedResult<Event> getEvents(final String userId) throws RecommenderException {
+    private Set<? extends Entity> getEntities(final String userId, final Class<?> targetClass)
+            throws NonExistentUser {
     
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    @Override
-    public PaginatedResult<Club> getClubs(final String userId) throws RecommenderException {
-    
-        // TODO Auto-generated method stub
-        return null;
+        if (targetClass == Person.class) {
+            return activitymanager.getFriends(userId);
+        } else if (targetClass == Event.class) {
+            return activitymanager.getEvents(userId);
+        } else {
+            return activitymanager.getClubs(userId);
+        }
     }
     
 }

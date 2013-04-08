@@ -10,7 +10,7 @@ import com.google.common.base.Objects;
 @JsonSubTypes({ @Type(value = Post.class, name = "activity"),
         @Type(value = Person.class, name = "person"), @Type(value = Event.class, name = "event"),
         @Type(value = Club.class, name = "club") })
-public class Entity {
+public class Entity implements Comparable<Entity> {
     
     private String id;
     
@@ -56,5 +56,11 @@ public class Entity {
     public String toString() {
     
         return Objects.toStringHelper(this).addValue(id).toString();
+    }
+    
+    @Override
+    public int compareTo(final Entity otherEntity) {
+    
+        return this.getId().compareTo(otherEntity.getId());
     }
 }

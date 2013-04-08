@@ -1,5 +1,10 @@
 package eu.elderspaces.recommendations.core;
 
+import java.io.IOException;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -26,9 +31,12 @@ public abstract class AbstractRecommenderTestCase {
     protected Recommender recommender;
     protected ActivityManager activityManager;
     
+    private ObjectMapper mapper;
+    
     @BeforeClass
     public void initialize() throws InvalidUserActivity, ActivityRepositoryException {
     
+        mapper = new ObjectMapper();
         specificImplementationClassInitialize();
     }
     
@@ -52,26 +60,29 @@ public abstract class AbstractRecommenderTestCase {
     protected abstract void specificImplementationShutDown();
     
     @Test
-    public void getFriends() throws RecommenderException, NonExistentUser {
+    public void getFriends() throws RecommenderException, NonExistentUser, JsonGenerationException,
+            JsonMappingException, IOException {
     
-        final PaginatedResult<Person> results = recommender.getFriends(USER_ID);
-        LOGGER.info("Recommendations computed: " + results);
+        final PaginatedResult results = recommender.getRecommendedEntities(USER_ID, Person.class);
+        LOGGER.info("Recommendations computed: " + mapper.writeValueAsString(results));
         Assert.assertFalse(results.getEntries().isEmpty());
     }
     
     @Test
-    public void getEvents() throws RecommenderException {
+    public void getEvents() throws RecommenderException, NonExistentUser, JsonGenerationException,
+            JsonMappingException, IOException {
     
-        final PaginatedResult<Event> results = recommender.getEvents(USER_ID);
-        LOGGER.info("Recommendations computed: " + results);
+        final PaginatedResult results = recommender.getRecommendedEntities(USER_ID, Event.class);
+        LOGGER.info("Recommendations computed: " + mapper.writeValueAsString(results));
         Assert.assertFalse(results.getEntries().isEmpty());
     }
     
     @Test
-    public void getClubs() throws RecommenderException {
+    public void getClubs() throws RecommenderException, NonExistentUser, JsonGenerationException,
+            JsonMappingException, IOException {
     
-        final PaginatedResult<Club> results = recommender.getClubs(USER_ID);
-        LOGGER.info("Recommendations computed: " + results);
+        final PaginatedResult results = recommender.getRecommendedEntities(USER_ID, Club.class);
+        LOGGER.info("Recommendations computed: " + mapper.writeValueAsString(results));
         Assert.assertFalse(results.getEntries().isEmpty());
     }
     

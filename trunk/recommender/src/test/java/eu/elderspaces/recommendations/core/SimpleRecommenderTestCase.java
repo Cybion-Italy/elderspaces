@@ -30,9 +30,19 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     private static final String FRIEND11_DISPLAY_NAME = "Friend 11 Display Name";
     private static final String FRIEND11_THUMBNAIL_URL = "Friend 11 Thumbnail Url";
     
+    private static final String FRIEND2_ID = "Friend 2 id";
+    private static final String FRIEND2_DISPLAY_NAME = "Friend 2 Display Name";
+    private static final String FRIEND2_THUMBNAIL_URL = "Friend 2 Thumbnail Url";
+    
+    private static final String FRIEND21_ID = "Friend 21 id";
+    private static final String FRIEND21_DISPLAY_NAME = "Friend 21 Display Name";
+    private static final String FRIEND21_THUMBNAIL_URL = "Friend 21 Thumbnail Url";
+    
     private Person user;
     private Person friend1;
     private Person friend11;
+    private Person friend2;
+    private Person friend21;
     
     @Override
     protected void specificImplementationClassInitialize() throws InvalidUserActivity,
@@ -42,10 +52,14 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         user = new Person(USER_ID, USER_DISPLAY_NAME, USER_THUMBNAIL_URL);
         friend1 = new Person(FRIEND1_ID, FRIEND1_DISPLAY_NAME, FRIEND1_THUMBNAIL_URL);
         friend11 = new Person(FRIEND11_ID, FRIEND11_DISPLAY_NAME, FRIEND11_THUMBNAIL_URL);
+        friend2 = new Person(FRIEND2_ID, FRIEND2_DISPLAY_NAME, FRIEND2_THUMBNAIL_URL);
+        friend21 = new Person(FRIEND21_ID, FRIEND21_DISPLAY_NAME, FRIEND21_THUMBNAIL_URL);
         
         activityRepository.addUser(user);
         activityRepository.addUser(friend1);
         activityRepository.addUser(friend11);
+        activityRepository.addUser(friend2);
+        activityRepository.addUser(friend21);
         
         activityManager = new SimpleActivityManager(activityRepository);
         
@@ -54,10 +68,20 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         final Activity friendActivity11 = new Activity(friend1, Verbs.MAKE_FRIEND, friend11, null,
                 "");
         
+        final Activity friendActivity2 = new Activity(user, Verbs.MAKE_FRIEND, friend2, null, "");
+        
+        final Activity friendActivity21 = new Activity(friend2, Verbs.MAKE_FRIEND, friend21, null,
+                "");
+        final Activity friendActivity211 = new Activity(friend2, Verbs.MAKE_FRIEND, friend11, null,
+                "");
+        
         final List<Activity> activities = Lists.newArrayList();
         
         activities.add(friendActivity1);
         activities.add(friendActivity11);
+        activities.add(friendActivity2);
+        activities.add(friendActivity21);
+        activities.add(friendActivity211);
         
         for (final Activity activity : activities) {
             activityManager.storeActivity(activity);

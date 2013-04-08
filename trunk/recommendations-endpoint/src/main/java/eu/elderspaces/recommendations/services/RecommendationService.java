@@ -17,16 +17,12 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import eu.elderspaces.activities.exceptions.NonExistentUser;
-import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
-import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
 import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
-import eu.elderspaces.recommendations.responses.ClubRecommendationResponse;
-import eu.elderspaces.recommendations.responses.EventRecommendationResponse;
-import eu.elderspaces.recommendations.responses.FriendRecommendationResponse;
+import eu.elderspaces.recommendations.responses.EntityRecommendationResponse;
 
 /**
  * 
@@ -54,21 +50,7 @@ public class RecommendationService extends JsonService {
     public Response getFriends(@PathParam("userId") final String userId) {
     
         LOGGER.info("Friends recommendation service called with userId: " + userId);
-        
-        final PaginatedResult<Person> recommendationReport;
-        
-        try {
-            recommendationReport = recommender.getFriends(userId);
-        } catch (final RecommenderException e) {
-            return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
-        } catch (final NonExistentUser e) {
-            return error(Response.Status.NOT_FOUND, e.getMessage());
-        }
-        
-        LOGGER.info("Friend recommendations retrieved: " + recommendationReport);
-        
-        return success(new FriendRecommendationResponse(ResponseStatus.OK,
-                "Friends recommendations", recommendationReport));
+        return getRecommendationResponse(userId);
     }
     
     @GET
@@ -76,19 +58,7 @@ public class RecommendationService extends JsonService {
     public Response getEvents(@PathParam("userId") final String userId) {
     
         LOGGER.info("Events recommendation service called with userId: " + userId);
-        
-        final PaginatedResult<Event> recommendationReport;
-        
-        try {
-            recommendationReport = recommender.getEvents(userId);
-        } catch (final RecommenderException e) {
-            return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-        
-        LOGGER.info("Event recommendations retrieved");
-        
-        return success(new EventRecommendationResponse(ResponseStatus.OK, "Events recommendations",
-                recommendationReport));
+        return getRecommendationResponse(userId);
     }
     
     @GET
@@ -96,19 +66,25 @@ public class RecommendationService extends JsonService {
     public Response getClubs(@PathParam("userId") final String userId) {
     
         LOGGER.info("Clubs recommendation service called with userId: " + userId);
-        
-        final PaginatedResult<Club> recommendationReport;
+        return getRecommendationResponse(userId);
+    }
+    
+    private Response getRecommendationResponse(final String userId) {
+    
+        final PaginatedResult recommendationReport;
         
         try {
-            recommendationReport = recommender.getClubs(userId);
+            recommendationReport = recommender.getRecommendedEntities(userId, Event.class);
         } catch (final RecommenderException e) {
             return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (final NonExistentUser e) {
+            return error(Response.Status.NOT_FOUND, e.getMessage());
         }
         
-        LOGGER.info("Club recommendations retrieved");
+        LOGGER.info("Event recommendations retrieved");
         
-        return success(new ClubRecommendationResponse(ResponseStatus.OK, "Clubs recommendations",
-                recommendationReport));
+        return success(new EntityRecommendationResponse(ResponseStatus.OK,
+                "Events recommendations", recommendationReport));
     }
     
 }

@@ -4,10 +4,13 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.model.Club;
+import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
+import eu.elderspaces.recommendations.exceptions.RecommenderException;
 
 public class FakeStaticRecommender implements Recommender {
     
@@ -50,47 +53,61 @@ public class FakeStaticRecommender implements Recommender {
     private static final String CLUB_CATEGORY_2 = "SPORT";
     private static final String CLUB_CATEGORY_3 = "MUSIC";
     
-    @Override
-    public PaginatedResult<Person> getFriends(final String userId) {
+    private PaginatedResult getFriends(final String userId) {
     
-        final Person firstFriendEntry = new Person(FRIEND_ID_1, DISPLAY_NAME_1, THUMBNAIL_URL_1);
-        final Person secondFriendEntry = new Person(FRIEND_ID_2, DISPLAY_NAME_2, THUMBNAIL_URL_2);
-        final Person thirdFriendEntry = new Person(FRIEND_ID_3, DISPLAY_NAME_3, THUMBNAIL_URL_3);
+        final Entity firstFriendEntry = new Person(FRIEND_ID_1, DISPLAY_NAME_1, THUMBNAIL_URL_1);
+        final Entity secondFriendEntry = new Person(FRIEND_ID_2, DISPLAY_NAME_2, THUMBNAIL_URL_2);
+        final Entity thirdFriendEntry = new Person(FRIEND_ID_3, DISPLAY_NAME_3, THUMBNAIL_URL_3);
         
-        final List<Person> entries = Lists.newArrayList(firstFriendEntry, secondFriendEntry,
+        final List<Entity> entries = Lists.newArrayList(firstFriendEntry, secondFriendEntry,
                 thirdFriendEntry);
         
-        return new PaginatedResult<Person>(START_INDEX, TOTAL_RESULTS, entries);
+        return new PaginatedResult(START_INDEX, TOTAL_RESULTS, entries);
     }
     
-    @Override
-    public PaginatedResult<Event> getEvents(final String userId) {
+    private PaginatedResult getEvents(final String userId) {
     
-        final Event firstEventEntry = new Event(EVENT_ID_1, EVENT_NAME_1, EVENT_SHORT_DESCRIPTION_1);
-        final Event secondEventEntry = new Event(EVENT_ID_2, EVENT_NAME_2,
+        final Entity firstEventEntry = new Event(EVENT_ID_1, EVENT_NAME_1,
+                EVENT_SHORT_DESCRIPTION_1);
+        final Entity secondEventEntry = new Event(EVENT_ID_2, EVENT_NAME_2,
                 EVENT_SHORT_DESCRIPTION_2);
-        final Event thirdEventEntry = new Event(EVENT_ID_3, EVENT_NAME_3, EVENT_SHORT_DESCRIPTION_3);
+        final Entity thirdEventEntry = new Event(EVENT_ID_3, EVENT_NAME_3,
+                EVENT_SHORT_DESCRIPTION_3);
         
-        final List<Event> entries = Lists.newArrayList(firstEventEntry, secondEventEntry,
+        final List<Entity> entries = Lists.newArrayList(firstEventEntry, secondEventEntry,
                 thirdEventEntry);
         
-        return new PaginatedResult<Event>(START_INDEX, TOTAL_RESULTS, entries);
+        return new PaginatedResult(START_INDEX, TOTAL_RESULTS, entries);
+    }
+    
+    private PaginatedResult getClubs(final String userId) {
+    
+        final Entity firstClubEntry = new Club(CLUB_ID_1, CLUB_NAME_1, CLUB_DESCRIPTION_1,
+                CLUB_SHORT_DESCRIPTION_1, CLUB_CATEGORY_1);
+        final Entity secondClubEntry = new Club(CLUB_ID_2, CLUB_NAME_2, CLUB_DESCRIPTION_2,
+                CLUB_SHORT_DESCRIPTION_2, CLUB_CATEGORY_2);
+        final Entity thirdClubEntry = new Club(CLUB_ID_3, CLUB_NAME_3, CLUB_DESCRIPTION_3,
+                CLUB_SHORT_DESCRIPTION_3, CLUB_CATEGORY_3);
+        
+        final List<Entity> entries = Lists.newArrayList(firstClubEntry, secondClubEntry,
+                thirdClubEntry);
+        
+        return new PaginatedResult(START_INDEX, TOTAL_RESULTS, entries);
     }
     
     @Override
-    public PaginatedResult<Club> getClubs(final String userId) {
+    public PaginatedResult getRecommendedEntities(final String userId,
+            final Class<? extends Entity> type) throws RecommenderException, NonExistentUser {
     
-        final Club firstClubEntry = new Club(CLUB_ID_1, CLUB_NAME_1, CLUB_DESCRIPTION_1,
-                CLUB_SHORT_DESCRIPTION_1, CLUB_CATEGORY_1);
-        final Club secondClubEntry = new Club(CLUB_ID_2, CLUB_NAME_2, CLUB_DESCRIPTION_2,
-                CLUB_SHORT_DESCRIPTION_2, CLUB_CATEGORY_2);
-        final Club thirdClubEntry = new Club(CLUB_ID_3, CLUB_NAME_3, CLUB_DESCRIPTION_3,
-                CLUB_SHORT_DESCRIPTION_3, CLUB_CATEGORY_3);
-        
-        final List<Club> entries = Lists.newArrayList(firstClubEntry, secondClubEntry,
-                thirdClubEntry);
-        
-        return new PaginatedResult<Club>(START_INDEX, TOTAL_RESULTS, entries);
+        if (type == Person.class) {
+            return getFriends(userId);
+        } else if (type == Event.class) {
+            return getEvents(userId);
+        } else if (type == Club.class) {
+            return getClubs(userId);
+        } else {
+            throw new RecommenderException("Invalid entity type");
+        }
     }
     
 }

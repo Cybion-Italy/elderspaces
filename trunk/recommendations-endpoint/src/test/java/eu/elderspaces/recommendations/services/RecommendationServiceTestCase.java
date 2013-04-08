@@ -15,14 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import eu.elderspaces.model.Club;
-import eu.elderspaces.model.Event;
-import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
-import eu.elderspaces.recommendations.responses.ClubRecommendationResponse;
-import eu.elderspaces.recommendations.responses.EventRecommendationResponse;
-import eu.elderspaces.recommendations.responses.FriendRecommendationResponse;
+import eu.elderspaces.recommendations.responses.EntityRecommendationResponse;
 
 @Test
 public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
@@ -46,7 +41,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     public void getFriends() throws JsonParseException, JsonMappingException, CybionHttpException,
             IOException {
     
-        final PaginatedResult<Person> recommendationReport = getFriendRecommendations(RecommendationsEndpoint.REST_RADIX
+        final PaginatedResult recommendationReport = getEntityRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_FRIENDS);
         LOGGER.info("Recommendations computed: " + recommendationReport);
         Assert.assertEquals(ENTRIES_SIZE, recommendationReport.getEntries().size());
@@ -57,7 +52,7 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     public void getEvents() throws JsonParseException, JsonMappingException, CybionHttpException,
             IOException {
     
-        final PaginatedResult<Event> recommendationReport = getEventRecommendations(RecommendationsEndpoint.REST_RADIX
+        final PaginatedResult recommendationReport = getEntityRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_EVENTS);
         LOGGER.info("Recommendations computed: " + recommendationReport);
         Assert.assertEquals(ENTRIES_SIZE, recommendationReport.getEntries().size());
@@ -68,14 +63,14 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
     public void getClubs() throws JsonParseException, JsonMappingException, CybionHttpException,
             IOException {
     
-        final PaginatedResult<Club> recommendationReport = getClubRecommendations(RecommendationsEndpoint.REST_RADIX
+        final PaginatedResult recommendationReport = getEntityRecommendations(RecommendationsEndpoint.REST_RADIX
                 + RecommendationsEndpoint.RECOMMENDATIONS + GET_CLUBS);
         LOGGER.info("Recommendations computed: " + recommendationReport);
         Assert.assertEquals(ENTRIES_SIZE, recommendationReport.getEntries().size());
         
     }
     
-    private PaginatedResult<Person> getFriendRecommendations(final String serviceCall)
+    private PaginatedResult getEntityRecommendations(final String serviceCall)
             throws CybionHttpException, JsonParseException, JsonMappingException, IOException {
     
         final String url = base_uri + serviceCall;
@@ -83,37 +78,6 @@ public class RecommendationServiceTestCase extends AbstractJerseyRESTTestCase {
         
         final String responseObject = getReportResponse.getObject();
         
-        final FriendRecommendationResponse getReportResult = mapper.readValue(responseObject,
-                FriendRecommendationResponse.class);
-        
-        return getReportResult.getObject();
-    }
-    
-    private PaginatedResult<Event> getEventRecommendations(final String serviceCall)
-            throws CybionHttpException, JsonParseException, JsonMappingException, IOException {
-    
-        final String url = base_uri + serviceCall;
-        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(url, null);
-        
-        final String responseObject = getReportResponse.getObject();
-        
-        final EventRecommendationResponse getReportResult = mapper.readValue(responseObject,
-                EventRecommendationResponse.class);
-        
-        return getReportResult.getObject();
-    }
-    
-    private PaginatedResult<Club> getClubRecommendations(final String serviceCall)
-            throws CybionHttpException, JsonParseException, JsonMappingException, IOException {
-    
-        final String url = base_uri + serviceCall;
-        final ExternalStringResponse getReportResponse = CybionHttpClient.performGet(url, null);
-        
-        final String responseObject = getReportResponse.getObject();
-        
-        final ClubRecommendationResponse getReportResult = mapper.readValue(responseObject,
-                ClubRecommendationResponse.class);
-        
-        return getReportResult.getObject();
+        return mapper.readValue(responseObject, EntityRecommendationResponse.class).getObject();
     }
 }

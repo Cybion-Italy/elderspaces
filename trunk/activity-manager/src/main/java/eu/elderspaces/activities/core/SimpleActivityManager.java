@@ -234,4 +234,18 @@ public class SimpleActivityManager implements ActivityManager {
             throw new NonExistentUser("User " + userId + " doesn't exist");
         }
     }
+    
+    @Override
+    public Set<? extends Entity> getEvents(final String userId) {
+    
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Set<? extends Entity> getClubs(final String userId) {
+    
+        // TODO Auto-generated method stub
+        return null;
+    }
 }
