@@ -73,9 +73,10 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
         requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         final Entity activityObject = new Post(POST_BODY, POST_TITLE, actor);
-        final Activity call = new Activity(actor, VERB, activityObject, null, PUBLISHED);
-        final String callString = mapper.writeValueAsString(call);
-        final String requestEntity = callString;
+        final Activity activity = new Activity(actor, VERB, activityObject, null, PUBLISHED);
+        LOGGER.info("Storing activity: " + mapper.writeValueAsString(activity));
+        final String activityString = mapper.writeValueAsString(activity);
+        final String requestEntity = activityString;
         final ExternalStringResponse stringResponse = CybionHttpClient.performPost(url,
                 requestHeaderMap, requestEntity);
         
