@@ -53,10 +53,6 @@ public class FakeStaticRecommender implements Recommender {
     @Override
     public PaginatedResult<Person> getFriends(final String userId) {
     
-        final PaginatedResult<Person> recommendationReport = new PaginatedResult<Person>();
-        recommendationReport.setStartIndex(START_INDEX);
-        recommendationReport.setTotalResults(TOTAL_RESULTS);
-        
         final Person firstFriendEntry = new Person(FRIEND_ID_1, DISPLAY_NAME_1, THUMBNAIL_URL_1);
         final Person secondFriendEntry = new Person(FRIEND_ID_2, DISPLAY_NAME_2, THUMBNAIL_URL_2);
         final Person thirdFriendEntry = new Person(FRIEND_ID_3, DISPLAY_NAME_3, THUMBNAIL_URL_3);
@@ -64,18 +60,12 @@ public class FakeStaticRecommender implements Recommender {
         final List<Person> entries = Lists.newArrayList(firstFriendEntry, secondFriendEntry,
                 thirdFriendEntry);
         
-        recommendationReport.setEntries(entries);
-        
-        return recommendationReport;
+        return new PaginatedResult<Person>(START_INDEX, TOTAL_RESULTS, entries);
     }
     
     @Override
     public PaginatedResult<Event> getEvents(final String userId) {
     
-        final PaginatedResult<Event> recommendationReport = new PaginatedResult<Event>();
-        recommendationReport.setStartIndex(START_INDEX);
-        recommendationReport.setTotalResults(TOTAL_RESULTS);
-        
         final Event firstEventEntry = new Event(EVENT_ID_1, EVENT_NAME_1, EVENT_SHORT_DESCRIPTION_1);
         final Event secondEventEntry = new Event(EVENT_ID_2, EVENT_NAME_2,
                 EVENT_SHORT_DESCRIPTION_2);
@@ -84,18 +74,12 @@ public class FakeStaticRecommender implements Recommender {
         final List<Event> entries = Lists.newArrayList(firstEventEntry, secondEventEntry,
                 thirdEventEntry);
         
-        recommendationReport.setEntries(entries);
-        
-        return recommendationReport;
+        return new PaginatedResult<Event>(START_INDEX, TOTAL_RESULTS, entries);
     }
     
     @Override
     public PaginatedResult<Club> getClubs(final String userId) {
     
-        final PaginatedResult<Club> recommendationReport = new PaginatedResult<Club>();
-        recommendationReport.setStartIndex(START_INDEX);
-        recommendationReport.setTotalResults(TOTAL_RESULTS);
-        
         final Club firstClubEntry = new Club(CLUB_ID_1, CLUB_NAME_1, CLUB_DESCRIPTION_1,
                 CLUB_SHORT_DESCRIPTION_1, CLUB_CATEGORY_1);
         final Club secondClubEntry = new Club(CLUB_ID_2, CLUB_NAME_2, CLUB_DESCRIPTION_2,
@@ -106,9 +90,7 @@ public class FakeStaticRecommender implements Recommender {
         final List<Club> entries = Lists.newArrayList(firstClubEntry, secondClubEntry,
                 thirdClubEntry);
         
-        recommendationReport.setEntries(entries);
-        
-        return recommendationReport;
+        return new PaginatedResult<Club>(START_INDEX, TOTAL_RESULTS, entries);
     }
     
 }

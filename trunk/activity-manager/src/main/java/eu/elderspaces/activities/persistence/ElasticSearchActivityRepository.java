@@ -1,5 +1,7 @@
 package eu.elderspaces.activities.persistence;
 
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -181,6 +183,20 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     
         // TODO Auto-generated method stub
         return false;
+    }
+    
+    @Override
+    public boolean userExists(final String userId) {
+    
+        // TODO Auto-generated method stub
+        return false;
+    }
+    
+    @Override
+    public Set<Person> getFriends(final String userId) {
+    
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }

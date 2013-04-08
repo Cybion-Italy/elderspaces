@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
+import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
@@ -60,6 +61,8 @@ public class RecommendationService extends JsonService {
             recommendationReport = recommender.getFriends(userId);
         } catch (final RecommenderException e) {
             return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
+        } catch (final NonExistentUser e) {
+            return error(Response.Status.NOT_FOUND, e.getMessage());
         }
         
         LOGGER.info("Friend recommendations retrieved: " + recommendationReport);

@@ -1,11 +1,14 @@
 package eu.elderspaces.activities.core;
 
+import java.util.Set;
+
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.inject.Inject;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.activities.exceptions.InvalidUserActivity;
+import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
@@ -24,53 +27,6 @@ public class SimpleActivityManager implements ActivityManager {
     public SimpleActivityManager(final ActivityRepository activityRepository) {
     
         this.activityRepository = activityRepository;
-    }
-    
-    @Override
-    public boolean storeActivity(final String activityContent) throws InvalidUserActivity,
-            ActivityRepositoryException {
-    
-        final Activity activity;
-        try {
-            activity = mapper.readValue(activityContent, Activity.class);
-        } catch (final Exception e) {
-            throw new InvalidUserActivity(e);
-        }
-        
-        final boolean activityStored = storeActivity(activity);
-        
-        final Person user = activity.getActor();
-        final String verb = activity.getVerb();
-        final Entity object = activity.getObject();
-        final Entity target = activity.getTarget();
-        
-        boolean profileUpdated = false;
-        
-        if (object.getClass() == Person.class) {
-            
-            final Person personObject = (Person) object;
-            profileUpdated = handlePersonObject(user, verb, personObject);
-            
-        } else if (object.getClass() == Post.class) {
-            
-            final Post postObject = (Post) object;
-            profileUpdated = handlePostObject(user, verb, postObject, target);
-            
-        } else if (object.getClass() == Event.class) {
-            
-            final Event eventObject = (Event) object;
-            profileUpdated = handleEventObject(user, verb, eventObject);
-            
-        } else if (object.getClass() == Club.class) {
-            
-            final Club clubObject = (Club) object;
-            profileUpdated = handleClubObject(user, verb, clubObject);
-            
-        } else {
-            throw new InvalidUserActivity("Invalid Object type");
-        }
-        
-        return profileUpdated && activityStored;
     }
     
     private boolean handlePersonObject(final Person user, final String verb,
@@ -215,10 +171,67 @@ public class SimpleActivityManager implements ActivityManager {
     }
     
     @Override
+    public boolean storeActivity(final String activityContent) throws InvalidUserActivity,
+            ActivityRepositoryException {
+    
+        final Activity activity;
+        try {
+            activity = mapper.readValue(activityContent, Activity.class);
+        } catch (final Exception e) {
+            throw new InvalidUserActivity(e);
+        }
+        
+        final boolean activityStored = storeActivity(activity);
+        
+        final Person user = activity.getActor();
+        final String verb = activity.getVerb();
+        final Entity object = activity.getObject();
+        final Entity target = activity.getTarget();
+        
+        boolean profileUpdated = false;
+        
+        if (object.getClass() == Person.class) {
+            
+            final Person personObject = (Person) object;
+            profileUpdated = handlePersonObject(user, verb, personObject);
+            
+        } else if (object.getClass() == Post.class) {
+            
+            final Post postObject = (Post) object;
+            profileUpdated = handlePostObject(user, verb, postObject, target);
+            
+        } else if (object.getClass() == Event.class) {
+            
+            final Event eventObject = (Event) object;
+            profileUpdated = handleEventObject(user, verb, eventObject);
+            
+        } else if (object.getClass() == Club.class) {
+            
+            final Club clubObject = (Club) object;
+            profileUpdated = handleClubObject(user, verb, clubObject);
+            
+        } else {
+            throw new InvalidUserActivity("Invalid Object type");
+        }
+        
+        return profileUpdated && activityStored;
+    }
+    
+    @Override
     public boolean storeActivity(final Activity activity) throws InvalidUserActivity,
             ActivityRepositoryException {
     
         final String userId = activity.getActor().getId();
         return activityRepository.store(activity, userId);
+    }
+    
+    @Override
+    public Set<Person> getFriends(final String userId) throws NonExistentUser {
+    
+        if (activityRepository.userExists(userId)) {
+            return activityRepository.getFriends(userId);
+        } else {
+            throw new NonExistentUser("User " + userId + " doesn't exist");
+        }
     }
 }

@@ -10,6 +10,17 @@ public class PaginatedResult<T> {
     private int totalResults;
     private List<T> entries;
     
+    public PaginatedResult() {
+    
+    }
+    
+    public PaginatedResult(final int startIndex, final int totalResults, final List<T> entries) {
+    
+        this.startIndex = startIndex;
+        this.totalResults = totalResults;
+        this.entries = entries;
+    }
+    
     public int getStartIndex() {
     
         return startIndex;
@@ -47,7 +58,7 @@ public class PaginatedResult<T> {
             return false;
         }
         
-        final PaginatedResult that = (PaginatedResult) o;
+        final PaginatedResult<?> that = (PaginatedResult<?>) o;
         
         return Objects.equal(startIndex, that.startIndex)
                 && Objects.equal(totalResults, that.totalResults)

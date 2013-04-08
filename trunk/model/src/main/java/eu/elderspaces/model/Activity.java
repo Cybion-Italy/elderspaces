@@ -15,15 +15,25 @@ public class Activity {
     
     }
     
-    public Activity(final String verb, final Entity object, final Entity target, final Person actor,
-            final String published) {
+    public Activity(final Person actor, final String verb, final Entity object,
+            final Entity target, final String published) {
     
         this.id = actor.getId() + "_" + verb + "_" + object.getId();
+        this.actor = actor;
         this.verb = verb;
         this.object = object;
         this.setTarget(target);
-        this.actor = actor;
         this.published = published;
+    }
+    
+    public Person getActor() {
+    
+        return actor;
+    }
+    
+    public void setActor(final Person actor) {
+    
+        this.actor = actor;
     }
     
     public String getVerb() {
@@ -54,16 +64,6 @@ public class Activity {
     public void setTarget(final Entity target) {
     
         this.target = target;
-    }
-    
-    public Person getActor() {
-    
-        return actor;
-    }
-    
-    public void setActor(final Person actor) {
-    
-        this.actor = actor;
     }
     
     public String getPublished() {

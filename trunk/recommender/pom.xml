@@ -26,6 +26,10 @@
 			<artifactId>model</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>activity-manager</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-xc</artifactId>
 		</dependency>

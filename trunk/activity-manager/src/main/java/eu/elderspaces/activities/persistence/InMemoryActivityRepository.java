@@ -301,4 +301,25 @@ public class InMemoryActivityRepository implements ActivityRepository {
         return userHistory;
     }
     
+    @Override
+    public boolean userExists(final String userId) {
+    
+        final UserProfile userProfile = profiles.get(userId);
+        if (userProfile != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    @Override
+    public Set<Person> getFriends(final String userId) {
+    
+        if (!userExists(userId)) {
+            return null;
+        } else {
+            return profiles.get(userId).getFriends();
+        }
+    }
+    
 }

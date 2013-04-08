@@ -8,7 +8,6 @@ import org.testng.annotations.Test;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.activities.exceptions.InvalidUserActivity;
-import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Entity;
@@ -29,13 +28,11 @@ public class SimpleActivityManagerTestCase {
     private static final String ACTIVITY_BODY = "Hello from Athens!";
     
     private ActivityManager activityManager;
-    private ActivityRepository activityRepository;
     
     @BeforeClass
     public void startUp() {
     
-        this.activityRepository = new InMemoryActivityRepository();
-        this.activityManager = new SimpleActivityManager(activityRepository);
+        this.activityManager = new SimpleActivityManager(new InMemoryActivityRepository());
     }
     
     @Test
@@ -43,7 +40,7 @@ public class SimpleActivityManagerTestCase {
     
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         final Entity activityObject = new Post(ACTIVITY_BODY, ACTIVITY_TITLE, actor);
-        final Activity call = new Activity(VERB, activityObject, null, actor, PUBLISHED);
+        final Activity call = new Activity(actor, VERB, activityObject, null, PUBLISHED);
         
         final boolean stored = activityManager.storeActivity(call);
         LOGGER.info("Storing call: " + call);

@@ -1,5 +1,7 @@
 package eu.elderspaces.activities.persistence;
 
+import java.util.Set;
+
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
@@ -46,5 +48,9 @@ public interface ActivityRepository {
     public boolean leaveClub(Person user, Club clubObject);
     
     public void addUser(Person user);
+    
+    public boolean userExists(String userId);
+    
+    public Set<Person> getFriends(String userId);
     
 }

@@ -20,7 +20,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     
     private static final String PUBLISHED = "2013-03-29T3:41:48+0100";
     private static final String VERB = "create";
-    private static final String PERSON_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
+    private static final String USER_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
     private static final String USER_DISPLAY_NAME = "Mr. Ederly Hans";
     private static final String USER_ID = "13913365:elderspaces.iwiw.hu";
     
@@ -64,7 +64,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     
         specificImplementationClassInitialize();
         
-        user = new Person(USER_ID, USER_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
+        user = new Person(USER_ID, USER_DISPLAY_NAME, USER_THUMBNAIL_URL);
         activityRepository.addUser(user);
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
         event = new Event(EVENT_ID, EVENT_NAME, EVENT_SHORT_DESCRIPTION);
@@ -88,7 +88,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     public void store() throws ActivityRepositoryException {
     
         final Entity activityObject = new Post(POST_BODY, POST_TITLE, user);
-        final Activity call = new Activity(VERB, activityObject, null, user, PUBLISHED);
+        final Activity call = new Activity(user, VERB, activityObject, null, PUBLISHED);
         
         final boolean stored = activityRepository.store(call, USER_ID);
         LOGGER.info("Storing call: " + call);
