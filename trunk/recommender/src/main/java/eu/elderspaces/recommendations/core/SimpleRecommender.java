@@ -56,11 +56,18 @@ public class SimpleRecommender implements Recommender {
         final SortedMap<Person, Integer> sortedResult = ImmutableSortedMap.copyOf(
                 indirectFriendConnectionMap, valueComparator);
         
-        final Person firstRecommendedFriend = Iterables.get(sortedResult.keySet(), 0);
-        final Person secondRecommendedFriend = Iterables.get(sortedResult.keySet(), 1);
-        final Person thirdRecommendedFriend = Iterables.get(sortedResult.keySet(), 2);
-        final List<Person> recommendedFriends = Lists.newArrayList(firstRecommendedFriend,
-                secondRecommendedFriend, thirdRecommendedFriend);
+        final Set<Person> sortedRecommendedFriends = sortedResult.keySet();
+        int resultsSize = 0;
+        if (sortedRecommendedFriends.size() < TOTAL_RESULTS) {
+            resultsSize = sortedRecommendedFriends.size();
+        } else {
+            resultsSize = TOTAL_RESULTS;
+        }
+        
+        final List<Person> recommendedFriends = Lists.newArrayList();
+        for (int i = 0; i < resultsSize; i++) {
+            recommendedFriends.add(Iterables.get(sortedRecommendedFriends, i));
+        }
         
         return new PaginatedResult<Person>(START_INDEX, TOTAL_RESULTS, recommendedFriends);
         

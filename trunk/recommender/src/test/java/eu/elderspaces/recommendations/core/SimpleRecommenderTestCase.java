@@ -10,6 +10,7 @@ import com.google.inject.internal.Lists;
 import eu.elderspaces.activities.core.SimpleActivityManager;
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.activities.exceptions.InvalidUserActivity;
+import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Person;
@@ -32,13 +33,22 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     protected void specificImplementationClassInitialize() throws InvalidUserActivity,
             ActivityRepositoryException {
     
-        activityManager = new SimpleActivityManager(new InMemoryActivityRepository());
+        final ActivityRepository activityRepository = new InMemoryActivityRepository();
         user = new Person(USER_ID, USER_DISPLAY_NAME, USER_THUMBNAIL_URL);
         friend1 = new Person(FRIEND1_ID, FRIEND1_DISPLAY_NAME, FRIEND1_THUMBNAIL_URL);
+        
+        activityRepository.addUser(user);
+        activityRepository.addUser(friend1);
+        
+        activityManager = new SimpleActivityManager(activityRepository);
+        
+        final Activity addFriend1Activity = new Activity(friend1, Verbs.CREATE, friend1, user, "");
+        
         final Activity friendActivity1 = new Activity(user, Verbs.MAKE_FRIEND, friend1, null, "");
         
         final List<Activity> activities = Lists.newArrayList();
         
+        activities.add(addFriend1Activity);
         activities.add(friendActivity1);
         
         for (final Activity activity : activities) {
