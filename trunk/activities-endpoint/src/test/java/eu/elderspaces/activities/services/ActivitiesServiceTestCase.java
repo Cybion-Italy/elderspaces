@@ -71,8 +71,8 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
         final Map<String, String> requestHeaderMap = Maps.newHashMap();
         requestHeaderMap.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
         requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        final Entity activityObject = new Post(POST_BODY, POST_TITLE);
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
+        final Entity activityObject = new Post(POST_BODY, POST_TITLE, actor);
         final Activity call = new Activity(VERB, activityObject, null, actor, PUBLISHED);
         final String callString = mapper.writeValueAsString(call);
         final String requestEntity = callString;

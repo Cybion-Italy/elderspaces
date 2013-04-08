@@ -66,7 +66,7 @@ public abstract class AbstractActivityRepositoryTestCase {
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
         event = new Event(EVENT_ID, EVENT_NAME, EVENT_SHORT_DESCRIPTION);
         club = new Club(CLUB_ID, CLUB_NAME, CLUB_DESCRIPTION, CLUB_SHORT_DESCRIPTION, CLUB_CATEGORY);
-        post = new Post(POST_BODY, POST_TITLE);
+        post = new Post(POST_BODY, POST_TITLE, user);
     }
     
     protected abstract void specificImplementationClassInitialize();
@@ -84,7 +84,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     @Test
     public void store() throws ActivityRepositoryException {
     
-        final Entity activityObject = new Post(POST_BODY, POST_TITLE);
+        final Entity activityObject = new Post(POST_BODY, POST_TITLE, user);
         final Activity call = new Activity(VERB, activityObject, null, user, PUBLISHED);
         
         final boolean stored = activityRepository.store(call, USER_ID);

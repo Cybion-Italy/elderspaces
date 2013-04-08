@@ -1,9 +1,12 @@
 package eu.elderspaces.model.profile;
 
 import java.util.List;
+import java.util.Map;
 
+import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Objects;
 
+import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Post;
 
@@ -11,6 +14,7 @@ public class UserHistory {
     
     private Person user;
     private List<Post> posts;
+    private final Map<Event, String> eventResponses = Maps.newHashMap();
     
     public UserHistory() {
     
@@ -42,6 +46,11 @@ public class UserHistory {
         this.posts = posts;
     }
     
+    public Map<Event, String> getEventResponses() {
+    
+        return eventResponses;
+    }
+    
     @Override
     public boolean equals(final Object o) {
     
@@ -51,20 +60,22 @@ public class UserHistory {
         
         final UserHistory that = (UserHistory) o;
         
-        return Objects.equal(user, that.user) && Objects.equal(posts, that.posts);
+        return Objects.equal(user, that.user) && Objects.equal(posts, that.posts)
+                && Objects.equal(eventResponses, that.eventResponses);
         
     }
     
     @Override
     public int hashCode() {
     
-        return Objects.hashCode(user, posts);
+        return Objects.hashCode(user, posts, eventResponses);
     }
     
     @Override
     public String toString() {
     
-        return Objects.toStringHelper(this).addValue(user).addValue(posts).toString();
+        return Objects.toStringHelper(this).addValue(user).addValue(posts).addValue(eventResponses)
+                .toString();
     }
     
 }

@@ -6,15 +6,17 @@ public class Post extends Entity {
     
     private String body;
     private String title;
+    private Entity target;
     
     public Post() {
     
     }
     
-    public Post(final String body, final String title) {
+    public Post(final String body, final String title, final Entity target) {
     
         this.body = body;
         this.title = title;
+        this.setTarget(target);
     }
     
     public String getBody() {
@@ -37,6 +39,16 @@ public class Post extends Entity {
         this.title = title;
     }
     
+    public Entity getTarget() {
+    
+        return target;
+    }
+    
+    public void setTarget(final Entity target) {
+    
+        this.target = target;
+    }
+    
     @Override
     public boolean equals(final Object o) {
     
@@ -46,20 +58,22 @@ public class Post extends Entity {
         
         final Post that = (Post) o;
         
-        return Objects.equal(body, that.body) && Objects.equal(title, that.title);
+        return Objects.equal(body, that.body) && Objects.equal(title, that.title)
+                && Objects.equal(target, that.target);
         
     }
     
     @Override
     public int hashCode() {
     
-        return Objects.hashCode(body, title);
+        return Objects.hashCode(body, title, target);
     }
     
     @Override
     public String toString() {
     
-        return Objects.toStringHelper(this).addValue(body).addValue(title).toString();
+        return Objects.toStringHelper(this).addValue(body).addValue(title).addValue(target)
+                .toString();
     }
     
 }
