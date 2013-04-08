@@ -3,9 +3,9 @@ package eu.elderspaces.model.profile;
 import java.util.List;
 import java.util.Map;
 
-import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Objects;
 
+import com.google.common.collect.Maps;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Post;
