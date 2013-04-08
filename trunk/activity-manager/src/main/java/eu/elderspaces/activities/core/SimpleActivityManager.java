@@ -181,7 +181,15 @@ public class SimpleActivityManager implements ActivityManager {
             throw new InvalidUserActivity(e);
         }
         
-        final boolean activityStored = storeActivity(activity);
+        return storeActivity(activity);
+    }
+    
+    @Override
+    public boolean storeActivity(final Activity activity) throws InvalidUserActivity,
+            ActivityRepositoryException {
+    
+        final String userId = activity.getActor().getId();
+        final boolean activityStored = activityRepository.store(activity, userId);
         
         final Person user = activity.getActor();
         final String verb = activity.getVerb();
@@ -215,14 +223,6 @@ public class SimpleActivityManager implements ActivityManager {
         }
         
         return profileUpdated && activityStored;
-    }
-    
-    @Override
-    public boolean storeActivity(final Activity activity) throws InvalidUserActivity,
-            ActivityRepositoryException {
-    
-        final String userId = activity.getActor().getId();
-        return activityRepository.store(activity, userId);
     }
     
     @Override

@@ -41,11 +41,14 @@ public class SimpleRecommender implements Recommender {
         final Set<Person> userFriends = activitymanager.getFriends(userId);
         final Map<Person, Integer> indirectFriendConnectionMap = Maps.newHashMap();
         for (final Person userFriend : userFriends) {
-            Integer connectionStrength = indirectFriendConnectionMap.get(userFriend);
-            if (connectionStrength != null) {
-                indirectFriendConnectionMap.put(userFriend, ++connectionStrength);
-            } else {
-                indirectFriendConnectionMap.put(userFriend, 1);
+            final Set<Person> friendsOfFriend = activitymanager.getFriends(userFriend.getId());
+            for (final Person friendOfFriend : friendsOfFriend) {
+                Integer connectionStrength = indirectFriendConnectionMap.get(friendOfFriend);
+                if (connectionStrength != null) {
+                    indirectFriendConnectionMap.put(friendOfFriend, ++connectionStrength);
+                } else {
+                    indirectFriendConnectionMap.put(friendOfFriend, 1);
+                }
             }
         }
         

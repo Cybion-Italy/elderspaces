@@ -26,8 +26,13 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     private static final String FRIEND1_DISPLAY_NAME = "Friend 1 Display Name";
     private static final String FRIEND1_THUMBNAIL_URL = "Friend 1 Thumbnail Url";
     
+    private static final String FRIEND11_ID = "Friend 11 id";
+    private static final String FRIEND11_DISPLAY_NAME = "Friend 11 Display Name";
+    private static final String FRIEND11_THUMBNAIL_URL = "Friend 11 Thumbnail Url";
+    
     private Person user;
     private Person friend1;
+    private Person friend11;
     
     @Override
     protected void specificImplementationClassInitialize() throws InvalidUserActivity,
@@ -36,20 +41,23 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         final ActivityRepository activityRepository = new InMemoryActivityRepository();
         user = new Person(USER_ID, USER_DISPLAY_NAME, USER_THUMBNAIL_URL);
         friend1 = new Person(FRIEND1_ID, FRIEND1_DISPLAY_NAME, FRIEND1_THUMBNAIL_URL);
+        friend11 = new Person(FRIEND11_ID, FRIEND11_DISPLAY_NAME, FRIEND11_THUMBNAIL_URL);
         
         activityRepository.addUser(user);
         activityRepository.addUser(friend1);
+        activityRepository.addUser(friend11);
         
         activityManager = new SimpleActivityManager(activityRepository);
         
-        final Activity addFriend1Activity = new Activity(friend1, Verbs.CREATE, friend1, user, "");
-        
         final Activity friendActivity1 = new Activity(user, Verbs.MAKE_FRIEND, friend1, null, "");
+        
+        final Activity friendActivity11 = new Activity(friend1, Verbs.MAKE_FRIEND, friend11, null,
+                "");
         
         final List<Activity> activities = Lists.newArrayList();
         
-        activities.add(addFriend1Activity);
         activities.add(friendActivity1);
+        activities.add(friendActivity11);
         
         for (final Activity activity : activities) {
             activityManager.storeActivity(activity);
