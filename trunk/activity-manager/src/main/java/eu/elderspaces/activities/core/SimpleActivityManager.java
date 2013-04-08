@@ -114,43 +114,35 @@ public class SimpleActivityManager implements ActivityManager {
             
             if (target == null) {
                 
-                postObjectHandled = activityRepository.addPost(user, postObject);
+                postObject.setTarget(user);
                 
-            } else if (target.getClass() == Event.class) {
+            } else if (target.getClass() == Event.class || target.getClass() == Club.class) {
                 
-                final Event targetEvent = (Event) target;
-                postObjectHandled = activityRepository.addPost(user, postObject, targetEvent);
-                
-            } else if (target.getClass() == Club.class) {
-                
-                final Club targetClub = (Club) target;
-                postObjectHandled = activityRepository.addPost(user, postObject, targetClub);
+                postObject.setTarget(target);
                 
             } else {
                 
                 throw new InvalidUserActivity("Invalid Target type");
             }
+            
+            postObjectHandled = activityRepository.addPost(user, postObject);
             
         } else if (verb.equals(Verbs.DELETE)) {
             
             if (target == null) {
                 
-                postObjectHandled = activityRepository.deletePost(user, postObject);
+                postObject.setTarget(user);
                 
-            } else if (target.getClass() == Event.class) {
+            } else if (target.getClass() == Event.class || target.getClass() == Club.class) {
                 
-                final Event targetEvent = (Event) target;
-                postObjectHandled = activityRepository.deletePost(user, postObject, targetEvent);
-                
-            } else if (target.getClass() == Club.class) {
-                
-                final Club targetClub = (Club) target;
-                postObjectHandled = activityRepository.deletePost(user, postObject, targetClub);
+                postObject.setTarget(target);
                 
             } else {
                 
                 throw new InvalidUserActivity("Invalid Target type");
             }
+            
+            postObjectHandled = activityRepository.deletePost(user, postObject);
             
         } else {
             throw new InvalidUserActivity("Invalid verb");

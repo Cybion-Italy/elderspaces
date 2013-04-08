@@ -113,35 +113,7 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean addPost(final Person user, final Post postObject, final Event target) {
-    
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
-    public boolean addPost(final Person user, final Post postObject, final Club target) {
-    
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
     public boolean deletePost(final Person user, final Post postObject) {
-    
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
-    public boolean deletePost(final Person user, final Post postObject, final Event targetEvent) {
-    
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
-    public boolean deletePost(final Person user, final Post postObject, final Club targetClub) {
     
         // TODO Auto-generated method stub
         return false;

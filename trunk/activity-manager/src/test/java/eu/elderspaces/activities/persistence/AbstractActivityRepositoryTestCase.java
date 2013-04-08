@@ -14,6 +14,7 @@ import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Post;
+import eu.elderspaces.model.Verbs;
 
 public abstract class AbstractActivityRepositoryTestCase {
     
@@ -39,6 +40,8 @@ public abstract class AbstractActivityRepositoryTestCase {
     private static final String CLUB_DESCRIPTION = "Club description";
     private static final String CLUB_SHORT_DESCRIPTION = "Club short description";
     private static final String CLUB_CATEGORY = "Club category";
+    
+    private static final String RSVP_RESPONSE = Verbs.MAYBE_RSVP_RESPONSE_TO_EVENT;
     
     private Person user;
     private Person friend;
@@ -186,7 +189,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     }
     
     @Test
-    public void createCLub() {
+    public void createClub() {
     
         LOGGER.info("Creating club");
         final boolean added = activityRepository.createClub(user, club);
@@ -237,6 +240,16 @@ public abstract class AbstractActivityRepositoryTestCase {
         LOGGER.info("Leaving existing club");
         left = activityRepository.leaveClub(user, club);
         Assert.assertTrue(left);
+    }
+    
+    @Test
+    public void createRSVPResponseToEvent() {
+    
+        LOGGER.info("Creating RSVP response to an event");
+        activityRepository.createEvent(user, event);
+        final boolean created = activityRepository.createRSVPResponseToEvent(user, RSVP_RESPONSE,
+                event);
+        Assert.assertTrue(created);
     }
     
 }

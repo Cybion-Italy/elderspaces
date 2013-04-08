@@ -25,15 +25,7 @@ public interface ActivityRepository {
     
     public boolean addPost(Person user, Post postObject);
     
-    public boolean addPost(Person user, Post postObject, Event target);
-    
-    public boolean addPost(Person user, Post postObject, Club target);
-    
     public boolean deletePost(Person user, Post postObject);
-    
-    public boolean deletePost(Person user, Post postObject, Event targetEvent);
-    
-    public boolean deletePost(Person user, Post postObject, Club targetClub);
     
     public boolean createEvent(Person user, Event eventObject);
     

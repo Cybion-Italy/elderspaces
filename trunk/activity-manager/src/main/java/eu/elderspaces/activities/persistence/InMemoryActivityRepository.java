@@ -131,20 +131,6 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean addPost(final Person user, final Post postObject, final Event target) {
-    
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
-    public boolean addPost(final Person user, final Post postObject, final Club target) {
-    
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
     public boolean deletePost(final Person user, final Post postObject) {
     
         final String userId = user.getId();
@@ -153,20 +139,6 @@ public class InMemoryActivityRepository implements ActivityRepository {
         userHistories.put(userId, userHistory);
         
         return deleted;
-    }
-    
-    @Override
-    public boolean deletePost(final Person user, final Post postObject, final Event targetEvent) {
-    
-        // TODO Auto-generated method stub
-        return false;
-    }
-    
-    @Override
-    public boolean deletePost(final Person user, final Post postObject, final Club targetClub) {
-    
-        // TODO Auto-generated method stub
-        return false;
     }
     
     @Override
@@ -223,8 +195,11 @@ public class InMemoryActivityRepository implements ActivityRepository {
     public boolean createRSVPResponseToEvent(final Person user, final String verb,
             final Event eventObject) {
     
-        // TODO Auto-generated method stub
-        return false;
+        final String userId = user.getId();
+        final UserHistory userHistory = getUserHistory(userId, user);
+        userHistory.getEventResponses().put(eventObject, verb);
+        
+        return true;
     }
     
     @Override
