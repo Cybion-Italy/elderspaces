@@ -30,6 +30,10 @@
 			<artifactId>recommender</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>activities-endpoint</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>it.cybion.commons</groupId>
 			<artifactId>test-utils</artifactId>
 		</dependency>

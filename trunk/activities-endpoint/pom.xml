@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>activities-endpoint</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>Elderspaces - Activity Endpoint</name>
 
@@ -38,14 +38,6 @@
 			<groupId>it.cybion.commons</groupId>
 			<artifactId>test-utils</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>eu.elderspaces</groupId>

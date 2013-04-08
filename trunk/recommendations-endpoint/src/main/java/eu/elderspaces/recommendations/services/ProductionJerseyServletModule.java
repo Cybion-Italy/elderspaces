@@ -15,6 +15,7 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
+import eu.elderspaces.activities.ActivitiesEndpoint;
 import eu.elderspaces.activities.core.ActivityManager;
 import eu.elderspaces.activities.core.SimpleActivityManager;
 import eu.elderspaces.activities.persistence.ActivityRepository;
@@ -42,6 +43,9 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         bind(Recommender.class).to(SimpleRecommender.class);
         bind(ActivityManager.class).to(SimpleActivityManager.class);
         bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
+        
+        // Temporarily:
+        bind(ActivitiesEndpoint.class);
         
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
