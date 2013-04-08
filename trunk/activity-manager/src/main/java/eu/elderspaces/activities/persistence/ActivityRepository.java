@@ -53,4 +53,8 @@ public interface ActivityRepository {
     
     public Set<Person> getFriends(String userId);
     
+    public Set<Event> getEvents(String userId);
+    
+    public Set<Club> getClubs(String userId);
+    
 }

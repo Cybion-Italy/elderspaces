@@ -13,6 +13,7 @@ import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Verbs;
 
@@ -21,6 +22,10 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     
     private static final String USER_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
     private static final String USER_DISPLAY_NAME = "Mr. Ederly Hans";
+    
+    private static final String USER2_ID = "User 2 Id";
+    private static final String USER2_THUMBNAIL_URL = "User 2 Thumbnail Url";
+    private static final String USER2_DISPLAY_NAME = "User 2 Display Name";
     
     private static final String FRIEND1_ID = "Friend 1 id";
     private static final String FRIEND1_DISPLAY_NAME = "Friend 1 Display Name";
@@ -38,11 +43,22 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     private static final String FRIEND21_DISPLAY_NAME = "Friend 21 Display Name";
     private static final String FRIEND21_THUMBNAIL_URL = "Friend 21 Thumbnail Url";
     
+    private static final String EVENT1_ID = "Event 1 id";
+    private static final String EVENT1_NAME = "Event 1 name";
+    private static final String EVENT1_SHORT_DESCRIPTION = "Event 1 short description";
+    
+    private static final String EVENT2_ID = "Event 2 id";
+    private static final String EVENT2_NAME = "Event 2 name";
+    private static final String EVENT2_SHORT_DESCRIPTION = "Event 2 short description";
+    
     private Person user;
+    private Person user2;
     private Person friend1;
     private Person friend11;
     private Person friend2;
     private Person friend21;
+    private Event event1;
+    private Event event2;
     
     @Override
     protected void specificImplementationClassInitialize() throws InvalidUserActivity,
@@ -50,10 +66,13 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     
         final ActivityRepository activityRepository = new InMemoryActivityRepository();
         user = new Person(USER_ID, USER_DISPLAY_NAME, USER_THUMBNAIL_URL);
+        user2 = new Person(USER2_ID, USER2_DISPLAY_NAME, USER2_THUMBNAIL_URL);
         friend1 = new Person(FRIEND1_ID, FRIEND1_DISPLAY_NAME, FRIEND1_THUMBNAIL_URL);
         friend11 = new Person(FRIEND11_ID, FRIEND11_DISPLAY_NAME, FRIEND11_THUMBNAIL_URL);
         friend2 = new Person(FRIEND2_ID, FRIEND2_DISPLAY_NAME, FRIEND2_THUMBNAIL_URL);
         friend21 = new Person(FRIEND21_ID, FRIEND21_DISPLAY_NAME, FRIEND21_THUMBNAIL_URL);
+        event1 = new Event(EVENT1_ID, EVENT1_NAME, EVENT1_SHORT_DESCRIPTION);
+        event2 = new Event(EVENT2_ID, EVENT2_NAME, EVENT2_SHORT_DESCRIPTION);
         
         activityRepository.addUser(user);
         activityRepository.addUser(friend1);
@@ -75,6 +94,17 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         final Activity friendActivity211 = new Activity(friend2, Verbs.MAKE_FRIEND, friend11, null,
                 "");
         
+        final Activity createEvent1Activity = new Activity(user2, Verbs.CREATE, event1, null, null);
+        final Activity partecipateEvent1Activity = new Activity(friend1,
+                Verbs.YES_RSVP_RESPONSE_TO_EVENT, event1, null, null);
+        
+        final Activity createEvent2Activity = new Activity(user2, Verbs.CREATE, event2, null, null);
+        final Activity partecipateEvent2Activity = new Activity(friend2,
+                Verbs.YES_RSVP_RESPONSE_TO_EVENT, event1, null, null);
+        
+        final Activity partecipateEvent2Activity2 = new Activity(friend2,
+                Verbs.YES_RSVP_RESPONSE_TO_EVENT, event2, null, null);
+        
         final List<Activity> activities = Lists.newArrayList();
         
         activities.add(friendActivity1);
@@ -82,6 +112,11 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         activities.add(friendActivity2);
         activities.add(friendActivity21);
         activities.add(friendActivity211);
+        activities.add(createEvent1Activity);
+        activities.add(partecipateEvent1Activity);
+        activities.add(createEvent2Activity);
+        activities.add(partecipateEvent2Activity);
+        activities.add(partecipateEvent2Activity2);
         
         for (final Activity activity : activities) {
             activityManager.storeActivity(activity);

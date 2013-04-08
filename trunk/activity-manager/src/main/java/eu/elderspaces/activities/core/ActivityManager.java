@@ -19,8 +19,8 @@ public interface ActivityManager {
     
     Set<Person> getFriends(String userId) throws NonExistentUser;
     
-    Set<? extends Entity> getEvents(String userId);
+    Set<? extends Entity> getEvents(String userId) throws NonExistentUser;
     
-    Set<? extends Entity> getClubs(String userId);
+    Set<? extends Entity> getClubs(String userId) throws NonExistentUser;
     
 }

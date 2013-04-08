@@ -236,16 +236,22 @@ public class SimpleActivityManager implements ActivityManager {
     }
     
     @Override
-    public Set<? extends Entity> getEvents(final String userId) {
+    public Set<Event> getEvents(final String userId) throws NonExistentUser {
     
-        // TODO Auto-generated method stub
-        return null;
+        if (activityRepository.userExists(userId)) {
+            return activityRepository.getEvents(userId);
+        } else {
+            throw new NonExistentUser("User " + userId + " doesn't exist");
+        }
     }
     
     @Override
-    public Set<? extends Entity> getClubs(final String userId) {
+    public Set<Club> getClubs(final String userId) throws NonExistentUser {
     
-        // TODO Auto-generated method stub
-        return null;
+        if (activityRepository.userExists(userId)) {
+            return activityRepository.getClubs(userId);
+        } else {
+            throw new NonExistentUser("User " + userId + " doesn't exist");
+        }
     }
 }

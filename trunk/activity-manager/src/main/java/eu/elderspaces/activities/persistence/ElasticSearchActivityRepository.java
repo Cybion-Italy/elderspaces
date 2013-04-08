@@ -199,4 +199,18 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
         return null;
     }
     
+    @Override
+    public Set<Event> getEvents(final String userId) {
+    
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    @Override
+    public Set<Club> getClubs(final String userId) {
+    
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
 }

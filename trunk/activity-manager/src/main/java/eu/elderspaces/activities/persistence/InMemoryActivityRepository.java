@@ -19,6 +19,7 @@ import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Post;
+import eu.elderspaces.model.Verbs;
 import eu.elderspaces.model.profile.UserHistory;
 import eu.elderspaces.model.profile.UserProfile;
 
@@ -144,12 +145,18 @@ public class InMemoryActivityRepository implements ActivityRepository {
     @Override
     public boolean createEvent(final Person user, final Event eventObject) {
     
+        return addEvent(user, eventObject);
+        
+    }
+    
+    private boolean addEvent(final Person user, final Event eventObject) {
+    
         final String userId = user.getId();
         final UserProfile userProfile = getUserProfile(userId, user, true);
-        final boolean created = userProfile.getEvents().add(eventObject);
+        final boolean added = userProfile.getEvents().add(eventObject);
         profiles.put(userId, userProfile);
         
-        return created;
+        return added;
     }
     
     @Override
@@ -199,7 +206,11 @@ public class InMemoryActivityRepository implements ActivityRepository {
         final UserHistory userHistory = getUserHistory(userId, user);
         userHistory.getEventResponses().put(eventObject, verb);
         
-        return true;
+        if (verb.equals(Verbs.YES_RSVP_RESPONSE_TO_EVENT)) {
+            return addEvent(user, eventObject);
+        } else {
+            return true;
+        }
     }
     
     @Override
@@ -319,6 +330,26 @@ public class InMemoryActivityRepository implements ActivityRepository {
             return null;
         } else {
             return profiles.get(userId).getFriends();
+        }
+    }
+    
+    @Override
+    public Set<Event> getEvents(final String userId) {
+    
+        if (!userExists(userId)) {
+            return null;
+        } else {
+            return profiles.get(userId).getEvents();
+        }
+    }
+    
+    @Override
+    public Set<Club> getClubs(final String userId) {
+    
+        if (!userExists(userId)) {
+            return null;
+        } else {
+            return profiles.get(userId).getClubs();
         }
     }
     
