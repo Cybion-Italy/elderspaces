@@ -2,7 +2,6 @@ package eu.elderspaces.activities.services;
 
 import it.cybion.commons.web.services.base.JsonService;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -37,7 +36,6 @@ public class ActivitiesService extends JsonService {
     }
     
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Path(ActivitiesEndpoint.STORE)
     public Response storeActivity(final String activityContent) {
     

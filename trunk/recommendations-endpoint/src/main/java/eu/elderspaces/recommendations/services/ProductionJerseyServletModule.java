@@ -15,11 +15,11 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
-import eu.elderspaces.activities.ActivitiesEndpoint;
 import eu.elderspaces.activities.core.ActivityManager;
 import eu.elderspaces.activities.core.SimpleActivityManager;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
+import eu.elderspaces.activities.services.ActivitiesService;
 import eu.elderspaces.activities.services.StatusService;
 import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.core.SimpleRecommender;
@@ -46,7 +46,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
         
         // Temporarily:
-        bind(ActivitiesEndpoint.class);
+        bind(ActivitiesService.class);
         bind(StatusService.class);
         
         // add bindings for Jackson
