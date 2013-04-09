@@ -44,7 +44,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>elderspaces-recommendations-endpoint</finalName>
+		<finalName>elderspaces-services</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
