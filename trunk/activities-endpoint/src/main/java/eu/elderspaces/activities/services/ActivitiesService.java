@@ -55,9 +55,9 @@ public class ActivitiesService extends JsonService {
         }
         
         if (stored) {
-            return success("Activity: '" + activityContent + "' stored");
+            return success("Activity stored");
         } else {
-            return error("Activity: '" + activityContent + "' not stored");
+            return error("Error while storing activity");
         }
     }
 }
