@@ -45,8 +45,8 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
     @Test
     public void givenOneEmptyActivityShouldGetNOKStatus() throws CybionHttpException {
     
-        final String url = super.base_uri + ActivitiesEndpoint.ACTIVITIES
-                + ActivitiesEndpoint.STORE;
+        final String url = super.base_uri + ActivitiesEndpoint.REST_RADIX
+                + ActivitiesEndpoint.ACTIVITIES + ActivitiesEndpoint.STORE;
         
         final Map<String, String> requestHeaderMap = Maps.newHashMap();
         requestHeaderMap.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
@@ -65,8 +65,8 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
     public void givenOneActivityShouldGetOKStatus() throws CybionHttpException,
             JsonGenerationException, JsonMappingException, IOException {
     
-        final String url = super.base_uri + ActivitiesEndpoint.ACTIVITIES
-                + ActivitiesEndpoint.STORE;
+        final String url = super.base_uri + ActivitiesEndpoint.REST_RADIX
+                + ActivitiesEndpoint.ACTIVITIES + ActivitiesEndpoint.STORE;
         
         final Map<String, String> requestHeaderMap = Maps.newHashMap();
         requestHeaderMap.put(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);

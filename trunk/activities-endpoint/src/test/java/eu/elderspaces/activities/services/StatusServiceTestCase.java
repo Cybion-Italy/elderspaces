@@ -27,8 +27,9 @@ public class StatusServiceTestCase extends BaseServiceTestCase {
     
     @Test
     public void servicesShouldBeUpAndRunning() throws CybionHttpException {
-        
-        final String url = super.base_uri + ActivitiesEndpoint.STATUS + ActivitiesEndpoint.NOW;
+    
+        final String url = super.base_uri + ActivitiesEndpoint.REST_RADIX
+                + ActivitiesEndpoint.STATUS + ActivitiesEndpoint.NOW;
         
         ExternalStringResponse stringResponse = null;
         
@@ -37,7 +38,7 @@ public class StatusServiceTestCase extends BaseServiceTestCase {
         stringResponse = CybionHttpClient.performGet(url, requestHeaderMap);
         
         LOGGER.debug("response body: " + stringResponse.getObject());
-        assertTrue(ResponseStatus.OK == stringResponse.getStatus(),
-                "Unexpected result: " + stringResponse.getMessage());
+        assertTrue(ResponseStatus.OK == stringResponse.getStatus(), "Unexpected result: "
+                + stringResponse.getMessage());
     }
 }
