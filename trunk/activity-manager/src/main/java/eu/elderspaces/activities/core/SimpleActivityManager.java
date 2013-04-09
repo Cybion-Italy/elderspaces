@@ -70,11 +70,11 @@ public class SimpleActivityManager implements ActivityManager {
             
             if (target == null) {
                 
-                postObject.setTarget(user);
+                postObject.setPostedOn(user);
                 
             } else if (target.getClass() == Event.class || target.getClass() == Club.class) {
                 
-                postObject.setTarget(target);
+                postObject.setPostedOn(target);
                 
             } else {
                 
@@ -87,11 +87,11 @@ public class SimpleActivityManager implements ActivityManager {
             
             if (target == null) {
                 
-                postObject.setTarget(user);
+                postObject.setPostedOn(user);
                 
             } else if (target.getClass() == Event.class || target.getClass() == Club.class) {
                 
-                postObject.setTarget(target);
+                postObject.setPostedOn(target);
                 
             } else {
                 

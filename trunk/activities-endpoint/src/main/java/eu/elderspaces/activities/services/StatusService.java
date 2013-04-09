@@ -19,11 +19,12 @@ import com.google.inject.Inject;
 import eu.elderspaces.activities.ActivitiesEndpoint;
 
 /**
- * This service is used to check that every dependency is satisfied and up and running
- *
+ * This service is used to check that every dependency is satisfied and up and
+ * running
+ * 
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
-@Path(ActivitiesEndpoint.STATUS)
+@Path(ActivitiesEndpoint.REST_RADIX + ActivitiesEndpoint.STATUS)
 @Produces(MediaType.APPLICATION_JSON)
 public class StatusService extends JsonService {
     
@@ -31,18 +32,19 @@ public class StatusService extends JsonService {
     
     @Inject
     public StatusService() {
+    
     }
     
     @GET
     @Path(ActivitiesEndpoint.NOW)
     public Response getStatus() {
+    
         final DateTime now = new DateTime();
         LOGGER.info("checking services status at " + now.toString());
         
         final Response.ResponseBuilder rb = Response.ok();
-        rb.entity(new StringResponse(ResponseStatus.OK,
-                "services up and running as of '" + now.toString()
-                + "'"));
+        rb.entity(new StringResponse(ResponseStatus.OK, "services up and running as of '"
+                + now.toString() + "'"));
         return rb.build();
     }
 }

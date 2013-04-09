@@ -22,7 +22,7 @@ import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
-@Path(ActivitiesEndpoint.ACTIVITY)
+@Path(ActivitiesEndpoint.REST_RADIX + ActivitiesEndpoint.ACTIVITIES)
 @Produces(MediaType.APPLICATION_JSON)
 public class ActivitiesService extends JsonService {
     
@@ -38,7 +38,7 @@ public class ActivitiesService extends JsonService {
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path(ActivitiesEndpoint.STORE_ACTIVITY)
+    @Path(ActivitiesEndpoint.STORE)
     public Response storeActivity(final String activityContent) {
     
         LOGGER.debug("Store activity service called");

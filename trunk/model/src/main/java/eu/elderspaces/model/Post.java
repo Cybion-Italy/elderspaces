@@ -6,17 +6,17 @@ public class Post extends Entity {
     
     private String body;
     private String title;
-    private Entity target;
+    private Entity postedOn;
     
     public Post() {
     
     }
     
-    public Post(final String body, final String title, final Entity target) {
+    public Post(final String body, final String title, final Entity postedOn) {
     
         this.body = body;
         this.title = title;
-        this.setTarget(target);
+        this.postedOn = postedOn;
     }
     
     public String getBody() {
@@ -39,14 +39,14 @@ public class Post extends Entity {
         this.title = title;
     }
     
-    public Entity getTarget() {
+    public Entity getPostedOn() {
     
-        return target;
+        return postedOn;
     }
     
-    public void setTarget(final Entity target) {
+    public void setPostedOn(final Entity postedOn) {
     
-        this.target = target;
+        this.postedOn = postedOn;
     }
     
     @Override
@@ -59,20 +59,20 @@ public class Post extends Entity {
         final Post that = (Post) o;
         
         return Objects.equal(body, that.body) && Objects.equal(title, that.title)
-                && Objects.equal(target, that.target);
+                && Objects.equal(postedOn, that.postedOn);
         
     }
     
     @Override
     public int hashCode() {
     
-        return Objects.hashCode(body, title, target);
+        return Objects.hashCode(body, title, postedOn);
     }
     
     @Override
     public String toString() {
     
-        return Objects.toStringHelper(this).addValue(body).addValue(title).addValue(target)
+        return Objects.toStringHelper(this).addValue(body).addValue(title).addValue(postedOn)
                 .toString();
     }
     

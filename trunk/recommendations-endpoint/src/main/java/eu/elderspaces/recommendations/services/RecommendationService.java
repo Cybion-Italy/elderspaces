@@ -3,7 +3,6 @@ package eu.elderspaces.recommendations.services;
 import it.cybion.commons.web.responses.ResponseStatus;
 import it.cybion.commons.web.services.base.JsonService;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -31,7 +30,6 @@ import eu.elderspaces.recommendations.responses.EntityRecommendationResponse;
  */
 
 @Path(RecommendationsEndpoint.REST_RADIX + RecommendationsEndpoint.RECOMMENDATIONS)
-@Consumes(MediaType.TEXT_PLAIN)
 @Produces(MediaType.APPLICATION_JSON)
 public class RecommendationService extends JsonService {
     

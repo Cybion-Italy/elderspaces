@@ -11,7 +11,7 @@
 	</parent>
 
 	<artifactId>recommendations-endpoint</artifactId>
-	<name>Elderspaces - Recommendation Endpoint</name>
+	<name>Elderspaces - REST Services</name>
 	<packaging>war</packaging>
 
 	<url>http://www.cybion.it</url>
