@@ -20,6 +20,7 @@ import eu.elderspaces.activities.core.ActivityManager;
 import eu.elderspaces.activities.core.SimpleActivityManager;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
+import eu.elderspaces.activities.services.StatusService;
 import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.core.SimpleRecommender;
 
@@ -46,6 +47,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         
         // Temporarily:
         bind(ActivitiesEndpoint.class);
+        bind(StatusService.class);
         
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
