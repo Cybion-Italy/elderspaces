@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.model.Event;
@@ -39,7 +38,7 @@ public class RecommendationService extends JsonService {
     private final Recommender recommender;
     
     @Inject
-    public RecommendationService(@Named("RealRecommender") final Recommender recommender) {
+    public RecommendationService(final Recommender recommender) {
     
         this.recommender = recommender;
     }

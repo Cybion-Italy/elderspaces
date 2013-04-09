@@ -10,7 +10,6 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
-import com.google.inject.name.Names;
 import com.sun.jersey.api.core.ClasspathResourceConfig;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
@@ -44,10 +43,8 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         // bind REST services
         bind(RecommendationService.class);
         bind(FakeRecommendationService.class);
-        bind(Recommender.class).annotatedWith(Names.named("FakeRecommender")).to(
-                FakeStaticRecommender.class);
-        bind(Recommender.class).annotatedWith(Names.named("RealRecommender")).to(
-                SimpleRecommender.class);
+        bind(Recommender.class).to(SimpleRecommender.class);
+        bind(FakeStaticRecommender.class);
         bind(ActivityManager.class).to(SimpleActivityManager.class);
         bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
         

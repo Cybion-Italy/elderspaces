@@ -14,12 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
+import eu.elderspaces.recommendations.core.FakeStaticRecommender;
 import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
 import eu.elderspaces.recommendations.responses.EntityRecommendationResponse;
@@ -39,7 +39,7 @@ public class FakeRecommendationService extends JsonService {
     private final Recommender recommender;
     
     @Inject
-    public FakeRecommendationService(@Named("FakeRecommender") final Recommender recommender) {
+    public FakeRecommendationService(final FakeStaticRecommender recommender) {
     
         this.recommender = recommender;
     }
