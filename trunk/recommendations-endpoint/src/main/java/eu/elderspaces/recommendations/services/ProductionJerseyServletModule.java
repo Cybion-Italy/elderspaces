@@ -10,6 +10,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
+import com.google.inject.name.Names;
 import com.sun.jersey.api.core.ClasspathResourceConfig;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
@@ -21,6 +22,7 @@ import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.activities.services.ActivitiesService;
 import eu.elderspaces.activities.services.StatusService;
+import eu.elderspaces.recommendations.core.FakeStaticRecommender;
 import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.core.SimpleRecommender;
 
@@ -41,7 +43,11 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         
         // bind REST services
         bind(RecommendationService.class);
-        bind(Recommender.class).to(SimpleRecommender.class);
+        bind(FakeRecommendationService.class);
+        bind(Recommender.class).annotatedWith(Names.named("FakeRecommender")).to(
+                FakeStaticRecommender.class);
+        bind(Recommender.class).annotatedWith(Names.named("RealRecommender")).to(
+                SimpleRecommender.class);
         bind(ActivityManager.class).to(SimpleActivityManager.class);
         bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
         
@@ -57,5 +63,4 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         serve("/rest/*").with(GuiceContainer.class);
         filter("/rest/*").through(GuiceContainer.class, initParams);
     }
-    
 }

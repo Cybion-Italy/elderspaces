@@ -1,0 +1,95 @@
+@CHARSET "UTF-8";
+
+body{
+background: white;
+/*text-align:center;*/
+font-size: .8em;
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color: #666;
+margin:0;
+}
+
+a img{
+border: 0;
+}
+
+a {
+font-family:Verdana, Arial, Helvetica, sans-serif;
+color: #666;
+text-decoration: none;
+}
+
+a:hover{
+text-decoration: underline;
+}
+
+a:visited{
+color: #666;
+}
+
+input[type="TEXT"] {
+        color: white;
+        font-weight: bold;
+        line-height: 1.2em;
+        background-color: gray;
+        border-style: outset;
+        border-width: 1px;
+        border-color: gray;
+}
+
+textarea {
+    background-color: gray;
+    border-color: gray;
+    border-style: outset;
+    border-width: 1px;
+    color: white;
+    font-weight: bold;
+    line-height: 1.2em;
+}
+
+input[type="SUBMIT"] {
+        color: white;
+        font-weight: bold;
+        line-height: 1.2em;
+        background-color: gray;
+        border-style: outset;
+        border-width: 1px;
+        border-color: gray;
+}
+
+input[type="RESET"] {
+        color: white;
+        font-weight: bold;
+        line-height: 1.2em;
+        background-color: gray;
+        border-style: outset;
+        border-width: 1px;
+        border-color: gray;
+}
+
+input[type="TEXT"]:hover {
+        border-style: inset;
+        border-width: 1px;
+        border-color: black;
+}
+
+div.main {
+}
+
+div.navbar {
+    display: table;
+}
+
+div.table {
+
+    display: table;
+
+}
+
+div.column {
+    display: inline;
+    margin: 5em;
+}
+
+#menu li{ margin:0 20px 20px 0; vertical-align:top}
+ 

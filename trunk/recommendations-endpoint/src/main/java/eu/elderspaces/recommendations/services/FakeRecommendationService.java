@@ -30,16 +30,16 @@ import eu.elderspaces.recommendations.responses.EntityRecommendationResponse;
  * 
  */
 
-@Path(RecommendationsEndpoint.REST_RADIX + RecommendationsEndpoint.RECOMMENDATIONS)
+@Path(RecommendationsEndpoint.REST_RADIX + RecommendationsEndpoint.FAKE_RECOMMENDATIONS)
 @Produces(MediaType.APPLICATION_JSON)
-public class RecommendationService extends JsonService {
+public class FakeRecommendationService extends JsonService {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(RecommendationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FakeRecommendationService.class);
     
     private final Recommender recommender;
     
     @Inject
-    public RecommendationService(@Named("RealRecommender") final Recommender recommender) {
+    public FakeRecommendationService(@Named("FakeRecommender") final Recommender recommender) {
     
         this.recommender = recommender;
     }

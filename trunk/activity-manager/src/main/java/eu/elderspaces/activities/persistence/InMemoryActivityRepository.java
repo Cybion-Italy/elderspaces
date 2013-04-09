@@ -76,7 +76,12 @@ public class InMemoryActivityRepository implements ActivityRepository {
         final boolean friendAdded = userProfile.getFriends().add(personObject);
         profiles.put(userId, userProfile);
         
-        return friendAdded;
+        final String objectUserId = personObject.getId();
+        final UserProfile objectUserProfile = getUserProfile(objectUserId, personObject, false);
+        final boolean friendAddedOtherDirection = objectUserProfile.getFriends().add(user);
+        profiles.put(objectUserId, objectUserProfile);
+        
+        return friendAdded && friendAddedOtherDirection;
     }
     
     @Override
@@ -85,9 +90,14 @@ public class InMemoryActivityRepository implements ActivityRepository {
         final String userId = user.getId();
         final UserProfile userProfile = getUserProfile(userId, user, false);
         final boolean friendRemoved = userProfile.getFriends().remove(personObject);
-        profiles.put(user.getId(), userProfile);
+        profiles.put(userId, userProfile);
         
-        return friendRemoved;
+        final String objectUserId = personObject.getId();
+        final UserProfile objectUserProfile = getUserProfile(objectUserId, personObject, false);
+        final boolean friendRemovedOtherDirection = objectUserProfile.getFriends().remove(user);
+        profiles.put(objectUserId, objectUserProfile);
+        
+        return friendRemoved && friendRemovedOtherDirection;
     }
     
     @Override

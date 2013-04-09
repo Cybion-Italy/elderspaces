@@ -12,12 +12,18 @@
 
 	<name>Elderspaces - Services Playground</name>
 
+	<packaging>war</packaging>
+
 	<url>http://www.cybion.it</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<dependencies>
 
+	<dependencies>
 	</dependencies>
+
+	<build>
+		<finalName>elderspaces-playground</finalName>
+	</build>
 </project>
