@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>eu.elderspaces</groupId>
@@ -16,8 +17,8 @@
 		<module>activity-manager</module>
 		<module>recommender</module>
 		<module>model</module>
-    <module>js-elderspaces</module>
-  </modules>
+		<module>js-elderspaces</module>
+	</modules>
 
 	<properties>
 
@@ -42,6 +43,14 @@
 		<maven-resources-plugin.version>2.4</maven-resources-plugin.version>
 		<maven-surefire-plugin.version>2.4.3</maven-surefire-plugin.version>
 		<maven-war-plugin.version>2.1.1</maven-war-plugin.version>
+
+
+		<!-- Sonar conf -->
+		<sonar.jdbc.url>jdbc:mysql://localhost:3306/sonar</sonar.jdbc.url>
+		<sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
+		<sonar.jdbc.username>sonar</sonar.jdbc.username>
+		<sonar.jdbc.password>sonar</sonar.jdbc.password>
+		<sonar.host.url>http://localhost:9000</sonar.host.url>
 
 	</properties>
 
