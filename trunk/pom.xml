@@ -12,8 +12,7 @@
 	<name>Elderspaces - Parent pom</name>
 
 	<modules>
-		<module>activities-endpoint</module>
-		<module>recommendations-endpoint</module>
+		<module>elderspaces-services</module>
 		<module>activity-manager</module>
 		<module>recommender</module>
 		<module>model</module>

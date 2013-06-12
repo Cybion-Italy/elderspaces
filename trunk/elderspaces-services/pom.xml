@@ -10,25 +10,20 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>activities-endpoint</artifactId>
-	<packaging>jar</packaging>
-
-	<name>Elderspaces - Activity Endpoint</name>
+	<artifactId>elderspaces-services</artifactId>
+	<name>Elderspaces - REST Services</name>
+	<packaging>war</packaging>
 
 	<url>http://www.cybion.it</url>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
 	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>it.cybion.commons</groupId>
 			<artifactId>web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>it.cybion.commons</groupId>
@@ -41,6 +36,18 @@
 		</dependency>
 		<dependency>
 			<groupId>eu.elderspaces</groupId>
+			<artifactId>recommender</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
 			<artifactId>activity-manager</artifactId>
 		</dependency>
 		<dependency>
@@ -50,7 +57,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>elderspaces-services</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -84,43 +91,6 @@
 					<failOnMissingWebXml>true</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<id>make-a-jar</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<packaging>jar</packaging>
-							<artifactId>${project.artifactId}</artifactId>
-							<groupId>${project.groupId}</groupId>
-							<version>${project.version}</version>
-							<file>
-								${project.build.directory}/${project.artifactId}.jar
-							</file>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-
 </project>
