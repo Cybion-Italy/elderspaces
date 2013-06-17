@@ -23,5 +23,10 @@
 			<artifactId>jersey-json</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>it.cybion.commons</groupId>
+			<artifactId>utils</artifactId>
+		</dependency>
 	</dependencies>
+	
 </project>

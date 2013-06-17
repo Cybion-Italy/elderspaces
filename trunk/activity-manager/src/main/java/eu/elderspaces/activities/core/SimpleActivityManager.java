@@ -11,11 +11,11 @@ import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
-import eu.elderspaces.model.Post;
 import eu.elderspaces.model.Verbs;
 
 public class SimpleActivityManager implements ActivityManager {
@@ -61,8 +61,8 @@ public class SimpleActivityManager implements ActivityManager {
         return personObjectHandled;
     }
     
-    private boolean handlePostObject(final Person user, final String verb, final Post postObject,
-            final Entity target) throws InvalidUserActivity {
+    private boolean handlePostObject(final Person user, final String verb,
+            final Activity postObject, final Entity target) throws InvalidUserActivity {
     
         boolean postObjectHandled = false;
         
@@ -70,11 +70,11 @@ public class SimpleActivityManager implements ActivityManager {
             
             if (target == null) {
                 
-                postObject.setPostedOn(user);
+                // postObject.setPostedOn(user);
                 
-            } else if (target.getClass() == Event.class || target.getClass() == Club.class) {
+            } else if ((target.getClass() == Event.class) || (target.getClass() == Club.class)) {
                 
-                postObject.setPostedOn(target);
+                // postObject.setPostedOn(target);
                 
             } else {
                 
@@ -87,11 +87,11 @@ public class SimpleActivityManager implements ActivityManager {
             
             if (target == null) {
                 
-                postObject.setPostedOn(user);
+                // postObject.setPostedOn(user);
                 
-            } else if (target.getClass() == Event.class || target.getClass() == Club.class) {
+            } else if ((target.getClass() == Event.class) || (target.getClass() == Club.class)) {
                 
-                postObject.setPostedOn(target);
+                // postObject.setPostedOn(target);
                 
             } else {
                 
@@ -174,9 +174,9 @@ public class SimpleActivityManager implements ActivityManager {
     public boolean storeActivity(final String activityContent) throws InvalidUserActivity,
             ActivityRepositoryException {
     
-        final Activity activity;
+        final ActivityStream activity;
         try {
-            activity = mapper.readValue(activityContent, Activity.class);
+            activity = mapper.readValue(activityContent, ActivityStream.class);
         } catch (final Exception e) {
             throw new InvalidUserActivity(e);
         }
@@ -185,7 +185,7 @@ public class SimpleActivityManager implements ActivityManager {
     }
     
     @Override
-    public boolean storeActivity(final Activity activity) throws InvalidUserActivity,
+    public boolean storeActivity(final ActivityStream activity) throws InvalidUserActivity,
             ActivityRepositoryException {
     
         final String userId = activity.getActor().getId();
@@ -203,9 +203,9 @@ public class SimpleActivityManager implements ActivityManager {
             final Person personObject = (Person) object;
             profileUpdated = handlePersonObject(user, verb, personObject);
             
-        } else if (object.getClass() == Post.class) {
+        } else if (object.getClass() == Activity.class) {
             
-            final Post postObject = (Post) object;
+            final Activity postObject = (Activity) object;
             profileUpdated = handlePostObject(user, verb, postObject, target);
             
         } else if (object.getClass() == Event.class) {

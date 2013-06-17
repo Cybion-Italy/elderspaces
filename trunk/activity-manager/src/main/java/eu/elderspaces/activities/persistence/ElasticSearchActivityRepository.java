@@ -12,10 +12,10 @@ import org.elasticsearch.node.NodeBuilder;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
-import eu.elderspaces.model.Post;
 
 public class ElasticSearchActivityRepository implements ActivityRepository {
     
@@ -45,7 +45,7 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean store(final Activity activity, final String userId)
+    public boolean store(final ActivityStream activity, final String userId)
             throws ActivityRepositoryException {
     
         String activityJson;
@@ -56,8 +56,8 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
         }
         
         final IndexResponse indexResponse = client
-                .prepareIndex(ACTIVITY_INDEX + userId, ACTIVITY_TYPE, activity.getId())
-                .setSource(activityJson).execute().actionGet();
+                .prepareIndex(ACTIVITY_INDEX + userId, ACTIVITY_TYPE).setSource(activityJson)
+                .execute().actionGet();
         LOGGER.info("tweet stored with index: " + indexResponse.getId());
         
         node.client().admin().indices().prepareRefresh().execute().actionGet();
@@ -108,14 +108,14 @@ public class ElasticSearchActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean addPost(final Person user, final Post postObject) {
+    public boolean addPost(final Person user, final Activity postObject) {
     
         // TODO Auto-generated method stub
         return false;
     }
     
     @Override
-    public boolean deletePost(final Person user, final Post postObject) {
+    public boolean deletePost(final Person user, final Activity postObject) {
     
         // TODO Auto-generated method stub
         return false;

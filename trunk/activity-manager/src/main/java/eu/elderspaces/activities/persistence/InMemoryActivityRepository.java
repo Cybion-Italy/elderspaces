@@ -14,18 +14,18 @@ import com.google.inject.internal.Maps;
 import com.google.inject.internal.Sets;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
-import eu.elderspaces.model.Post;
+import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Verbs;
 import eu.elderspaces.model.profile.UserHistory;
 import eu.elderspaces.model.profile.UserProfile;
 
 public class InMemoryActivityRepository implements ActivityRepository {
     
-    private final Map<String, List<Activity>> activities = Maps.newHashMap();
+    private final Map<String, List<ActivityStream>> activities = Maps.newHashMap();
     private final Map<String, UserHistory> userHistories = Maps.newHashMap();
     private final Map<String, UserProfile> profiles = Maps.newHashMap();
     
@@ -38,9 +38,9 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean store(final Activity activity, final String userId) {
+    public boolean store(final ActivityStream activity, final String userId) {
     
-        List<Activity> userActivities = activities.get(userId);
+        List<ActivityStream> userActivities = activities.get(userId);
         
         if (userActivities == null) {
             
@@ -58,9 +58,9 @@ public class InMemoryActivityRepository implements ActivityRepository {
     public boolean store(final String activityString, final String userId)
             throws ActivityRepositoryException {
     
-        Activity activity = null;
+        ActivityStream activity = null;
         try {
-            activity = mapper.readValue(activityString, Activity.class);
+            activity = mapper.readValue(activityString, ActivityStream.class);
         } catch (final Exception e) {
             throw new ActivityRepositoryException(e);
         }
@@ -131,7 +131,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean addPost(final Person user, final Post postObject) {
+    public boolean addPost(final Person user, final Activity postObject) {
     
         final String userId = user.getId();
         final UserHistory userHistory = getUserHistory(userId, user);
@@ -142,7 +142,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     }
     
     @Override
-    public boolean deletePost(final Person user, final Post postObject) {
+    public boolean deletePost(final Person user, final Activity postObject) {
     
         final String userId = user.getId();
         final UserHistory userHistory = getUserHistory(userId, user);
@@ -315,7 +315,7 @@ public class InMemoryActivityRepository implements ActivityRepository {
     
         UserHistory userHistory = userHistories.get(userId);
         if (userHistory == null) {
-            final List<Post> posts = Lists.newArrayList();
+            final List<Activity> posts = Lists.newArrayList();
             userHistory = new UserHistory(user, posts);
         }
         

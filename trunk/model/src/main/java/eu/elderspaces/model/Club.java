@@ -66,7 +66,7 @@ public class Club extends Entity {
     @Override
     public boolean equals(final Object o) {
     
-        if (o == null || getClass() != o.getClass()) {
+        if ((o == null) || (getClass() != o.getClass())) {
             return false;
         }
         

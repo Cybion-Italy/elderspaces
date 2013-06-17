@@ -1,5 +1,6 @@
 package eu.elderspaces.recommendations.core;
 
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 import eu.elderspaces.activities.persistence.ActivityRepository;
 import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
-import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
@@ -101,38 +102,46 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         
         activityManager = new SimpleActivityManager(activityRepository);
         
-        final Activity friendActivity1 = new Activity(user, Verbs.MAKE_FRIEND, friend1, null, "");
+        final ActivityStream friendActivity1 = new ActivityStream(user, Verbs.MAKE_FRIEND, friend1,
+                null, new Date());
         
-        final Activity friendActivity11 = new Activity(friend1, Verbs.MAKE_FRIEND, friend11, null,
-                "");
+        final ActivityStream friendActivity11 = new ActivityStream(friend1, Verbs.MAKE_FRIEND,
+                friend11, null, new Date());
         
-        final Activity friendActivity2 = new Activity(user, Verbs.MAKE_FRIEND, friend2, null, "");
+        final ActivityStream friendActivity2 = new ActivityStream(user, Verbs.MAKE_FRIEND, friend2,
+                null, new Date());
         
-        final Activity friendActivity21 = new Activity(friend2, Verbs.MAKE_FRIEND, friend21, null,
-                "");
-        final Activity friendActivity211 = new Activity(friend2, Verbs.MAKE_FRIEND, friend11, null,
-                "");
+        final ActivityStream friendActivity21 = new ActivityStream(friend2, Verbs.MAKE_FRIEND,
+                friend21, null, new Date());
+        final ActivityStream friendActivity211 = new ActivityStream(friend2, Verbs.MAKE_FRIEND,
+                friend11, null, new Date());
         
-        final Activity createEvent1Activity = new Activity(user2, Verbs.CREATE, event1, null, null);
-        final Activity partecipateEvent1Activity = new Activity(friend1,
+        final ActivityStream createEvent1Activity = new ActivityStream(user2, Verbs.CREATE, event1,
+                null, null);
+        final ActivityStream partecipateEvent1Activity = new ActivityStream(friend1,
                 Verbs.YES_RSVP_RESPONSE_TO_EVENT, event1, null, null);
         
-        final Activity createEvent2Activity = new Activity(user2, Verbs.CREATE, event2, null, null);
-        final Activity partecipateEvent2Activity = new Activity(friend2,
+        final ActivityStream createEvent2Activity = new ActivityStream(user2, Verbs.CREATE, event2,
+                null, null);
+        final ActivityStream partecipateEvent2Activity = new ActivityStream(friend2,
                 Verbs.YES_RSVP_RESPONSE_TO_EVENT, event1, null, null);
         
-        final Activity partecipateEvent2Activity2 = new Activity(friend2,
+        final ActivityStream partecipateEvent2Activity2 = new ActivityStream(friend2,
                 Verbs.YES_RSVP_RESPONSE_TO_EVENT, event2, null, null);
         
-        final Activity createClub1Activity = new Activity(user2, Verbs.CREATE, club1, null, null);
+        final ActivityStream createClub1Activity = new ActivityStream(user2, Verbs.CREATE, club1,
+                null, null);
         
-        final Activity joinClub1Activity = new Activity(friend1, Verbs.JOIN, club1, null, null);
+        final ActivityStream joinClub1Activity = new ActivityStream(friend1, Verbs.JOIN, club1,
+                null, null);
         
-        final Activity createClub2Activity = new Activity(friend2, Verbs.CREATE, club2, null, null);
+        final ActivityStream createClub2Activity = new ActivityStream(friend2, Verbs.CREATE, club2,
+                null, null);
         
-        final Activity joinClub1Activity2 = new Activity(friend2, Verbs.JOIN, club1, null, null);
+        final ActivityStream joinClub1Activity2 = new ActivityStream(friend2, Verbs.JOIN, club1,
+                null, null);
         
-        final List<Activity> activities = Lists.newArrayList();
+        final List<ActivityStream> activities = Lists.newArrayList();
         
         activities.add(friendActivity1);
         activities.add(friendActivity11);
@@ -149,7 +158,7 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         activities.add(createClub2Activity);
         activities.add(joinClub1Activity2);
         
-        for (final Activity activity : activities) {
+        for (final ActivityStream activity : activities) {
             activityManager.storeActivity(activity);
         }
         

@@ -1,70 +1,32 @@
 package eu.elderspaces.model;
 
-import org.codehaus.jackson.annotate.JsonTypeInfo;
+import java.util.Date;
 
-import com.google.common.base.Objects;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "objectType")
 public class Event extends Entity {
     
+    public static enum InvitationAnswer {
+        YES, NO, MAYBE
+    };
+    
+    private Date startDate; // 2013-06-13 17:15
+    private String category;
     private String shortDescription;
+    private String description;
     private String name;
+    private Date endDate; // 2013-06-13 19:15
     
     public Event() {
     
     }
     
-    public Event(final String id, final String name, final String shortDescription) {
+    public Event(final String id, final String description, final String name) {
     
         super(id);
-        this.shortDescription = shortDescription;
+        this.description = description;
         this.name = name;
-    }
-    
-    public String getShortDescription() {
-    
-        return shortDescription;
-    }
-    
-    public void setShortDescription(final String shortDescription) {
-    
-        this.shortDescription = shortDescription;
-    }
-    
-    public String getName() {
-    
-        return name;
-    }
-    
-    public void setName(final String name) {
-    
-        this.name = name;
-    }
-    
-    @Override
-    public boolean equals(final Object o) {
-    
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        
-        final Event that = (Event) o;
-        
-        return Objects.equal(shortDescription, that.shortDescription)
-                && Objects.equal(name, that.name);
-        
-    }
-    
-    @Override
-    public int hashCode() {
-    
-        return Objects.hashCode(shortDescription, name);
-    }
-    
-    @Override
-    public String toString() {
-    
-        return Objects.toStringHelper(this).addValue(shortDescription).addValue(name).toString();
     }
     
 }

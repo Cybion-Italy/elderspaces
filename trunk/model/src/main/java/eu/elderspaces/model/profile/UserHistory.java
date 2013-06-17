@@ -8,19 +8,19 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
-import eu.elderspaces.model.Post;
+import eu.elderspaces.model.Activity;
 
 public class UserHistory {
     
     private Person user;
-    private List<Post> posts;
+    private List<Activity> posts;
     private final Map<Event, String> eventResponses = Maps.newHashMap();
     
     public UserHistory() {
     
     }
     
-    public UserHistory(final Person user, final List<Post> posts) {
+    public UserHistory(final Person user, final List<Activity> posts) {
     
         this.user = user;
         this.posts = posts;
@@ -36,12 +36,12 @@ public class UserHistory {
         this.user = user;
     }
     
-    public List<Post> getPosts() {
+    public List<Activity> getPosts() {
     
         return posts;
     }
     
-    public void setPosts(final List<Post> posts) {
+    public void setPosts(final List<Activity> posts) {
     
         this.posts = posts;
     }

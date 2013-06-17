@@ -1,31 +1,92 @@
 package eu.elderspaces.model;
 
-import com.google.common.base.Objects;
-
 public class Person extends Entity {
     
-    private String displayName;
+    private int friendsCount;
+    private String[] interests;
+    private String[] movies;
+    private String aboutMe;
+    private String[] languagesSpoken;
+    private String[] tvShows;
     private String thumbnailUrl;
+    
+    private String name;
+    private String pets;
+    private String gender;
+    private String[] activities;
+    private String[] music;
+    private String[] books;
+    private String displayName;
     
     public Person() {
     
     }
     
-    public Person(final String id, final String displayName, final String thumbnailUrl) {
+    public Person(final String id, final String thumbnailUrl, final String displayName) {
     
         super(id);
-        this.displayName = displayName;
         this.thumbnailUrl = thumbnailUrl;
-    }
-    
-    public String getDisplayName() {
-    
-        return displayName;
-    }
-    
-    public void setDisplayName(final String displayName) {
-    
         this.displayName = displayName;
+    }
+    
+    public int getFriendsCount() {
+    
+        return friendsCount;
+    }
+    
+    public void setFriendsCount(final int friendsCount) {
+    
+        this.friendsCount = friendsCount;
+    }
+    
+    public String[] getInterests() {
+    
+        return interests;
+    }
+    
+    public void setInterests(final String[] interests) {
+    
+        this.interests = interests;
+    }
+    
+    public String[] getMovies() {
+    
+        return movies;
+    }
+    
+    public void setMovies(final String[] movies) {
+    
+        this.movies = movies;
+    }
+    
+    public String getAboutMe() {
+    
+        return aboutMe;
+    }
+    
+    public void setAboutMe(final String aboutMe) {
+    
+        this.aboutMe = aboutMe;
+    }
+    
+    public String[] getLanguagesSpoken() {
+    
+        return languagesSpoken;
+    }
+    
+    public void setLanguagesSpoken(final String[] languagesSpoken) {
+    
+        this.languagesSpoken = languagesSpoken;
+    }
+    
+    public String[] getTvShows() {
+    
+        return tvShows;
+    }
+    
+    public void setTvShows(final String[] tvShows) {
+    
+        this.tvShows = tvShows;
     }
     
     public String getThumbnailUrl() {
@@ -38,29 +99,74 @@ public class Person extends Entity {
         this.thumbnailUrl = thumbnailUrl;
     }
     
-    @Override
-    public boolean equals(final Object o) {
+    public String getName() {
     
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        
-        final Person that = (Person) o;
-        
-        return Objects.equal(displayName, that.displayName)
-                && Objects.equal(thumbnailUrl, that.thumbnailUrl);
-        
+        return name;
     }
     
-    @Override
-    public int hashCode() {
+    public void setName(final String name) {
     
-        return Objects.hashCode(displayName, thumbnailUrl);
+        this.name = name;
     }
     
-    @Override
-    public String toString() {
+    public String getPets() {
     
-        return Objects.toStringHelper(this).addValue(displayName).addValue(thumbnailUrl).toString();
+        return pets;
     }
+    
+    public void setPets(final String pets) {
+    
+        this.pets = pets;
+    }
+    
+    public String getGender() {
+    
+        return gender;
+    }
+    
+    public void setGender(final String gender) {
+    
+        this.gender = gender;
+    }
+    
+    public String[] getActivities() {
+    
+        return activities;
+    }
+    
+    public void setActivities(final String[] activities) {
+    
+        this.activities = activities;
+    }
+    
+    public String[] getMusic() {
+    
+        return music;
+    }
+    
+    public void setMusic(final String[] music) {
+    
+        this.music = music;
+    }
+    
+    public String[] getBooks() {
+    
+        return books;
+    }
+    
+    public void setBooks(final String[] books) {
+    
+        this.books = books;
+    }
+    
+    public String getDisplayName() {
+    
+        return displayName;
+    }
+    
+    public void setDisplayName(final String displayName) {
+    
+        this.displayName = displayName;
+    }
+    
 }

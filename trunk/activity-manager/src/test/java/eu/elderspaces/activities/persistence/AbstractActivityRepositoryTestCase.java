@@ -1,5 +1,7 @@
 package eu.elderspaces.activities.persistence;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -9,16 +11,16 @@ import org.testng.annotations.Test;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
-import eu.elderspaces.model.Post;
 import eu.elderspaces.model.Verbs;
 
 public abstract class AbstractActivityRepositoryTestCase {
     
-    private static final String PUBLISHED = "2013-03-29T3:41:48+0100";
+    private static final Date PUBLISHED = new Date(); // "2013-03-29T3:41:48+0100";
     private static final String VERB = "create";
     private static final String USER_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
     private static final String USER_DISPLAY_NAME = "Mr. Ederly Hans";
@@ -28,6 +30,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     private static final String FRIEND_DISPLAY_NAME = "Mr. Matt Eldy";
     private static final String FRIEND_ID = "13913366:elderspaces.iwiw.hu";
     
+    private static final String POST_ID = null;
     private static final String POST_TITLE = "said :";
     private static final String POST_BODY = "Hello from Athens!";
     
@@ -45,7 +48,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     
     private Person user;
     private Person friend;
-    private Post post;
+    private Activity post;
     private Event event;
     private Club club;
     
@@ -69,7 +72,7 @@ public abstract class AbstractActivityRepositoryTestCase {
         friend = new Person(FRIEND_ID, FRIEND_DISPLAY_NAME, FRIEND_THUMBNAIL_URL);
         event = new Event(EVENT_ID, EVENT_NAME, EVENT_SHORT_DESCRIPTION);
         club = new Club(CLUB_ID, CLUB_NAME, CLUB_DESCRIPTION, CLUB_SHORT_DESCRIPTION, CLUB_CATEGORY);
-        post = new Post(POST_BODY, POST_TITLE, user);
+        post = new Activity(POST_ID, POST_BODY, POST_TITLE);
     }
     
     protected abstract void specificImplementationClassInitialize();
@@ -87,8 +90,8 @@ public abstract class AbstractActivityRepositoryTestCase {
     @Test
     public void store() throws ActivityRepositoryException {
     
-        final Entity activityObject = new Post(POST_BODY, POST_TITLE, user);
-        final Activity call = new Activity(user, VERB, activityObject, null, PUBLISHED);
+        final Entity activityObject = new Activity(POST_ID, POST_BODY, POST_TITLE);
+        final ActivityStream call = new ActivityStream(user, VERB, activityObject, null, PUBLISHED);
         
         final boolean stored = activityRepository.store(call, USER_ID);
         LOGGER.info("Storing call: " + call);

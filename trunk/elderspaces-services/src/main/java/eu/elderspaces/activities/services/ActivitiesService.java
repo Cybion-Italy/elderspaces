@@ -39,9 +39,10 @@ public class ActivitiesService extends JsonService {
     @Path(ActivitiesEndpoint.STORE)
     public Response storeActivity(final String activityContent) {
     
-        LOGGER.debug("Store activity service called");
+        LOGGER.debug("Store activity service called on:");
+        LOGGER.debug(activityContent);
         
-        if (activityContent == null || activityContent.length() == 0) {
+        if ((activityContent == null) || (activityContent.length() == 0)) {
             return error("empty parameter");
         }
         

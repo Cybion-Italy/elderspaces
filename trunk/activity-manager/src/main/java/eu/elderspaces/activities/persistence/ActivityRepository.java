@@ -3,17 +3,17 @@ package eu.elderspaces.activities.persistence;
 import java.util.Set;
 
 import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.model.Activity;
+import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
-import eu.elderspaces.model.Post;
+import eu.elderspaces.model.Activity;
 
 public interface ActivityRepository {
     
     public void shutDownRepository();
     
-    public boolean store(Activity call, String userId) throws ActivityRepositoryException;
+    public boolean store(ActivityStream call, String userId) throws ActivityRepositoryException;
     
     public boolean store(String callString, String userId) throws ActivityRepositoryException;
     
@@ -25,9 +25,9 @@ public interface ActivityRepository {
     
     public boolean deleteUser(Person user);
     
-    public boolean addPost(Person user, Post postObject);
+    public boolean addPost(Person user, Activity postObject);
     
-    public boolean deletePost(Person user, Post postObject);
+    public boolean deletePost(Person user, Activity postObject);
     
     public boolean createEvent(Person user, Event eventObject);
     
