@@ -1,19 +1,24 @@
 package eu.elderspaces.persistence;
 
 import eu.elderspaces.model.ActivityStream;
+import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
  */
 
 public interface ActivityStreamRepository {
-
-    String store(ActivityStream activityStream);
-
+    
+    String store(ActivityStream activityStream) throws ActivityStreamRepositoryException;
+    
+    String store(String activityStreamJSON) throws ActivityStreamRepositoryException;
+    
     ActivityStream getActivityStream(String id);
-
+    
     boolean remove(String id);
-
+    
     long getTotalActivityStreamSize();
-
+    
+    void shutDownRepository();
+    
 }
