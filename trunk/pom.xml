@@ -15,8 +15,8 @@
 		<module>activity-manager</module>
 		<module>recommender</module>
 		<module>model</module>
+		<module>persistence</module>
 		<module>js-elderspaces</module>
-    <module>persistence</module>
   </modules>
 
 	<properties>
