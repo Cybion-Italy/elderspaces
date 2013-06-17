@@ -11,7 +11,7 @@ import eu.elderspaces.model.Person;
  * @author serxhiodaja (at) gmail (dot) com
  */
 
-public interface EntitiesRepository extends ActivitiesStreamDispatcher {
+public interface EntitiesRepository {
     
     void updateProfile(Person actor, Date eventTime);
     

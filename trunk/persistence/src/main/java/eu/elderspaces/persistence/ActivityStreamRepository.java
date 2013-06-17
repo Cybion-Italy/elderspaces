@@ -7,13 +7,13 @@ import eu.elderspaces.model.ActivityStream;
  */
 
 public interface ActivityStreamRepository {
-    
-    public void store(String jsonActivityStream);
-    
-    public String getJsonActivityStream(int indexNumber);
-    
-    public ActivityStream getActivityStream(int indexNumber);
-    
-    public int getTotalActivityStreamSize();
-    
+
+    String store(ActivityStream activityStream);
+
+    ActivityStream getActivityStream(String id);
+
+    boolean remove(String id);
+
+    long getTotalActivityStreamSize();
+
 }

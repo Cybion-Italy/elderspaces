@@ -17,11 +17,11 @@ public interface SocialNetworkRepository {
     // void sendFriendRequest(Person actor, Person object, Date eventTime);
     
     void addNewFriend(Person actor, Person object, Date eventTime);
-    
-    void deleteFriendConnection(Person actor, Person object, Date eventTime);
-    
+
     void modifyProfileData(Person actor, Date eventTime);
-    
+
+    void deleteFriendConnection(Person actor, Person object, Date eventTime);
+
     void deleteUser(Person actor, Date eventTime);
     
     void postActivity(Person actor, Activity object, Date eventTime);
