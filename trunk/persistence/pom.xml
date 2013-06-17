@@ -10,13 +10,13 @@
 	</parent>
 
 	<artifactId>persistence</artifactId>
-	<name>persistence</name>
+	<name>Persistence used to store users, relations, etc... </name>
+    <packaging>jar</packaging>
 
-	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	
+    <properties>
+        <blueprints-core.version>2.3.0</blueprints-core.version>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>eu.elderspaces</groupId>
@@ -26,21 +26,21 @@
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
 		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>com.tinkerpop.blueprints</groupId>
+            <artifactId>blueprints-core</artifactId>
+            <version>${blueprints-core.version}</version>
+        </dependency>
+        <dependency>
 			<groupId>com.tinkerpop.blueprints</groupId>
 			<artifactId>blueprints-neo4j-graph</artifactId>
-			<version>2.3.0</version>
+			<version>${blueprints-core.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>logback-classic</artifactId>
 					<groupId>ch.qos.logback</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.tinkerpop.blueprints</groupId>
-			<artifactId>blueprints-core</artifactId>
-			<version>2.3.0</version>
 		</dependency>
 	</dependencies>
 </project>
