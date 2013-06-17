@@ -6,7 +6,7 @@ import eu.elderspaces.model.ActivityStream;
  * @author serxhiodaja (at) gmail (dot) com
  */
 
-public interface ActivitiesStreamRepository {
+public interface ActivitiesStreamDispatcher {
     
     public void dispatchActivyStream(ActivityStream activityStream);
 }
