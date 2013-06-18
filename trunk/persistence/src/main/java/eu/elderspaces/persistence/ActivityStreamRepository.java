@@ -8,17 +8,15 @@ import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
  */
 
 public interface ActivityStreamRepository {
-    
+
     String store(ActivityStream activityStream) throws ActivityStreamRepositoryException;
-    
-    String store(String activityStreamJSON) throws ActivityStreamRepositoryException;
-    
-    ActivityStream getActivityStream(String id);
-    
-    boolean remove(String id);
-    
-    long getTotalActivityStreamSize();
-    
-    void shutDownRepository();
-    
+
+    ActivityStream getActivityStream(String id) throws ActivityStreamRepositoryException;
+
+    boolean remove(String id) throws ActivityStreamRepositoryException;
+
+    long getTotalActivityStreamSize() throws ActivityStreamRepositoryException;
+
+    void shutDownRepository() throws ActivityStreamRepositoryException;
+
 }

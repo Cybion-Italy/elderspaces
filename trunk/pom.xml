@@ -141,7 +141,6 @@
 				<artifactId>jackson-jaxrs</artifactId>
 				<version>${jackson-xc.version}</version>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>

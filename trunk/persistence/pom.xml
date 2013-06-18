@@ -10,6 +10,7 @@
 	</parent>
 
 	<artifactId>persistence</artifactId>
+
 	<name>Persistence used to store users, relations, etc... </name>
     <packaging>jar</packaging>
 

@@ -74,6 +74,11 @@ public class SimpleActivityManager implements ActivityManager {
 
         boolean profileUpdated = false;
 
+        //TODO: every handler method should:
+        //1) store the subjects and objects (Events, Persons, etc... ) in the EntitiesRepository
+        //2) store the vertices in SocialNetworkRepository with minimal properties
+        //3) store the relations created in SocialNetworkRepository
+
         if (object.getClass() == Person.class) {
 
             final Person personObject = (Person) object;
