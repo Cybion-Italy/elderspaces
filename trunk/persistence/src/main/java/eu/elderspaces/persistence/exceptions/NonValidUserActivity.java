@@ -1,28 +1,28 @@
 package eu.elderspaces.persistence.exceptions;
 
-public class InvalidUserActivity extends Exception {
+public class NonValidUserActivity extends Exception {
     
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
     
-    public InvalidUserActivity() {
+    public NonValidUserActivity() {
     
         super();
     }
     
-    public InvalidUserActivity(final String message, final Throwable cause) {
+    public NonValidUserActivity(final String message, final Throwable cause) {
     
         super(message, cause);
     }
     
-    public InvalidUserActivity(final String message) {
+    public NonValidUserActivity(final String message) {
     
         super(message);
     }
     
-    public InvalidUserActivity(final Throwable cause) {
+    public NonValidUserActivity(final Throwable cause) {
     
         super(cause);
     }
