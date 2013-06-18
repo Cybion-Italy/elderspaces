@@ -17,8 +17,6 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 import eu.elderspaces.activities.core.ActivityManager;
 import eu.elderspaces.activities.core.SimpleActivityManager;
-import eu.elderspaces.activities.persistence.ActivityRepository;
-import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.activities.services.ActivitiesService;
 import eu.elderspaces.activities.services.StatusService;
 import eu.elderspaces.recommendations.core.FakeStaticRecommender;
@@ -46,7 +44,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         bind(Recommender.class).to(SimpleRecommender.class);
         bind(FakeStaticRecommender.class);
         bind(ActivityManager.class).to(SimpleActivityManager.class);
-        bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
+//        bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
         
         // Temporarily:
         bind(ActivitiesService.class);

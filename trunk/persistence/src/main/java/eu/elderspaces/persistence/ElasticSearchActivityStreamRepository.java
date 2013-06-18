@@ -1,15 +1,16 @@
 package eu.elderspaces.persistence;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.client.transport.TransportClient;
 
 import eu.elderspaces.model.ActivityStream;
-import eu.elderspaces.model.utils.ActivityStreamObjectMapper;
 import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -18,25 +19,34 @@ public class ElasticSearchActivityStreamRepository implements ActivityStreamRepo
     
     private static final Logger LOGGER = Logger
             .getLogger(ElasticSearchActivityStreamRepository.class);
+
     private static final String ACTIVITY_INDEX = "user-";
     private static final String ACTIVITY_TYPE = "activity";
     
-    private final Node node;
     private final Client client;
-    private final ObjectMapper mapper;
-    
-    public ElasticSearchActivityStreamRepository() {
-    
-        node = NodeBuilder.nodeBuilder().node();
-        client = node.client();
-        mapper = ActivityStreamObjectMapper.getDefaultMapper();
+
+    private  ObjectMapper mapper;
+
+    private final String host;
+
+    @Inject
+    public ElasticSearchActivityStreamRepository(
+            @Named("eu.elderspaces.activitystream.repository.host") final String esHost,
+            @Named("eu.elderspaces.activitystream.repository.port") final int port,
+            final ObjectMapper mapper) {
+
+        this.host = esHost;
+
+        this.client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(
+                this.host, port));
+        this.mapper = mapper;
     }
-    
+
     @Override
     public void shutDownRepository() {
     
         client.close();
-        node.close();
+
     }
     
     @Override
@@ -54,7 +64,7 @@ public class ElasticSearchActivityStreamRepository implements ActivityStreamRepo
                 .setSource(activityJson).execute().actionGet();
         LOGGER.debug("ActivityStream stored with index: " + indexResponse.getId());
         
-        node.client().admin().indices().prepareRefresh().execute().actionGet();
+        this.client.admin().indices().prepareRefresh().execute().actionGet();
         
         return indexResponse.getId();
     }
@@ -66,7 +76,7 @@ public class ElasticSearchActivityStreamRepository implements ActivityStreamRepo
                 .setSource(activityStreamJSON).execute().actionGet();
         LOGGER.debug("ActivityStream stored with index: " + indexResponse.getId());
         
-        node.client().admin().indices().prepareRefresh().execute().actionGet();
+        this.client.admin().indices().prepareRefresh().execute().actionGet();
         
         return indexResponse.getId();
     }

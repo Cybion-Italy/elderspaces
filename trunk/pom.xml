@@ -101,6 +101,11 @@
 				<artifactId>model</artifactId>
 				<version>${elderspaces.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>eu.elderspaces</groupId>
+                <artifactId>persistence</artifactId>
+                <version>${elderspaces.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>eu.elderspaces</groupId>
 				<artifactId>activities-endpoint</artifactId>

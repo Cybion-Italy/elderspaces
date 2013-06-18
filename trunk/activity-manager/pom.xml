@@ -14,23 +14,11 @@
 
 	<url>http://www.cybion.it</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
 	<dependencies>
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-xc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-jaxrs</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>eu.elderspaces</groupId>
+            <artifactId>persistence</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>eu.elderspaces</groupId>
 			<artifactId>model</artifactId>

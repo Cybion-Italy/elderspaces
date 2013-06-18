@@ -2,25 +2,13 @@ package eu.elderspaces.activities.core;
 
 import java.util.Set;
 
-import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.activities.exceptions.InvalidUserActivity;
-import eu.elderspaces.activities.exceptions.NonExistentUser;
+import eu.elderspaces.activities.core.exceptions.ActivityManagerException;
 import eu.elderspaces.model.ActivityStream;
-import eu.elderspaces.model.Entity;
-import eu.elderspaces.model.Person;
 
 public interface ActivityManager {
+
+    boolean storeActivity(String activityContent) throws ActivityManagerException;
     
-    boolean storeActivity(String activityContent) throws InvalidUserActivity,
-            ActivityRepositoryException;
-    
-    boolean storeActivity(ActivityStream activity) throws InvalidUserActivity,
-            ActivityRepositoryException;
-    
-    Set<Person> getFriends(String userId) throws NonExistentUser;
-    
-    Set<? extends Entity> getEvents(String userId) throws NonExistentUser;
-    
-    Set<? extends Entity> getClubs(String userId) throws NonExistentUser;
-    
+    boolean storeActivity(ActivityStream activity) throws ActivityManagerException;
+
 }

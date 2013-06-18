@@ -1,5 +1,6 @@
 package eu.elderspaces.activities.services;
 
+import eu.elderspaces.activities.core.exceptions.ActivityManagerException;
 import it.cybion.commons.web.services.base.JsonService;
 
 import javax.ws.rs.POST;
@@ -15,8 +16,6 @@ import com.google.inject.Inject;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
 import eu.elderspaces.activities.core.ActivityManager;
-import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.activities.exceptions.InvalidUserActivity;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -49,12 +48,10 @@ public class ActivitiesService extends JsonService {
         boolean stored;
         try {
             stored = activityManager.storeActivity(activityContent);
-        } catch (final InvalidUserActivity e) {
+        } catch (final ActivityManagerException e) {
             return error(Response.Status.NOT_ACCEPTABLE, e.getMessage());
-        } catch (final ActivityRepositoryException e) {
-            return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        
+
         if (stored) {
             return success("Activity stored");
         } else {
