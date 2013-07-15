@@ -43,16 +43,7 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
     private static final String VERTEX_DATE = "date";
     
     // ******************************************************************************
-    // edge index name
-    // private static final String EDGE_INDEX_NAME = "edge-index";
-    //
-    // // edge index keys
-    // private static final String EIK_HAS_FRIEND = "has-friend";
-    // private static final String EIK_HAS_EVENT = "has-event";
-    // private static final String EIK_HAS_ACTIVITY = "has-activity";
-    // private static final String EIK_HAS_CLUB = "has-club";
-    // private static final String EIK_HAS_MEMBER = "has-member";
-    //
+    
     // // edges
     private static final String HAS_FRIEND = "has-friend";
     private static final String HAS_EVENT = "has-event";
@@ -177,21 +168,57 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
     @Override
     public void postActivity(final Person actor, final Activity object, final Date eventTime) {
     
-        // final Vertex actorPersonVertex = vertexIndex,.
-        
+        try {
+            final Vertex personVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator()
+                    .next();
+            
+            final Vertex activityVertex = graph.addVertex(null);
+            activityVertex.setProperty(VERTEX_ID, object.getId());
+            activityVertex.setProperty(VERTEX_DATE, eventTime.getTime());
+            vertexIndex.put(VIK_ACTIVITY, object.getId(), activityVertex);
+            
+            final Edge edge = graph.addEdge(null, personVertex, activityVertex, HAS_ACTIVITY);
+            edge.setProperty(EDGE_DATE, eventTime.getTime());
+            
+            graph.stopTransaction(Conclusion.SUCCESS);
+        } catch (final Exception e) {
+            LOGGER.error("Invalid postActivity request for user id: " + actor.getId()
+                    + " on activity id: " + object.getId());
+        }
     }
     
     @Override
     public void createClub(final Person actor, final Club object, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        try {
+            final Vertex personVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator()
+                    .next();
+            
+            final Vertex clubVertex = graph.addVertex(null);
+            clubVertex.setProperty(VERTEX_ID, object.getId());
+            clubVertex.setProperty(VERTEX_DATE, eventTime.getTime());
+            vertexIndex.put(VIK_CLUB, object.getId(), clubVertex);
+            
+            Edge edge = graph.addEdge(null, personVertex, clubVertex, HAS_CLUB);
+            edge.setProperty(EDGE_DATE, eventTime.getTime());
+            
+            edge = graph.addEdge(null, clubVertex, personVertex, HAS_MEMBER);
+            edge.setProperty(EDGE_DATE, eventTime.getTime());
+            
+            graph.stopTransaction(Conclusion.SUCCESS);
+            
+        } catch (final Exception e) {
+            LOGGER.error("Invalid createClub request for user id: " + actor.getId()
+                    + " on club id: " + object.getId());
+        }
         
     }
     
     @Override
     public void modifyClub(final Person actor, final Club object, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        // no change on the social graph
+        return;
         
     }
     
