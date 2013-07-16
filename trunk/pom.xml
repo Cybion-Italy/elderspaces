@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>eu.elderspaces</groupId>
@@ -17,7 +18,7 @@
 		<module>model</module>
 		<module>persistence</module>
 		<module>js-elderspaces</module>
-  </modules>
+	</modules>
 
 	<properties>
 
@@ -35,6 +36,9 @@
 		<jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
 		<elasticsearch.version>0.20.6</elasticsearch.version>
 		<jackson-xc.version>1.9.9</jackson-xc.version>
+		<blueprints-core.version>2.3.0</blueprints-core.version>
+		<neo4j-kernel.version>1.9.M05</neo4j-kernel.version>
+		<gremlin.version>2.3.0</gremlin.version>
 
 		<!-- Plugin versions -->
 
@@ -101,11 +105,11 @@
 				<artifactId>model</artifactId>
 				<version>${elderspaces.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>eu.elderspaces</groupId>
-                <artifactId>persistence</artifactId>
-                <version>${elderspaces.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>eu.elderspaces</groupId>
+				<artifactId>persistence</artifactId>
+				<version>${elderspaces.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>eu.elderspaces</groupId>
 				<artifactId>activities-endpoint</artifactId>
@@ -141,9 +145,32 @@
 				<artifactId>jackson-jaxrs</artifactId>
 				<version>${jackson-xc.version}</version>
 			</dependency>
-
+			<dependency>
+				<groupId>com.tinkerpop.blueprints</groupId>
+				<artifactId>blueprints-core</artifactId>
+				<version>${blueprints-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tinkerpop.blueprints</groupId>
+				<artifactId>blueprints-neo4j-graph</artifactId>
+				<version>${blueprints-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.neo4j</groupId>
+				<artifactId>neo4j-kernel</artifactId>
+				<version>${neo4j-kernel.version}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.tinkerpop.gremlin</groupId>
+				<artifactId>gremlin-java</artifactId>
+				<version>${gremlin.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.testng</groupId>

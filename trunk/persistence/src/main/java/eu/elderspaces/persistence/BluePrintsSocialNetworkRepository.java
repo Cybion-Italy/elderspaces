@@ -1,24 +1,24 @@
 package eu.elderspaces.persistence;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import org.testng.log4testng.Logger;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Index;
-import com.tinkerpop.blueprints.TransactionalGraph.Conclusion;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-import eu.elderspaces.model.Activity;
-import eu.elderspaces.model.Club;
-import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Event.InvitationAnswer;
-import eu.elderspaces.model.Person;
+import eu.elderspaces.persistence.helpers.Costants;
+import eu.elderspaces.persistence.helpers.GraphHelper;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
@@ -28,257 +28,431 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
     
     private static final Logger LOGGER = Logger.getLogger(BluePrintsSocialNetworkRepository.class);
     
-    // ********************************************************************************
-    // vertex index name
-    private static final String VERTEX_INDEX_NAME = "vertex-index";
-    
-    // vertex index keys
-    private static final String VIK_PERSON = "person";
-    private static final String VIK_CLUB = "club";
-    private static final String VIK_EVENT = "event";
-    private static final String VIK_ACTIVITY = "activity";
-    
-    // properties
-    private static final String VERTEX_ID = "id";
-    private static final String VERTEX_DATE = "date";
-    
-    // ******************************************************************************
-    
-    // // edges
-    private static final String HAS_FRIEND = "has-friend";
-    private static final String HAS_EVENT = "has-event";
-    private static final String HAS_ACTIVITY = "has-activity";
-    private static final String HAS_CLUB = "has-club";
-    private static final String HAS_MEMBER = "has-member";
-    
-    // edge properties
-    private static final String EDGE_DATE = "date";
-    
-    // ********************************************************************
-    
     Neo4jGraph graph;
-    Index<Vertex> vertexIndex;
-    Index<Edge> edgeIndex;
+    
+    GraphHelper helper;
     
     @Inject
-    public BluePrintsSocialNetworkRepository(@Named("graphDir") final String graphDirectoryPath) {
+    public BluePrintsSocialNetworkRepository(final Neo4jGraph graph) {
     
-        graph = new Neo4jGraph(graphDirectoryPath);
+        this.graph = graph;
+        helper = new GraphHelper(graph);
         
-        try {
-            if (!graph.getIndices().iterator().hasNext()) {
-                this.vertexIndex = graph.createIndex(VERTEX_INDEX_NAME, Vertex.class);
-            } else {
-                this.vertexIndex = graph.getIndex(VERTEX_INDEX_NAME, Vertex.class);
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage());
-        }
     }
     
     @Override
-    public void addNewFriend(final Person actor, final Person object, final Date eventTime) {
+    public void shutdown() {
+    
+        graph.shutdown();
+    }
+    
+    @Override
+    public void addNewFriend(final String actorId, final String objectId, final Date eventTime) {
     
         try {
-            final Vertex actorPersonVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator()
-                    .next();
-            final Vertex objectPersonVertex = vertexIndex.get(VIK_PERSON, object.getId())
-                    .iterator().next();
+            final Vertex actorPersonVertex = helper.getOrCreatePerson(actorId, eventTime);
+            final Vertex objectPersonVertex = helper.getOrCreatePerson(objectId, eventTime);
             
-            Edge edge = graph.addEdge(null, actorPersonVertex, objectPersonVertex, HAS_FRIEND);
-            edge.setProperty(EDGE_DATE, eventTime.getTime());
+            Edge edge = actorPersonVertex.addEdge(Costants.HAS_FRIEND, objectPersonVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
             
-            edge = graph.addEdge(null, objectPersonVertex, actorPersonVertex, HAS_FRIEND);
-            edge.setProperty(EDGE_DATE, eventTime.getTime());
+            edge = objectPersonVertex.addEdge(Costants.HAS_FRIEND, actorPersonVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
             
-            graph.stopTransaction(Conclusion.SUCCESS);
+            graph.commit();
         } catch (final Exception e) {
-            LOGGER.error("Invalid addNewFriend request between id: " + actor.getId() + " and id: "
-                    + object.getId());
+            LOGGER.error("Invalid addNewFriend request between id: " + actorId + " and id: "
+                    + objectId);
         }
         
     }
     
     @Override
-    public void deleteFriendConnection(final Person actor, final Person object, final Date eventTime) {
+    public void deleteFriendConnection(final String actorId, final String objectId,
+            final Date eventTime) {
     
-        final Vertex actorPersonVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator()
-                .next();
-        final Vertex objectPersonVertex = vertexIndex.get(VIK_PERSON, object.getId()).iterator()
-                .next();
+        final Vertex actorPersonVertex = helper.getOrCreatePerson(actorId, eventTime);
+        final Vertex objectPersonVertex = helper.getOrCreatePerson(objectId, eventTime);
         
-        Iterator<Edge> iterator = actorPersonVertex.getEdges(Direction.OUT, HAS_FRIEND).iterator();
+        Iterator<Edge> iterator = actorPersonVertex.getEdges(Direction.OUT, Costants.HAS_FRIEND)
+                .iterator();
         while (iterator.hasNext()) {
             final Edge edge = iterator.next();
-            if (edge.getVertex(Direction.IN).getId().equals(object.getId())) {
+            if (edge.getVertex(Direction.IN).getId().equals(objectId)) {
                 edge.remove();
                 break;
             }
         }
         
         // inverse removal
-        iterator = objectPersonVertex.getEdges(Direction.OUT, HAS_FRIEND).iterator();
+        iterator = objectPersonVertex.getEdges(Direction.OUT, Costants.HAS_FRIEND).iterator();
         while (iterator.hasNext()) {
             final Edge edge = iterator.next();
-            if (edge.getVertex(Direction.IN).getId().equals(actor.getId())) {
+            if (edge.getVertex(Direction.IN).getId().equals(actorId)) {
                 edge.remove();
                 break;
             }
         }
         
-        graph.stopTransaction(Conclusion.SUCCESS);
+        graph.commit();
         
     }
     
     @Override
-    public void modifyProfileData(final Person actor, final Date eventTime) {
+    public void modifyProfileData(final String actorId, final Date eventTime) {
     
-        Vertex personVertex;
+        helper.getOrCreatePerson(actorId, eventTime);
         
+    }
+    
+    @Override
+    public void deleteUser(final String actorId, final Date eventTime) {
+    
+        helper.removePerson(actorId);
+        
+    }
+    
+    @Override
+    public void postActivity(final String actorId, final String objectId, final Date eventTime) {
+    
         try {
-            personVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator().next();
+            final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
+            
+            final Vertex activityVertex = helper.getOrCreateActivity(objectId, eventTime);
+            
+            final Edge edge = personVertex.addEdge(Costants.HAS_ACTIVITY, activityVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            graph.commit();
         } catch (final Exception e) {
+            LOGGER.error("Invalid postActivity request for user id: " + actorId
+                    + " on activity id: " + objectId);
+        }
+    }
+    
+    @Override
+    public void createClub(final String actorId, final String objectId, final Date eventTime) {
+    
+        try {
+            final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
             
-            // this is a new user
-            personVertex = graph.addVertex(null);
-            personVertex.setProperty(VERTEX_ID, actor.getId());
-            personVertex.setProperty(VERTEX_DATE, eventTime.getTime());
+            final Vertex clubVertex = helper.getOrCreateClub(objectId, eventTime);
             
-            vertexIndex.put(VIK_PERSON, actor.getId(), personVertex);
+            Edge edge = personVertex.addEdge(Costants.HAS_CLUB, clubVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            edge = clubVertex.addEdge(Costants.HAS_MEMBER, personVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            graph.commit();
+            
+        } catch (final Exception e) {
+            LOGGER.error("Invalid createClub request for user id: " + actorId + " on club id: "
+                    + objectId);
         }
         
     }
     
     @Override
-    public void deleteUser(final Person actor, final Date eventTime) {
+    public void deleteClub(final String actorId, final String objectId, final Date eventTime) {
+    
+        helper.removeClub(objectId);
+        
+    }
+    
+    @Override
+    public void joinClub(final String actorId, final String objectId, final Date eventTime) {
     
         try {
-            final Vertex personVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator()
-                    .next();
-            vertexIndex.remove(VIK_PERSON, actor.getId(), personVertex);
-            graph.removeVertex(personVertex);
-            graph.stopTransaction(Conclusion.SUCCESS);
+            final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
+            
+            final Vertex clubVertex = helper.getOrCreateClub(objectId, eventTime);
+            
+            Edge edge = personVertex.addEdge(Costants.HAS_CLUB, clubVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            edge = clubVertex.addEdge(Costants.HAS_MEMBER, personVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            graph.commit();
             
         } catch (final Exception e) {
-            LOGGER.error("Invalid deleteUser request on id: " + actor.getId());
+            LOGGER.error("Invalid joinClub request for user id: " + actorId + " on club id: "
+                    + objectId);
         }
         
     }
     
     @Override
-    public void postActivity(final Person actor, final Activity object, final Date eventTime) {
+    public void postClubActivity(final String actorId, final String objectId,
+            final String targetId, final Date eventTime) {
     
         try {
-            final Vertex personVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator()
-                    .next();
+            final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
+            final Vertex activityVertex = helper.getOrCreateActivity(objectId, eventTime);
+            final Vertex clubVertex = helper.getOrCreateClub(targetId, eventTime);
             
-            final Vertex activityVertex = graph.addVertex(null);
-            activityVertex.setProperty(VERTEX_ID, object.getId());
-            activityVertex.setProperty(VERTEX_DATE, eventTime.getTime());
-            vertexIndex.put(VIK_ACTIVITY, object.getId(), activityVertex);
+            Edge edge = personVertex.addEdge(Costants.HAS_ACTIVITY, activityVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
             
-            final Edge edge = graph.addEdge(null, personVertex, activityVertex, HAS_ACTIVITY);
-            edge.setProperty(EDGE_DATE, eventTime.getTime());
+            edge = clubVertex.addEdge(Costants.HAS_ACTIVITY, activityVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
             
-            graph.stopTransaction(Conclusion.SUCCESS);
-        } catch (final Exception e) {
-            LOGGER.error("Invalid postActivity request for user id: " + actor.getId()
-                    + " on activity id: " + object.getId());
-        }
-    }
-    
-    @Override
-    public void createClub(final Person actor, final Club object, final Date eventTime) {
-    
-        try {
-            final Vertex personVertex = vertexIndex.get(VIK_PERSON, actor.getId()).iterator()
-                    .next();
-            
-            final Vertex clubVertex = graph.addVertex(null);
-            clubVertex.setProperty(VERTEX_ID, object.getId());
-            clubVertex.setProperty(VERTEX_DATE, eventTime.getTime());
-            vertexIndex.put(VIK_CLUB, object.getId(), clubVertex);
-            
-            Edge edge = graph.addEdge(null, personVertex, clubVertex, HAS_CLUB);
-            edge.setProperty(EDGE_DATE, eventTime.getTime());
-            
-            edge = graph.addEdge(null, clubVertex, personVertex, HAS_MEMBER);
-            edge.setProperty(EDGE_DATE, eventTime.getTime());
-            
-            graph.stopTransaction(Conclusion.SUCCESS);
+            graph.commit();
             
         } catch (final Exception e) {
-            LOGGER.error("Invalid createClub request for user id: " + actor.getId()
-                    + " on club id: " + object.getId());
+            LOGGER.error("Invalid postClubActivity request for user id: " + actorId
+                    + " on club id: " + targetId + " with activity id: " + objectId);
         }
         
     }
     
     @Override
-    public void modifyClub(final Person actor, final Club object, final Date eventTime) {
+    public void createEvent(final String actorId, final String objectId, final Date eventTime) {
     
-        // no change on the social graph
-        return;
+        try {
+            final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
+            
+            final Vertex eventVertex = helper.getOrCreateEvent(objectId, eventTime);
+            
+            Edge edge = personVertex.addEdge(Costants.HAS_EVENT, eventVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            edge = eventVertex.addEdge(Costants.HAS_MEMBER, personVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            graph.commit();
+            
+        } catch (final Exception e) {
+            LOGGER.error("Invalid createEvent request for user id: " + actorId + " on event id: "
+                    + objectId);
+        }
         
     }
     
     @Override
-    public void deleteClub(final Person actor, final Club object, final Date eventTime) {
+    public void deleteEvent(final String actorId, final String objectId, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        helper.removeEvent(objectId);
         
     }
     
     @Override
-    public void joinClub(final Person actor, final Club object, final Date eventTime) {
+    public void respondEvent(final String actorId, final String objectId,
+            final InvitationAnswer answer, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        if (answer.equals(InvitationAnswer.MAYBE) || answer.equals(InvitationAnswer.YES)) {
+            try {
+                final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
+                
+                final Vertex eventVertex = helper.getOrCreateEvent(objectId, eventTime);
+                
+                Edge edge = personVertex.addEdge(Costants.HAS_EVENT, eventVertex);
+                edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+                
+                edge = eventVertex.addEdge(Costants.HAS_MEMBER, personVertex);
+                edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+                
+                graph.commit();
+                
+            } catch (final Exception e) {
+                LOGGER.error("Invalid respondEvent request for user id: " + actorId
+                        + " on event id: " + objectId);
+            }
+        }
         
     }
     
     @Override
-    public void postClubActivity(final Person actor, final Activity object, final Club target,
-            final Date eventTime) {
+    public void postEventActivity(final String actorId, final String objectId,
+            final String targetId, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        try {
+            final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
+            final Vertex activityVertex = helper.getOrCreateActivity(objectId, eventTime);
+            final Vertex eventVertex = helper.getOrCreateEvent(targetId, eventTime);
+            
+            Edge edge = personVertex.addEdge(Costants.HAS_ACTIVITY, activityVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            edge = eventVertex.addEdge(Costants.HAS_ACTIVITY, activityVertex);
+            edge.setProperty(Costants.EDGE_DATE, eventTime.getTime());
+            
+            graph.commit();
+            
+        } catch (final Exception e) {
+            LOGGER.error("Invalid postEventActivity request for user id: " + actorId
+                    + " on event id: " + targetId + " with activity id: " + objectId);
+        }
         
     }
     
     @Override
-    public void createEvent(final Person actor, final Event object, final Date eventTime) {
+    public void deleteActivity(final String actorId, final String objectId, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        helper.removeActivity(objectId);
         
     }
     
     @Override
-    public void modifyEvent(final Person actor, final Event object, final Date eventTime) {
+    public void leaveClub(final String actorId, final String objectId, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        try {
+            final Vertex personVertex = helper.getOrCreatePerson(actorId, eventTime);
+            final Vertex clubVertex = helper.getOrCreateClub(objectId, eventTime);
+            
+            // remove person-club edge
+            Iterator<Edge> iterator = personVertex.getEdges(Direction.OUT, Costants.HAS_CLUB)
+                    .iterator();
+            while (iterator.hasNext()) {
+                final Edge edge = iterator.next();
+                
+                // iterate till we find the left club
+                if (edge.getVertex(Direction.IN).getProperty(Costants.VERTEX_ID).equals(objectId)) {
+                    graph.removeEdge(edge);
+                    break;
+                }
+            }
+            
+            // remove club-person edge
+            iterator = clubVertex.getEdges(Direction.OUT, Costants.HAS_MEMBER).iterator();
+            while (iterator.hasNext()) {
+                final Edge edge = iterator.next();
+                
+                // iterate till we find the unsubscribing member
+                if (edge.getVertex(Direction.IN).getProperty(Costants.VERTEX_ID).equals(actorId)) {
+                    graph.removeEdge(edge);
+                    break;
+                }
+            }
+            
+            graph.commit();
+            
+        } catch (final Exception e) {
+            LOGGER.error("Invalid leaveClub request for user id: " + actorId + " on club id: "
+                    + objectId);
+        }
         
     }
     
     @Override
-    public void deleteEvent(final Person actor, final Event object, final Date eventTime) {
+    public void deleteClubActivity(final String actorId, final String objectId,
+            final String target, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        helper.removeActivity(objectId);
         
     }
     
     @Override
-    public void respondEvent(final Person actor, final Event object, final InvitationAnswer answer,
-            final Date eventTime) {
+    public void deleteEventActivity(final String actorId, final String objectId,
+            final String targetId, final Date eventTime) {
     
-        // TODO Auto-generated method stub
+        helper.removeActivity(objectId);
         
     }
     
-    @Override
-    public void postEventActivity(final Person actor, final Activity object, final Event target,
-            final Date eventTime) {
+    // *****************************************************************************
+    // QUERIES
     
-        // TODO Auto-generated method stub
+    @Override
+    public Set<String> getFriends(final String id) {
+    
+        List<String> ids = new ArrayList<String>();
         
+        final Vertex vertex = helper.getOrCreatePerson(id, new Date());
+        
+        final GremlinPipeline pipe = new GremlinPipeline();
+        ids = pipe.start(vertex).out(Costants.HAS_FRIEND).property(Costants.VERTEX_ID).toList();
+        
+        final Set<String> uniqueIds = new HashSet<String>();
+        for (final String friendId : ids) {
+            uniqueIds.add(friendId);
+        }
+        
+        uniqueIds.remove(id);
+        
+        return uniqueIds;
+    }
+    
+    @Override
+    public Set<String> getClubs(final String id) {
+    
+        List<String> ids = new ArrayList<String>();
+        
+        final Vertex vertex = helper.getOrCreatePerson(id, new Date());
+        
+        final GremlinPipeline pipe = new GremlinPipeline();
+        ids = pipe.start(vertex).out(Costants.HAS_CLUB).property(Costants.VERTEX_ID).toList();
+        
+        final Set<String> uniqueIds = new HashSet<String>();
+        for (final String friendId : ids) {
+            uniqueIds.add(friendId);
+        }
+        
+        uniqueIds.remove(id);
+        
+        return uniqueIds;
+    }
+    
+    @Override
+    public Set<String> getEvents(final String id) {
+    
+        List<String> ids = new ArrayList<String>();
+        
+        final Vertex vertex = helper.getOrCreatePerson(id, new Date());
+        
+        final GremlinPipeline pipe = new GremlinPipeline();
+        ids = pipe.start(vertex).out(Costants.HAS_CLUB).property(Costants.VERTEX_ID).toList();
+        
+        final Set<String> uniqueIds = new HashSet<String>();
+        for (final String friendId : ids) {
+            uniqueIds.add(friendId);
+        }
+        
+        uniqueIds.remove(id);
+        
+        return uniqueIds;
+    }
+    
+    @Override
+    public Set<String> getActivities(final String id) {
+    
+        List<String> ids = new ArrayList<String>();
+        
+        final Vertex vertex = helper.getOrCreatePerson(id, new Date());
+        
+        final GremlinPipeline pipe = new GremlinPipeline();
+        ids = pipe.start(vertex).out(Costants.HAS_CLUB).property(Costants.VERTEX_ID).toList();
+        
+        final Set<String> uniqueIds = new HashSet<String>();
+        for (final String friendId : ids) {
+            uniqueIds.add(friendId);
+        }
+        
+        uniqueIds.remove(id);
+        
+        return uniqueIds;
+    }
+    
+    @Override
+    public Set<String> getFriendsOfFriends(final String id) {
+    
+        List<String> ids = new ArrayList<String>();
+        
+        final Vertex personVertex = helper.getOrCreatePerson(id, new Date());
+        
+        final GremlinPipeline pipe = new GremlinPipeline();
+        ids = pipe.start(personVertex).out(Costants.HAS_FRIEND).out(Costants.HAS_FRIEND)
+                .property(Costants.VERTEX_ID).toList();
+        
+        final Set<String> uniqueIds = new HashSet<String>();
+        for (final String friendId : ids) {
+            uniqueIds.add(friendId);
+        }
+        
+        uniqueIds.remove(id);
+        
+        return uniqueIds;
     }
     
 }

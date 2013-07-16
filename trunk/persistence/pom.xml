@@ -11,11 +11,8 @@
 
 	<artifactId>persistence</artifactId>
 	<name>Persistence used to store users, relations, etc... </name>
-    <packaging>jar</packaging>
+	<packaging>jar</packaging>
 
-    <properties>
-        <blueprints-core.version>2.3.0</blueprints-core.version>
-    </properties>
 
 	<dependencies>
 		<dependency>
@@ -30,21 +27,29 @@
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>com.tinkerpop.blueprints</groupId>
-            <artifactId>blueprints-core</artifactId>
-            <version>${blueprints-core.version}</version>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>com.tinkerpop.blueprints</groupId>
+			<artifactId>blueprints-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.tinkerpop.blueprints</groupId>
 			<artifactId>blueprints-neo4j-graph</artifactId>
-			<version>${blueprints-core.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>logback-classic</artifactId>
 					<groupId>ch.qos.logback</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-kernel</artifactId>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.tinkerpop.gremlin</groupId>
+			<artifactId>gremlin-java</artifactId>
 		</dependency>
 	</dependencies>
 </project>

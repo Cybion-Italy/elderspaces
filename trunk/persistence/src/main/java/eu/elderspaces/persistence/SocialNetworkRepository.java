@@ -1,12 +1,9 @@
 package eu.elderspaces.persistence;
 
 import java.util.Date;
+import java.util.Set;
 
-import eu.elderspaces.model.Activity;
-import eu.elderspaces.model.Club;
-import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Event.InvitationAnswer;
-import eu.elderspaces.model.Person;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
@@ -14,46 +11,61 @@ import eu.elderspaces.model.Person;
 
 public interface SocialNetworkRepository {
     
-    // void sendFriendRequest(Person actor, Person object, Date eventTime);
+    public void shutdown();
     
-    void addNewFriend(Person actor, Person object, Date eventTime);
-
-    void modifyProfileData(Person actor, Date eventTime);
-
-    void deleteFriendConnection(Person actor, Person object, Date eventTime);
-
-    void deleteUser(Person actor, Date eventTime);
+    // *******************************************************************************************
+    // activity stream updates
     
-    void postActivity(Person actor, Activity object, Date eventTime);
+    // void sendFriendRequest(String actorId, String objectId, Date eventTime);
     
-    // void deleteActivity(Person actor, Activity object, Date eventTime);
+    void addNewFriend(String actorId, String objectId, Date eventTime);
     
-    void createClub(Person actor, Club object, Date eventTime);
+    void modifyProfileData(String actorId, Date eventTime);
     
-    void modifyClub(Person actor, Club object, Date eventTime);
+    void deleteFriendConnection(String actorId, String objectId, Date eventTime);
     
-    void deleteClub(Person actor, Club object, Date eventTime);
+    void deleteUser(String actorId, Date eventTime);
     
-    void joinClub(Person actor, Club object, Date eventTime);
+    void postActivity(String actorId, String objectId, Date eventTime);
     
-    // void leaveClub(Person actor, Club object, Date eventTime);
+    void deleteActivity(String actorId, String objectId, Date eventTime);
     
-    void postClubActivity(Person actor, Activity object, Club target, Date eventTime);
+    void createClub(String actorId, String objectId, Date eventTime);
     
-    // void deleteClubActivity(Person actor, Activity object, Club target, Date
-    // eventTime);
+    // void modifyClub(String actorId, String objectId, Date eventTime);
     
-    void createEvent(Person actor, Event object, Date eventTime);
+    void deleteClub(String actorId, String objectId, Date eventTime);
     
-    void modifyEvent(Person actor, Event object, Date eventTime);
+    void joinClub(String actorId, String objectId, Date eventTime);
     
-    void deleteEvent(Person actor, Event object, Date eventTime);
+    void leaveClub(String actorId, String objectId, Date eventTime);
     
-    void respondEvent(Person actor, Event object, InvitationAnswer answer, Date eventTime);
+    void postClubActivity(String actorId, String objectId, String targetId, Date eventTime);
     
-    void postEventActivity(Person actor, Activity object, Event target, Date eventTime);
+    void deleteClubActivity(String actorId, String objectId, String target, Date eventTime);
     
-    // void deleteEventActivity(Person actor, Activity object, Event target,
-    // Date eventTime);
+    void createEvent(String actorId, String objectId, Date eventTime);
     
+    // void modifyEvent(String actorId, String objectId, Date eventTime);
+    
+    void deleteEvent(String actorId, String objectId, Date eventTime);
+    
+    void respondEvent(String actorId, String objectId, InvitationAnswer answer, Date eventTime);
+    
+    void postEventActivity(String actorId, String objectId, String targetId, Date eventTime);
+    
+    void deleteEventActivity(String actorId, String objectId, String targetId, Date eventTime);
+    
+    // *******************************************************************************************
+    // query methods
+    
+    Set<String> getFriends(String id);
+    
+    Set<String> getClubs(String id);
+    
+    Set<String> getEvents(String id);
+    
+    Set<String> getActivities(String id);
+    
+    Set<String> getFriendsOfFriends(String id);
 }
