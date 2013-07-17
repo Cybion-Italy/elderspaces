@@ -20,7 +20,7 @@ public interface SocialNetworkRepository {
     
     void addNewFriend(String actorId, String objectId, Date eventTime);
     
-    void modifyProfileData(String actorId, Date eventTime);
+    void createNewUser(String actorId, Date eventTime);
     
     void deleteFriendConnection(String actorId, String objectId, Date eventTime);
     
@@ -57,7 +57,7 @@ public interface SocialNetworkRepository {
     void deleteEventActivity(String actorId, String objectId, String targetId, Date eventTime);
     
     // *******************************************************************************************
-    // query methods
+    // getters
     
     Set<String> getFriends(String id);
     
@@ -67,5 +67,15 @@ public interface SocialNetworkRepository {
     
     Set<String> getActivities(String id);
     
+    // query methods
+    
     Set<String> getFriendsOfFriends(String id);
+    
+    Set<String> getEventActivities(String id);
+    
+    Set<String> getClubActivities(String id);
+    
+    Set<String> getClubsOfFriends(String id);
+    
+    Set<String> getEventsOfFriends(String id);
 }

@@ -10,6 +10,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 
 import eu.elderspaces.persistence.BluePrintsSocialNetworkRepository;
+import eu.elderspaces.persistence.exceptions.NonExistingUserException;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
@@ -144,6 +145,16 @@ public class GraphHelper {
         vertexIndex.remove(Costants.VIK_ACTIVITY, id, vertex);
         graph.removeVertex(vertex);
         graph.commit();
+    }
+    
+    public Vertex getPerson(final String personId) throws NonExistingUserException {
+    
+        try {
+            final Vertex vertex = vertexIndex.get(Costants.VIK_PERSON, personId).iterator().next();
+            return vertex;
+        } catch (final NoSuchElementException e) {
+            throw new NonExistingUserException("Requested user " + personId + " does not exist");
+        }
     }
     
 }
