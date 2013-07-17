@@ -39,6 +39,7 @@
 		<blueprints-core.version>2.3.0</blueprints-core.version>
 		<neo4j-kernel.version>1.9.M05</neo4j-kernel.version>
 		<gremlin.version>2.3.0</gremlin.version>
+		<easymock.version>3.2</easymock.version>
 
 		<!-- Plugin versions -->
 
@@ -166,6 +167,12 @@
 				<groupId>com.tinkerpop.gremlin</groupId>
 				<artifactId>gremlin-java</artifactId>
 				<version>${gremlin.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.easymock</groupId>
+				<artifactId>easymock</artifactId>
+				<version>${easymock.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

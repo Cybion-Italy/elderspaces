@@ -31,4 +31,17 @@ public interface EntitiesRepository {
     
     void modifyEvent(Event object, Date eventTime);
     
+    // **********************************************************
+    // getters
+    Person getPerson(String id);
+    
+    Club getClub(String id);
+    
+    Event getEvent(String id);
+    
+    Activity getActivity(String id);
+    
+    // **********************************************************
+    // queries
+    
 }

@@ -1,26 +1,30 @@
 package eu.elderspaces.recommendations.core;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import com.google.inject.internal.Lists;
+import com.google.inject.internal.Sets;
 
-import eu.elderspaces.activities.core.SimpleActivityManager;
-import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.activities.exceptions.InvalidUserActivity;
-import eu.elderspaces.activities.persistence.ActivityRepository;
-import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
 import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Verbs;
+import eu.elderspaces.persistence.EntitiesRepository;
+import eu.elderspaces.persistence.SocialNetworkRepository;
 
 @Test
-public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
+public class SocialNetworkRecommenderTestCase extends AbstractRecommenderTestCase {
     
     private static final String USER_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
     private static final String USER_DISPLAY_NAME = "Mr. Ederly Hans";
@@ -76,11 +80,12 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
     private Club club1;
     private Club club2;
     
-    @Override
-    protected void specificImplementationClassInitialize() throws InvalidUserActivity,
-            ActivityRepositoryException {
+    SocialNetworkRepository mockSocialNetworkRepository;
+    EntitiesRepository mockEntitiesRepository;
     
-        final ActivityRepository activityRepository = new InMemoryActivityRepository();
+    @Override
+    protected void specificImplementationClassInitialize() {
+    
         user = new Person(USER_ID, USER_DISPLAY_NAME, USER_THUMBNAIL_URL);
         user2 = new Person(USER2_ID, USER2_DISPLAY_NAME, USER2_THUMBNAIL_URL);
         friend1 = new Person(FRIEND1_ID, FRIEND1_DISPLAY_NAME, FRIEND1_THUMBNAIL_URL);
@@ -93,14 +98,6 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
                 CLUB1_CATEGORY);
         club2 = new Club(CLUB2_ID, CLUB2_NAME, CLUB2_DESCRIPTION, CLUB2_SHORT_DESCRIPTION,
                 CLUB2_CATEGORY);
-        
-        activityRepository.addUser(user);
-        activityRepository.addUser(friend1);
-        activityRepository.addUser(friend11);
-        activityRepository.addUser(friend2);
-        activityRepository.addUser(friend21);
-        
-        activityManager = new SimpleActivityManager(activityRepository);
         
         final ActivityStream friendActivity1 = new ActivityStream(user, Verbs.MAKE_FRIEND, friend1,
                 null, new Date());
@@ -158,27 +155,44 @@ public class SimpleRecommenderTestCase extends AbstractRecommenderTestCase {
         activities.add(createClub2Activity);
         activities.add(joinClub1Activity2);
         
-        for (final ActivityStream activity : activities) {
-            activityManager.storeActivity(activity);
-        }
+        mockSocialNetworkRepository = createMock(SocialNetworkRepository.class);
+        final Set<String> friendSet = Sets.newHashSet();
+        friendSet.add(USER2_ID);
         
-        recommender = new SimpleRecommender(activityManager);
-        LOGGER = LoggerFactory.getLogger(SimpleRecommenderTestCase.class);
+        final Set<String> clubSet = Sets.newHashSet();
+        clubSet.add(CLUB1_ID);
+        
+        final Set<String> eventSet = Sets.newHashSet();
+        eventSet.add(EVENT1_ID);
+        
+        expect(mockSocialNetworkRepository.getFriendsOfFriends(USER_ID)).andReturn(friendSet);
+        expect(mockSocialNetworkRepository.getClubsOfFriends(USER_ID)).andReturn(clubSet);
+        expect(mockSocialNetworkRepository.getEventsOfFriends(USER_ID)).andReturn(eventSet);
+        replay(mockSocialNetworkRepository);
+        
+        mockEntitiesRepository = createMock(EntitiesRepository.class);
+        expect(mockEntitiesRepository.getPerson(USER2_ID)).andReturn(user2);
+        expect(mockEntitiesRepository.getClub(CLUB1_ID)).andReturn(club1);
+        expect(mockEntitiesRepository.getEvent(EVENT1_ID)).andReturn(event1);
+        replay(mockEntitiesRepository);
+        
+        recommender = new SocialNetworkRecommender(mockSocialNetworkRepository,
+                mockEntitiesRepository);
+        LOGGER = LoggerFactory.getLogger(SocialNetworkRecommenderTestCase.class);
         
     }
     
     @Override
     protected void specificImplementationShutDown() {
     
-        // Do nothing
+        verify(mockSocialNetworkRepository);
+        verify(mockEntitiesRepository);
         
     }
     
     @Override
     protected void specificImplementationMethodInitialize() {
     
-        activityManager = new SimpleActivityManager(new InMemoryActivityRepository());
-        
     }
     
 }

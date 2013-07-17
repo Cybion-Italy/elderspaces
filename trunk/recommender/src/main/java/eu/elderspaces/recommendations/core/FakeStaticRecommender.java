@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
@@ -97,7 +96,7 @@ public class FakeStaticRecommender implements Recommender {
     
     @Override
     public PaginatedResult getRecommendedEntities(final String userId,
-            final Class<? extends Entity> type) throws RecommenderException, NonExistentUser {
+            final Class<? extends Entity> type) throws RecommenderException {
     
         if (type == Person.class) {
             return getFriends(userId);

@@ -12,10 +12,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import eu.elderspaces.activities.core.ActivityManager;
-import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.activities.exceptions.InvalidUserActivity;
-import eu.elderspaces.activities.exceptions.NonExistentUser;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
@@ -29,12 +25,11 @@ public abstract class AbstractRecommenderTestCase {
     protected static Logger LOGGER;
     
     protected Recommender recommender;
-    protected ActivityManager activityManager;
     
     private ObjectMapper mapper;
     
     @BeforeClass
-    public void initialize() throws InvalidUserActivity, ActivityRepositoryException {
+    public void initialize() {
     
         mapper = new ObjectMapper();
         specificImplementationClassInitialize();
@@ -46,8 +41,7 @@ public abstract class AbstractRecommenderTestCase {
         specificImplementationMethodInitialize();
     }
     
-    protected abstract void specificImplementationClassInitialize() throws InvalidUserActivity,
-            ActivityRepositoryException;
+    protected abstract void specificImplementationClassInitialize();
     
     protected abstract void specificImplementationMethodInitialize();
     
@@ -60,7 +54,7 @@ public abstract class AbstractRecommenderTestCase {
     protected abstract void specificImplementationShutDown();
     
     @Test
-    public void getFriends() throws RecommenderException, NonExistentUser, JsonGenerationException,
+    public void getFriends() throws RecommenderException, JsonGenerationException,
             JsonMappingException, IOException {
     
         final PaginatedResult results = recommender.getRecommendedEntities(USER_ID, Person.class);
@@ -69,7 +63,7 @@ public abstract class AbstractRecommenderTestCase {
     }
     
     @Test
-    public void getEvents() throws RecommenderException, NonExistentUser, JsonGenerationException,
+    public void getEvents() throws RecommenderException, JsonGenerationException,
             JsonMappingException, IOException {
     
         final PaginatedResult results = recommender.getRecommendedEntities(USER_ID, Event.class);
@@ -78,7 +72,7 @@ public abstract class AbstractRecommenderTestCase {
     }
     
     @Test
-    public void getClubs() throws RecommenderException, NonExistentUser, JsonGenerationException,
+    public void getClubs() throws RecommenderException, JsonGenerationException,
             JsonMappingException, IOException {
     
         final PaginatedResult results = recommender.getRecommendedEntities(USER_ID, Club.class);

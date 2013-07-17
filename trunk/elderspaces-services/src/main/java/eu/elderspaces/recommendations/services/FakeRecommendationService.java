@@ -15,8 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-import eu.elderspaces.activities.exceptions.NonExistentUser;
+import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
+import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
 import eu.elderspaces.recommendations.core.FakeStaticRecommender;
@@ -49,7 +50,7 @@ public class FakeRecommendationService extends JsonService {
     public Response getFriends(@PathParam("userId") final String userId) {
     
         LOGGER.info("Friends recommendation service called with userId: " + userId);
-        return getRecommendationResponse(userId);
+        return getRecommendationResponse(userId, Person.class);
     }
     
     @GET
@@ -57,7 +58,7 @@ public class FakeRecommendationService extends JsonService {
     public Response getEvents(@PathParam("userId") final String userId) {
     
         LOGGER.info("Events recommendation service called with userId: " + userId);
-        return getRecommendationResponse(userId);
+        return getRecommendationResponse(userId, Event.class);
     }
     
     @GET
@@ -65,10 +66,10 @@ public class FakeRecommendationService extends JsonService {
     public Response getClubs(@PathParam("userId") final String userId) {
     
         LOGGER.info("Clubs recommendation service called with userId: " + userId);
-        return getRecommendationResponse(userId);
+        return getRecommendationResponse(userId, Club.class);
     }
     
-    private Response getRecommendationResponse(final String userId) {
+    private Response getRecommendationResponse(final String userId, final Class requestedClass) {
     
         final PaginatedResult recommendationReport;
         
@@ -76,8 +77,6 @@ public class FakeRecommendationService extends JsonService {
             recommendationReport = recommender.getRecommendedEntities(userId, Event.class);
         } catch (final RecommenderException e) {
             return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
-        } catch (final NonExistentUser e) {
-            return error(Response.Status.NOT_FOUND, e.getMessage());
         }
         
         LOGGER.info("Event recommendations retrieved");
