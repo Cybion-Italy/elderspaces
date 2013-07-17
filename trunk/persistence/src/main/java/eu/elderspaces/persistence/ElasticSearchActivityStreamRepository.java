@@ -16,16 +16,17 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
 public class ElasticSearchActivityStreamRepository implements ActivityStreamRepository {
-    
-    private static final Logger LOGGER = Logger
-            .getLogger(ElasticSearchActivityStreamRepository.class);
 
-    private static final String ACTIVITY_INDEX = "user-";
-    private static final String ACTIVITY_TYPE = "activity";
-    
+    private static final Logger LOGGER = Logger.getLogger(
+            ElasticSearchActivityStreamRepository.class);
+
+    private static final String ELDERSPACES_DB = "es";
+
+    private static final String ACTIVITIES = "activities";
+
     private final Client client;
 
-    private  ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     private final String host;
 
@@ -44,61 +45,50 @@ public class ElasticSearchActivityStreamRepository implements ActivityStreamRepo
 
     @Override
     public void shutDownRepository() {
-    
+
         client.close();
 
     }
-    
+
     @Override
     public String store(final ActivityStream activityStream)
             throws ActivityStreamRepositoryException {
-    
+
         String activityJson;
         try {
             activityJson = mapper.writeValueAsString(activityStream);
         } catch (final Exception e) {
             throw new ActivityStreamRepositoryException(e);
         }
-        
-        final IndexResponse indexResponse = client.prepareIndex(ACTIVITY_INDEX, ACTIVITY_TYPE)
+
+        final IndexResponse indexResponse = client.prepareIndex(ELDERSPACES_DB, ACTIVITIES)
                 .setSource(activityJson).execute().actionGet();
         LOGGER.debug("ActivityStream stored with index: " + indexResponse.getId());
-        
+
         this.client.admin().indices().prepareRefresh().execute().actionGet();
-        
+
         return indexResponse.getId();
     }
-    
+
     @Override
-    public String store(final String activityStreamJSON) {
-    
-        final IndexResponse indexResponse = client.prepareIndex(ACTIVITY_INDEX, ACTIVITY_TYPE)
-                .setSource(activityStreamJSON).execute().actionGet();
-        LOGGER.debug("ActivityStream stored with index: " + indexResponse.getId());
-        
-        this.client.admin().indices().prepareRefresh().execute().actionGet();
-        
-        return indexResponse.getId();
-    }
-    
-    @Override
-    public ActivityStream getActivityStream(final String id) {
-    
+    public ActivityStream getActivityStream(final String id)
+            throws ActivityStreamRepositoryException {
+
         return null; // To change body of implemented methods use File |
-                     // Settings | File Templates.
+        // Settings | File Templates.
     }
-    
+
     @Override
-    public boolean remove(final String id) {
-    
+    public boolean remove(final String id) throws ActivityStreamRepositoryException {
+
         return false; // To change body of implemented methods use File |
-                      // Settings | File Templates.
+        // Settings | File Templates.
     }
-    
+
     @Override
-    public long getTotalActivityStreamSize() {
-    
+    public long getTotalActivityStreamSize() throws ActivityStreamRepositoryException {
+
         return 0; // To change body of implemented methods use File | Settings |
-                  // File Templates.
+        // File Templates.
     }
 }
