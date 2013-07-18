@@ -64,24 +64,59 @@ public class Club extends Entity {
     }
     
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final Object obj) {
     
-        if ((o == null) || (getClass() != o.getClass())) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
             return false;
         }
-        
-        final Club that = (Club) o;
-        
-        return Objects.equal(description, that.description)
-                && Objects.equal(shortDescription, that.shortDescription)
-                && Objects.equal(name, that.name) && Objects.equal(category, that.category);
-        
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Club other = (Club) obj;
+        if (category == null) {
+            if (other.category != null) {
+                return false;
+            }
+        } else if (!category.equals(other.category)) {
+            return false;
+        }
+        if (description == null) {
+            if (other.description != null) {
+                return false;
+            }
+        } else if (!description.equals(other.description)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (shortDescription == null) {
+            if (other.shortDescription != null) {
+                return false;
+            }
+        } else if (!shortDescription.equals(other.shortDescription)) {
+            return false;
+        }
+        return true;
     }
     
     @Override
     public int hashCode() {
     
-        return Objects.hashCode(description, shortDescription, name, category);
+        final int prime = 31;
+        int result = super.hashCode();
+        result = (prime * result) + ((category == null) ? 0 : category.hashCode());
+        result = (prime * result) + ((description == null) ? 0 : description.hashCode());
+        result = (prime * result) + ((name == null) ? 0 : name.hashCode());
+        result = (prime * result) + ((shortDescription == null) ? 0 : shortDescription.hashCode());
+        return result;
     }
     
     @Override

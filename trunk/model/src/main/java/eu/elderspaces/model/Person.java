@@ -1,5 +1,7 @@
 package eu.elderspaces.model;
 
+import java.util.Arrays;
+
 public class Person extends Entity {
     
     private int friendsCount;
@@ -215,5 +217,109 @@ public class Person extends Entity {
             ret += item + separator;
         }
         return ret;
+    }
+    
+    @Override
+    public int hashCode() {
+    
+        final int prime = 31;
+        int result = super.hashCode();
+        result = (prime * result) + ((aboutMe == null) ? 0 : aboutMe.hashCode());
+        result = (prime * result) + Arrays.hashCode(activities);
+        result = (prime * result) + Arrays.hashCode(books);
+        result = (prime * result) + ((displayName == null) ? 0 : displayName.hashCode());
+        result = (prime * result) + friendsCount;
+        result = (prime * result) + ((gender == null) ? 0 : gender.hashCode());
+        result = (prime * result) + Arrays.hashCode(interests);
+        result = (prime * result) + Arrays.hashCode(languagesSpoken);
+        result = (prime * result) + Arrays.hashCode(movies);
+        result = (prime * result) + Arrays.hashCode(music);
+        result = (prime * result) + ((name == null) ? 0 : name.hashCode());
+        result = (prime * result) + ((pets == null) ? 0 : pets.hashCode());
+        result = (prime * result) + ((thumbnailUrl == null) ? 0 : thumbnailUrl.hashCode());
+        result = (prime * result) + Arrays.hashCode(tvShows);
+        return result;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+    
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Person other = (Person) obj;
+        if (aboutMe == null) {
+            if (other.aboutMe != null) {
+                return false;
+            }
+        } else if (!aboutMe.equals(other.aboutMe)) {
+            return false;
+        }
+        if (!Arrays.equals(activities, other.activities)) {
+            return false;
+        }
+        if (!Arrays.equals(books, other.books)) {
+            return false;
+        }
+        if (displayName == null) {
+            if (other.displayName != null) {
+                return false;
+            }
+        } else if (!displayName.equals(other.displayName)) {
+            return false;
+        }
+        if (friendsCount != other.friendsCount) {
+            return false;
+        }
+        if (gender == null) {
+            if (other.gender != null) {
+                return false;
+            }
+        } else if (!gender.equals(other.gender)) {
+            return false;
+        }
+        if (!Arrays.equals(interests, other.interests)) {
+            return false;
+        }
+        if (!Arrays.equals(languagesSpoken, other.languagesSpoken)) {
+            return false;
+        }
+        if (!Arrays.equals(movies, other.movies)) {
+            return false;
+        }
+        if (!Arrays.equals(music, other.music)) {
+            return false;
+        }
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (pets == null) {
+            if (other.pets != null) {
+                return false;
+            }
+        } else if (!pets.equals(other.pets)) {
+            return false;
+        }
+        if (thumbnailUrl == null) {
+            if (other.thumbnailUrl != null) {
+                return false;
+            }
+        } else if (!thumbnailUrl.equals(other.thumbnailUrl)) {
+            return false;
+        }
+        if (!Arrays.equals(tvShows, other.tvShows)) {
+            return false;
+        }
+        return true;
     }
 }

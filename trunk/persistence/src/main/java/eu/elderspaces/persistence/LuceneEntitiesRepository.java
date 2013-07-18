@@ -41,7 +41,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     private static final Logger LOGGER = Logger.getLogger(LuceneEntitiesRepository.class);
     
     // MISC
-    private static final String STRING_SEPARATOR = " ";
+    private static final String STRING_SEPARATOR = "###";
     
     // Entity Properties
     private static final String ID = "id";
@@ -125,9 +125,9 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         try {
             if (!alreadyExists(object.getId())) {
-                ;
+                store(object);
             }
-            store(object);
+            
         } catch (final RepositoryException e) {
             LOGGER.error("Could not store activity");
         }
@@ -153,7 +153,9 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     public void createEvent(final Event object, final Date eventTime) {
     
         try {
-            store(object);
+            if (!alreadyExists(object.getId())) {
+                store(object);
+            }
         } catch (final RepositoryException e) {
             LOGGER.error("Could not store activity");
         }
@@ -179,8 +181,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     public void deleteUser(final Person user, final Date eventTime) {
     
         try {
-            final int docNumber = searchUnique(user.getId());
-            reader.deleteDocument(docNumber);
+            writer.deleteDocuments(new Term(ID, user.getId()));
+            writer.commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -188,8 +190,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage());
-        } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -199,8 +199,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     public void deleteActivity(final Activity activity, final Date eventTime) {
     
         try {
-            final int docNumber = searchUnique(activity.getId());
-            reader.deleteDocument(docNumber);
+            writer.deleteDocuments(new Term(ID, activity.getId()));
+            writer.commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -208,8 +208,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage());
-        } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -219,8 +217,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     public void deleteClub(final Club club, final Date eventTime) {
     
         try {
-            final int docNumber = searchUnique(club.getId());
-            reader.deleteDocument(docNumber);
+            writer.deleteDocuments(new Term(ID, club.getId()));
+            writer.commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -228,8 +226,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage());
-        } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -239,8 +235,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     public void deleteEvent(final Event event, final Date eventTime) {
     
         try {
-            final int docNumber = searchUnique(event.getId());
-            reader.deleteDocument(docNumber);
+            writer.deleteDocuments(new Term(ID, event.getId()));
+            writer.commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -248,8 +244,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
-            LOGGER.error(e.getMessage());
-        } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -297,9 +291,9 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         doc.add(new Field(OBJECT_TYPE, Activity.class.getSimpleName(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         
-        doc.add(new Field(ACTIVITY_TITLE, activity.getTitle(), Field.Store.NO,
+        doc.add(new Field(ACTIVITY_TITLE, activity.getTitle(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(ACTIVITY_BODY, activity.getBody(), Field.Store.NO,
+        doc.add(new Field(ACTIVITY_BODY, activity.getBody(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         
         return doc;
@@ -314,18 +308,18 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         doc.add(new Field(OBJECT_TYPE, Event.class.getSimpleName(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         
-        doc.add(new Field(EVENT_CATEGORY, event.getCategory(), Field.Store.NO,
+        doc.add(new Field(EVENT_CATEGORY, event.getCategory(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(EVENT_DESCRIPTION, event.getDescription(), Field.Store.NO,
+        doc.add(new Field(EVENT_DESCRIPTION, event.getDescription(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         doc.add(new Field(EVENT_END_DATE, Long.toString(event.getEndDate().getTime()),
-                Field.Store.NO, Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(EVENT_NAME, event.getName(), Field.Store.NO, Field.Index.NOT_ANALYZED,
+                Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
+        doc.add(new Field(EVENT_NAME, event.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED,
                 TermVector.NO));
-        doc.add(new Field(EVENT_SHORT_DESCRIPTION, event.getShortDescription(), Field.Store.NO,
+        doc.add(new Field(EVENT_SHORT_DESCRIPTION, event.getShortDescription(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         doc.add(new Field(EVENT_START_DATE, Long.toString(event.getStartDate().getTime()),
-                Field.Store.NO, Field.Index.NOT_ANALYZED, TermVector.NO));
+                Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
         
         return doc;
     }
@@ -338,13 +332,13 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         doc.add(new Field(OBJECT_TYPE, Club.class.getSimpleName(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         
-        doc.add(new Field(CLUB_CATEGORY, club.getCategory(), Field.Store.NO,
+        doc.add(new Field(CLUB_CATEGORY, club.getCategory(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(CLUB_DESCRIPTION, club.getDescription(), Field.Store.NO,
+        doc.add(new Field(CLUB_DESCRIPTION, club.getDescription(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(CLUB_NAME, club.getName(), Field.Store.NO, Field.Index.NOT_ANALYZED,
+        doc.add(new Field(CLUB_NAME, club.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED,
                 TermVector.NO));
-        doc.add(new Field(CLUB_SHORT_DESCRIPTION, club.getShortDescription(), Field.Store.NO,
+        doc.add(new Field(CLUB_SHORT_DESCRIPTION, club.getShortDescription(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         
         return doc;
@@ -358,35 +352,35 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         doc.add(new Field(OBJECT_TYPE, Person.class.getSimpleName(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         
-        doc.add(new Field(PERSON_ABOUT_ME, person.getAboutMe(), Field.Store.NO,
+        doc.add(new Field(PERSON_ABOUT_ME, person.getAboutMe(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         doc.add(new Field(PERSON_ACTIVITIES, person.getActivitiesString(STRING_SEPARATOR),
-                Field.Store.NO, Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(PERSON_BOOKS, person.getBooksString(STRING_SEPARATOR), Field.Store.NO,
+                Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
+        doc.add(new Field(PERSON_BOOKS, person.getBooksString(STRING_SEPARATOR), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(PERSON_DISPLAY_NAME, person.getDisplayName(), Field.Store.NO,
+        doc.add(new Field(PERSON_DISPLAY_NAME, person.getDisplayName(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         doc.add(new Field(PERSON_FRIEND_COUNT, Integer.toString(person.getFriendsCount()),
-                Field.Store.NO, Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(PERSON_GENDER, person.getGender(), Field.Store.NO,
+                Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
+        doc.add(new Field(PERSON_GENDER, person.getGender(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         doc.add(new Field(PERSON_INTERESTS, person.getInterestsString(STRING_SEPARATOR),
-                Field.Store.NO, Field.Index.NOT_ANALYZED, TermVector.NO));
+                Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
         doc.add(new Field(PERSON_LANGUAGE_SPOKEN,
-                person.getLanguagesSpokenString(STRING_SEPARATOR), Field.Store.NO,
+                person.getLanguagesSpokenString(STRING_SEPARATOR), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(PERSON_MOVIES, person.getMoviesString(STRING_SEPARATOR), Field.Store.NO,
+        doc.add(new Field(PERSON_MOVIES, person.getMoviesString(STRING_SEPARATOR), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(PERSON_MUSIC, person.getMusicString(STRING_SEPARATOR), Field.Store.NO,
+        doc.add(new Field(PERSON_MUSIC, person.getMusicString(STRING_SEPARATOR), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
-        doc.add(new Field(PERSON_NAME, person.getName(), Field.Store.NO, Field.Index.NOT_ANALYZED,
+        doc.add(new Field(PERSON_NAME, person.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED,
                 TermVector.NO));
-        doc.add(new Field(PERSON_PETS, person.getPets(), Field.Store.NO, Field.Index.NOT_ANALYZED,
+        doc.add(new Field(PERSON_PETS, person.getPets(), Field.Store.YES, Field.Index.NOT_ANALYZED,
                 TermVector.NO));
-        doc.add(new Field(PERSON_THUMBNAILS, person.getThumbnailUrl(), Field.Store.NO,
+        doc.add(new Field(PERSON_THUMBNAILS, person.getThumbnailUrl(), Field.Store.YES,
                 Field.Index.NOT_ANALYZED, TermVector.NO));
         doc.add(new Field(PERSON_TV_SHOWS, person.getTvShowsString(STRING_SEPARATOR),
-                Field.Store.NO, Field.Index.NOT_ANALYZED, TermVector.NO));
+                Field.Store.YES, Field.Index.NOT_ANALYZED, TermVector.NO));
         
         return doc;
     }
@@ -491,9 +485,10 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             searcher.close();
             
             if (collector.getTotalHits() > 1) {
-                throw new RepositoryException("Multiple results on exact id query!!!");
+                throw new RepositoryException("Multiple results on exact query with id: "
+                        + documentId);
             } else if (collector.getTotalHits() == 0) {
-                throw new RepositoryException("No match!");
+                throw new RepositoryException("No match on id: " + documentId);
             }
             
             final ScoreDoc[] hits = collector.topDocs().scoreDocs;
