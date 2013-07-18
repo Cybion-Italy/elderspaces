@@ -24,6 +24,8 @@ import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.LockObtainFailedException;
 
+import com.google.inject.Inject;
+
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Entity;
@@ -86,6 +88,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     private static final String ACTIVITY_BODY = "body";
     private static final String ACTIVITY_TITLE = "title";
     
+    @Inject
     public LuceneEntitiesRepository(final Directory directory, final Analyzer analyzer) {
     
         super(directory, analyzer);

@@ -21,7 +21,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 import eu.elderspaces.activities.core.ActivityStreamManager;
-import eu.elderspaces.activities.core.SimpleActivityManager;
+import eu.elderspaces.activities.core.MultiLayerActivityStreamManager;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -52,7 +52,7 @@ public class TestJerseyServletModule extends JerseyServletModule {
         // bind REST services
         bind(StatusService.class);
         bind(ActivitiesService.class);
-        bind(ActivityStreamManager.class).to(SimpleActivityManager.class);
+        bind(ActivityStreamManager.class).to(MultiLayerActivityStreamManager.class);
         
         // add bindings for Jackson json serialization
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();

@@ -21,7 +21,7 @@ import eu.elderspaces.persistence.EntitiesRepository;
 import eu.elderspaces.persistence.SocialNetworkRepository;
 import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
 
-public class SimpleActivityManager implements ActivityStreamManager {
+public class MultiLayerActivityStreamManager implements ActivityStreamManager {
     
     private final ObjectMapper mapper;
     
@@ -32,7 +32,7 @@ public class SimpleActivityManager implements ActivityStreamManager {
     private final SocialNetworkRepository socialNetworkRepository;
     
     @Inject
-    public SimpleActivityManager(final ActivityStreamRepository activityRepository,
+    public MultiLayerActivityStreamManager(final ActivityStreamRepository activityRepository,
             final EntitiesRepository entitiesRepository,
             final SocialNetworkRepository socialNetworkRepository, final ObjectMapper objectMapper) {
     
