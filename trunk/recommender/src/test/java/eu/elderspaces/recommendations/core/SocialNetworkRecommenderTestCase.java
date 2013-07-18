@@ -4,6 +4,7 @@ import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import it.cybion.commons.exceptions.RepositoryException;
 
 import java.util.Date;
 import java.util.List;
@@ -171,9 +172,13 @@ public class SocialNetworkRecommenderTestCase extends AbstractRecommenderTestCas
         replay(mockSocialNetworkRepository);
         
         mockEntitiesRepository = createMock(EntitiesRepository.class);
-        expect(mockEntitiesRepository.getPerson(USER2_ID)).andReturn(user2);
-        expect(mockEntitiesRepository.getClub(CLUB1_ID)).andReturn(club1);
-        expect(mockEntitiesRepository.getEvent(EVENT1_ID)).andReturn(event1);
+        try {
+            expect(mockEntitiesRepository.getPerson(USER2_ID)).andReturn(user2);
+            expect(mockEntitiesRepository.getClub(CLUB1_ID)).andReturn(club1);
+            expect(mockEntitiesRepository.getEvent(EVENT1_ID)).andReturn(event1);
+        } catch (final RepositoryException e) {
+            LOGGER.error(e.getMessage());
+        }
         replay(mockEntitiesRepository);
         
         recommender = new SocialNetworkRecommender(mockSocialNetworkRepository,

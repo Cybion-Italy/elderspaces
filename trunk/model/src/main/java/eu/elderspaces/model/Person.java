@@ -44,6 +44,15 @@ public class Person extends Entity {
         return interests;
     }
     
+    public String getInterestsString(final String separator) {
+    
+        String ret = "";
+        for (final String item : interests) {
+            ret += item + separator;
+        }
+        return ret;
+    }
+    
     public void setInterests(final String[] interests) {
     
         this.interests = interests;
@@ -52,6 +61,11 @@ public class Person extends Entity {
     public String[] getMovies() {
     
         return movies;
+    }
+    
+    public String getMoviesString(final String separator) {
+    
+        return getStringFromArray(movies, separator);
     }
     
     public void setMovies(final String[] movies) {
@@ -74,6 +88,11 @@ public class Person extends Entity {
         return languagesSpoken;
     }
     
+    public String getLanguagesSpokenString(final String separator) {
+    
+        return getStringFromArray(languagesSpoken, separator);
+    }
+    
     public void setLanguagesSpoken(final String[] languagesSpoken) {
     
         this.languagesSpoken = languagesSpoken;
@@ -82,6 +101,11 @@ public class Person extends Entity {
     public String[] getTvShows() {
     
         return tvShows;
+    }
+    
+    public String getTvShowsString(final String separator) {
+    
+        return getStringFromArray(tvShows, separator);
     }
     
     public void setTvShows(final String[] tvShows) {
@@ -134,6 +158,11 @@ public class Person extends Entity {
         return activities;
     }
     
+    public String getActivitiesString(final String separator) {
+    
+        return getStringFromArray(activities, separator);
+    }
+    
     public void setActivities(final String[] activities) {
     
         this.activities = activities;
@@ -144,6 +173,11 @@ public class Person extends Entity {
         return music;
     }
     
+    public String getMusicString(final String separator) {
+    
+        return getStringFromArray(music, separator);
+    }
+    
     public void setMusic(final String[] music) {
     
         this.music = music;
@@ -152,6 +186,11 @@ public class Person extends Entity {
     public String[] getBooks() {
     
         return books;
+    }
+    
+    public String getBooksString(final String separator) {
+    
+        return getStringFromArray(books, separator);
     }
     
     public void setBooks(final String[] books) {
@@ -169,4 +208,12 @@ public class Person extends Entity {
         this.displayName = displayName;
     }
     
+    private String getStringFromArray(final String[] array, final String separator) {
+    
+        String ret = "";
+        for (final String item : array) {
+            ret += item + separator;
+        }
+        return ret;
+    }
 }

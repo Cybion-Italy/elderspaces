@@ -1,5 +1,7 @@
 package eu.elderspaces.recommendations.core;
 
+import it.cybion.commons.exceptions.RepositoryException;
+
 import java.util.List;
 import java.util.Set;
 
@@ -56,20 +58,38 @@ public class SocialNetworkRecommender implements Recommender {
         if (targetClass == Person.class) {
             final Set<String> ids = socialNetworkRepository.getFriendsOfFriends(userId);
             for (final String id : ids) {
-                final Person person = entityRepository.getPerson(id);
+                Person person;
+                try {
+                    person = entityRepository.getPerson(id);
+                } catch (final RepositoryException e) {
+                    LOGGER.error(e.getMessage());
+                    continue;
+                }
                 result.add(person);
             }
             
         } else if (targetClass == Event.class) {
             final Set<String> ids = socialNetworkRepository.getEventsOfFriends(userId);
             for (final String id : ids) {
-                final Event event = entityRepository.getEvent(id);
+                Event event;
+                try {
+                    event = entityRepository.getEvent(id);
+                } catch (final RepositoryException e) {
+                    LOGGER.error(e.getMessage());
+                    continue;
+                }
                 result.add(event);
             }
         } else if (targetClass == Club.class) {
             final Set<String> ids = socialNetworkRepository.getClubsOfFriends(userId);
             for (final String id : ids) {
-                final Club club = entityRepository.getClub(id);
+                Club club;
+                try {
+                    club = entityRepository.getClub(id);
+                } catch (final RepositoryException e) {
+                    LOGGER.error(e.getMessage());
+                    continue;
+                }
                 result.add(club);
             }
         }

@@ -19,9 +19,13 @@ import eu.elderspaces.activities.core.ActivityManager;
 import eu.elderspaces.activities.core.SimpleActivityManager;
 import eu.elderspaces.activities.services.ActivitiesService;
 import eu.elderspaces.activities.services.StatusService;
+import eu.elderspaces.persistence.BluePrintsSocialNetworkRepository;
+import eu.elderspaces.persistence.EntitiesRepository;
+import eu.elderspaces.persistence.LuceneEntitiesRepository;
+import eu.elderspaces.persistence.SocialNetworkRepository;
 import eu.elderspaces.recommendations.core.FakeStaticRecommender;
 import eu.elderspaces.recommendations.core.Recommender;
-import eu.elderspaces.recommendations.core.SimpleRecommender;
+import eu.elderspaces.recommendations.core.SocialNetworkRecommender;
 
 /**
  * @author micheleminno
@@ -41,10 +45,11 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         // bind REST services
         bind(RecommendationService.class);
         bind(FakeRecommendationService.class);
-        bind(Recommender.class).to(SimpleRecommender.class);
+        bind(Recommender.class).to(SocialNetworkRecommender.class);
         bind(FakeStaticRecommender.class);
         bind(ActivityManager.class).to(SimpleActivityManager.class);
-//        bind(ActivityRepository.class).to(InMemoryActivityRepository.class);
+        bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
+        bind(EntitiesRepository.class).to(LuceneEntitiesRepository.class);
         
         // Temporarily:
         bind(ActivitiesService.class);
