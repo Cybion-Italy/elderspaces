@@ -12,9 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
-import eu.elderspaces.activities.exceptions.InvalidUserActivity;
-import eu.elderspaces.activities.persistence.InMemoryActivityRepository;
+import eu.elderspaces.activities.core.exceptions.ActivityManagerException;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Entity;
@@ -35,18 +33,20 @@ public class SimpleActivityManagerTestCase {
     private static final String ACTIVITY_BODY = "Hello from Athens!";
     
     private ObjectMapper mapper;
-    private ActivityManager activityManager;
+    private ActivityStreamManager activityManager;
     
     @BeforeClass
     public void startUp() {
     
-        this.activityManager = new SimpleActivityManager(new InMemoryActivityRepository());
         this.mapper = new ObjectMapper();
+        
+        this.activityManager = new SimpleActivityManager(null, null, null, mapper);
+        
     }
     
     @Test
-    public void storeActivity() throws InvalidUserActivity, ActivityRepositoryException,
-            JsonGenerationException, JsonMappingException, IOException {
+    public void storeActivity() throws JsonGenerationException, JsonMappingException, IOException,
+            ActivityManagerException {
     
         final Person actor = new Person(PERSON_ID, PERSON_DISPLAY_NAME, PERSON_THUMBNAIL_URL);
         final Entity activityObject = new Activity(ACTIVITY_ID, ACTIVITY_BODY, ACTIVITY_TITLE);

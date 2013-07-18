@@ -15,7 +15,7 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
-import eu.elderspaces.activities.core.ActivityManager;
+import eu.elderspaces.activities.core.ActivityStreamManager;
 import eu.elderspaces.activities.core.SimpleActivityManager;
 import eu.elderspaces.activities.services.ActivitiesService;
 import eu.elderspaces.activities.services.StatusService;
@@ -47,7 +47,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         bind(FakeRecommendationService.class);
         bind(Recommender.class).to(SocialNetworkRecommender.class);
         bind(FakeStaticRecommender.class);
-        bind(ActivityManager.class).to(SimpleActivityManager.class);
+        bind(ActivityStreamManager.class).to(SimpleActivityManager.class);
         bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
         bind(EntitiesRepository.class).to(LuceneEntitiesRepository.class);
         

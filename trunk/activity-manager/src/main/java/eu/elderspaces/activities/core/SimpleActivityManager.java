@@ -1,251 +1,277 @@
 package eu.elderspaces.activities.core;
 
-import eu.elderspaces.activities.core.exceptions.ActivityManagerException;
-import eu.elderspaces.persistence.ActivityStreamRepository;
-import eu.elderspaces.persistence.EntitiesRepository;
-import eu.elderspaces.persistence.SocialNetworkRepository;
-import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
+import java.util.Date;
+
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.inject.Inject;
 
+import eu.elderspaces.activities.core.exceptions.ActivityManagerException;
+import eu.elderspaces.activities.core.exceptions.InvalidActivityStreamException;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
+import eu.elderspaces.model.Event.InvitationAnswer;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Verbs;
+import eu.elderspaces.persistence.ActivityStreamRepository;
+import eu.elderspaces.persistence.EntitiesRepository;
+import eu.elderspaces.persistence.SocialNetworkRepository;
+import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
 
-public class SimpleActivityManager implements ActivityManager {
-
+public class SimpleActivityManager implements ActivityStreamManager {
+    
     private final ObjectMapper mapper;
-
+    
     private final ActivityStreamRepository activityRepository;
-
+    
     private final EntitiesRepository entitiesRepository;
-
+    
     private final SocialNetworkRepository socialNetworkRepository;
-
+    
     @Inject
     public SimpleActivityManager(final ActivityStreamRepository activityRepository,
-                                 final EntitiesRepository entitiesRepository,
-                                 final SocialNetworkRepository socialNetworkRepository,
-                                 final ObjectMapper objectMapper) {
-
+            final EntitiesRepository entitiesRepository,
+            final SocialNetworkRepository socialNetworkRepository, final ObjectMapper objectMapper) {
+    
         this.activityRepository = activityRepository;
         this.entitiesRepository = entitiesRepository;
         this.socialNetworkRepository = socialNetworkRepository;
         this.mapper = objectMapper;
     }
-
+    
     @Override
     public boolean storeActivity(final String activityContent) throws ActivityManagerException {
-
+    
         final ActivityStream activity;
         try {
             activity = mapper.readValue(activityContent, ActivityStream.class);
         } catch (final Exception e) {
-            throw new ActivityManagerException(
-                    "can't deserialise activity: '" + activityContent + "' to json", e);
+            throw new ActivityManagerException("can't deserialise activity: '" + activityContent
+                    + "' to json", e);
         }
-
+        
         return storeActivity(activity);
     }
-
+    
     @Override
     public boolean storeActivity(final ActivityStream activity) throws ActivityManagerException {
-
+    
         final String userId = activity.getActor().getId();
         String activityId = "";
-
+        
         try {
             activityId = activityRepository.store(activity);
-        } catch (ActivityStreamRepositoryException e) {
+        } catch (final ActivityStreamRepositoryException e) {
             throw new ActivityManagerException("can't store activity '" + activity + "'", e);
         }
-        boolean activityStored = !activityId.equals("");
-
+        
+        final boolean activityStored = !activityId.equals("");
+        
         final Person user = activity.getActor();
         final String verb = activity.getVerb();
         final Entity target = activity.getTarget();
-
+        final Date eventTime = activity.getPublished();
+        
         final Entity object = activity.getObject();
-
+        
         boolean profileUpdated = false;
-
-        //TODO: every handler method should:
-        //1) store the subjects and objects (Events, Persons, etc... ) in the EntitiesRepository
-        //2) store the vertices in SocialNetworkRepository with minimal properties
-        //3) store the relations created in SocialNetworkRepository
-
-        if (object.getClass() == Person.class) {
-
-            final Person personObject = (Person) object;
-            profileUpdated = handlePersonObject(user, verb, personObject);
-
-        } else if (object.getClass() == Activity.class) {
-
-            final Activity postObject = (Activity) object;
-            profileUpdated = handlePostObject(user, verb, postObject, target);
-
-        } else if (object.getClass() == Event.class) {
-
-            final Event eventObject = (Event) object;
-            profileUpdated = handleEventObject(user, verb, eventObject);
-
-        } else if (object.getClass() == Club.class) {
-
-            final Club clubObject = (Club) object;
-            profileUpdated = handleClubObject(user, verb, clubObject);
-
-        } else {
-            throw new ActivityManagerException(
-                    "Not managed class type: '" + object.getClass().getName() + "'");
+        
+        try {
+            // entities and relations are stored according to the activity logic
+            if (object.getClass() == Person.class) {
+                
+                final Person personObject = (Person) object;
+                profileUpdated = handlePersonObject(user, verb, personObject, eventTime);
+                
+            } else if (object.getClass() == Activity.class) {
+                
+                final Activity postObject = (Activity) object;
+                profileUpdated = handlePostObject(user, verb, postObject, target, eventTime);
+                
+            } else if (object.getClass() == Event.class) {
+                
+                final Event eventObject = (Event) object;
+                profileUpdated = handleEventObject(user, verb, eventObject, eventTime);
+                
+            } else if (object.getClass() == Club.class) {
+                
+                final Club clubObject = (Club) object;
+                profileUpdated = handleClubObject(user, verb, clubObject, eventTime);
+                
+            } else {
+                throw new ActivityManagerException("Not managed class type: '"
+                        + object.getClass().getName() + "'");
+            }
+        } catch (final InvalidActivityStreamException e) {
+            throw new ActivityManagerException(e.getMessage(), e);
         }
-
+        
         return profileUpdated && activityStored;
     }
-
-
+    
     private boolean handlePersonObject(final Person user, final String verb,
-            final Person personObject) throws InvalidUserActivity {
-
-        boolean personObjectHandled = false;
-
+            final Person personObject, final Date eventTime) throws InvalidActivityStreamException {
+    
         if (verb.equals(Verbs.REQUEST_FRIEND)) {
-
+            
             // Do nothing
-
+            
         } else if (verb.equals(Verbs.MAKE_FRIEND)) {
-
-            personObjectHandled = activityRepository.addFriend(user, personObject);
-
+            
+            socialNetworkRepository.addNewFriend(user.getId(), personObject.getId(), eventTime);
+            
         } else if (verb.equals(Verbs.REMOVE_FRIEND)) {
-
-            personObjectHandled = activityRepository.removeFriend(user, personObject);
-
+            
+            socialNetworkRepository.deleteFriendConnection(user.getId(), personObject.getId(),
+                    eventTime);
+            
         } else if (verb.equals(Verbs.UPDATE)) {
-
-            personObjectHandled = activityRepository.updateUser(user, personObject);
-
+            
+            entitiesRepository.updateProfile(personObject, eventTime);
+            socialNetworkRepository.createNewUser(personObject.getId(), eventTime);
+            
         } else if (verb.equals(Verbs.DELETE)) {
-
-            personObjectHandled = activityRepository.deleteUser(user);
-
+            
+            entitiesRepository.deleteUser(user, eventTime);
+            socialNetworkRepository.deleteUser(user.getId(), eventTime);
+            
         } else {
-            throw new InvalidUserActivity("Invalid verb");
+            throw new InvalidActivityStreamException("Invalid verb");
         }
-
-        return personObjectHandled;
+        
+        return true;
     }
-
+    
     private boolean handlePostObject(final Person user, final String verb,
-            final Activity postObject, final Entity target) throws InvalidUserActivity {
-
-        boolean postObjectHandled = false;
-
+            final Activity postObject, final Entity target, final Date eventTime)
+            throws InvalidActivityStreamException {
+    
         if (verb.equals(Verbs.CREATE)) {
-
+            
             if (target == null) {
-
-                // postObject.setPostedOn(user);
-
-            } else if ((target.getClass() == Event.class) || (target.getClass() == Club.class)) {
-
-                // postObject.setPostedOn(target);
-
+                
+                entitiesRepository.postActivity(postObject, eventTime);
+                socialNetworkRepository.postActivity(user.getId(), postObject.getId(), eventTime);
+                
+            } else if (target.getClass() == Event.class) {
+                
+                entitiesRepository.postActivity(postObject, eventTime);
+                socialNetworkRepository.postEventActivity(user.getId(), postObject.getId(),
+                        target.getId(), eventTime);
+                
+            } else if (target.getClass() == Club.class) {
+                
+                entitiesRepository.postActivity(postObject, eventTime);
+                socialNetworkRepository.postClubActivity(user.getId(), postObject.getId(),
+                        target.getId(), eventTime);
+                
             } else {
-
-                throw new InvalidUserActivity("Invalid Target type");
+                throw new InvalidActivityStreamException("Invalid Target type");
             }
-
-            postObjectHandled = activityRepository.addPost(user, postObject);
-
+            
         } else if (verb.equals(Verbs.DELETE)) {
-
+            
             if (target == null) {
-
-                // postObject.setPostedOn(user);
-
-            } else if ((target.getClass() == Event.class) || (target.getClass() == Club.class)) {
-
-                // postObject.setPostedOn(target);
-
+                
+                entitiesRepository.deleteActivity(postObject, eventTime);
+                socialNetworkRepository.deleteActivity(user.getId(), postObject.getId(), eventTime);
+                
+            } else if (target.getClass() == Event.class) {
+                
+                entitiesRepository.deleteActivity(postObject, eventTime);
+                socialNetworkRepository.deleteEventActivity(user.getId(), postObject.getId(),
+                        target.getId(), eventTime);
+                
+            } else if (target.getClass() == Club.class) {
+                
+                entitiesRepository.deleteActivity(postObject, eventTime);
+                socialNetworkRepository.deleteClubActivity(user.getId(), postObject.getId(),
+                        target.getId(), eventTime);
+                
             } else {
-
-                throw new InvalidUserActivity("Invalid Target type");
+                
+                throw new InvalidActivityStreamException("Invalid Target type");
             }
-
-            postObjectHandled = activityRepository.deletePost(user, postObject);
-
+            
         } else {
-            throw new InvalidUserActivity("Invalid verb");
+            throw new InvalidActivityStreamException("Invalid verb");
         }
-
-        return postObjectHandled;
+        
+        return true;
     }
-
-    private boolean handleEventObject(final Person user, final String verb, final Event eventObject)
-            throws InvalidUserActivity {
-
-        boolean eventObjectHandled = false;
-
+    
+    private boolean handleEventObject(final Person user, final String verb,
+            final Event eventObject, final Date eventTime) throws InvalidActivityStreamException {
+    
         if (verb.equals(Verbs.CREATE)) {
-
-            eventObjectHandled = activityRepository.createEvent(user, eventObject);
-
+            
+            entitiesRepository.createEvent(eventObject, eventTime);
+            socialNetworkRepository.createEvent(user.getId(), eventObject.getId(), eventTime);
+            
         } else if (verb.equals(Verbs.UPDATE)) {
-
-            eventObjectHandled = activityRepository.modifyEvent(user, eventObject);
-
+            
+            entitiesRepository.modifyEvent(eventObject, eventTime);
+            
         } else if (verb.equals(Verbs.DELETE)) {
-
-            eventObjectHandled = activityRepository.deleteEvent(user, eventObject);
-
+            
+            entitiesRepository.deleteEvent(eventObject, eventTime);
+            socialNetworkRepository.deleteEvent(user.getId(), eventObject.getId(), eventTime);
+            
         } else if (verb.equals(Verbs.YES_RSVP_RESPONSE_TO_EVENT)
                 || verb.equals(Verbs.NO_RSVP_RESPONSE_TO_EVENT)
                 || verb.equals(Verbs.MAYBE_RSVP_RESPONSE_TO_EVENT)) {
-
-            eventObjectHandled = activityRepository.createRSVPResponseToEvent(user, verb,
-                    eventObject);
-
+            
+            InvitationAnswer answer = InvitationAnswer.NO;
+            if (verb.equals(Verbs.YES_RSVP_RESPONSE_TO_EVENT)) {
+                answer = InvitationAnswer.YES;
+            } else if (verb.equals(Verbs.MAYBE_RSVP_RESPONSE_TO_EVENT)) {
+                answer = InvitationAnswer.MAYBE;
+            } else if (verb.equals(Verbs.NO_RSVP_RESPONSE_TO_EVENT)) {
+                answer = InvitationAnswer.NO;
+            }
+            
+            socialNetworkRepository.respondEvent(user.getId(), eventObject.getId(), answer,
+                    eventTime);
+            
         } else {
-            throw new InvalidUserActivity("Invalid verb");
+            throw new InvalidActivityStreamException("Invalid verb");
         }
-
-        return eventObjectHandled;
+        
+        return true;
     }
-
-    private boolean handleClubObject(final Person user, final String verb, final Club clubObject)
-            throws InvalidUserActivity {
-
-        boolean clubObjectHandled = false;
-
+    
+    private boolean handleClubObject(final Person user, final String verb, final Club clubObject,
+            final Date eventTime) throws InvalidActivityStreamException {
+    
         if (verb.equals(Verbs.CREATE)) {
-
-            clubObjectHandled = activityRepository.createClub(user, clubObject);
-
+            
+            entitiesRepository.createClub(clubObject, eventTime);
+            socialNetworkRepository.createClub(user.getId(), clubObject.getId(), eventTime);
+            
         } else if (verb.equals(Verbs.UPDATE)) {
-
-            clubObjectHandled = activityRepository.modifyClub(user, clubObject);
-
+            
+            entitiesRepository.modifyClub(clubObject, eventTime);
+            
         } else if (verb.equals(Verbs.DELETE)) {
-
-            clubObjectHandled = activityRepository.deleteClub(user, clubObject);
-
+            
+            entitiesRepository.deleteClub(clubObject, eventTime);
+            socialNetworkRepository.deleteClub(user.getId(), clubObject.getId(), eventTime);
+            
         } else if (verb.equals(Verbs.JOIN)) {
-
-            clubObjectHandled = activityRepository.joinClub(user, clubObject);
-
+            
+            socialNetworkRepository.joinClub(user.getId(), clubObject.getId(), eventTime);
+            
         } else if (verb.equals(Verbs.LEAVE)) {
-
-            clubObjectHandled = activityRepository.leaveClub(user, clubObject);
-
+            
+            socialNetworkRepository.leaveClub(user.getId(), clubObject.getId(), eventTime);
+            
         } else {
-            throw new InvalidUserActivity("Invalid verb");
+            throw new InvalidActivityStreamException("Invalid verb");
         }
-
-        return clubObjectHandled;
+        
+        return true;
     }
 }

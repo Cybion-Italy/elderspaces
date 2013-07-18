@@ -9,7 +9,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import eu.elderspaces.activities.exceptions.ActivityRepositoryException;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
@@ -17,6 +16,7 @@ import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Verbs;
+import eu.elderspaces.persistence.ActivityStreamRepository;
 
 public abstract class AbstractActivityRepositoryTestCase {
     
@@ -54,7 +54,7 @@ public abstract class AbstractActivityRepositoryTestCase {
     
     protected static Logger LOGGER;
     
-    protected ActivityRepository activityRepository;
+    protected ActivityStreamRepository activityRepository;
     
     @BeforeMethod
     public void initializeDataStructures() {

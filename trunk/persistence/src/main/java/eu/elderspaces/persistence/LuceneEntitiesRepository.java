@@ -235,6 +235,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         
     }
     
+    @Override
     public void deleteEvent(final Event event, final Date eventTime) {
     
         try {

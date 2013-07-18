@@ -33,6 +33,8 @@ public interface EntitiesRepository {
     
     void modifyEvent(Event object, Date eventTime);
     
+    void deleteEvent(Event event, Date eventTime);
+    
     // **********************************************************
     // getters
     Person getPerson(String id) throws RepositoryException;
@@ -42,8 +44,5 @@ public interface EntitiesRepository {
     Event getEvent(String id) throws RepositoryException;
     
     Activity getActivity(String id) throws RepositoryException;
-    
-    // **********************************************************
-    // queries
     
 }

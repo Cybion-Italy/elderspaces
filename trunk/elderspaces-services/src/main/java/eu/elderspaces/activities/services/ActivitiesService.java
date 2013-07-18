@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import eu.elderspaces.activities.ActivitiesEndpoint;
-import eu.elderspaces.activities.core.ActivityManager;
+import eu.elderspaces.activities.core.ActivityStreamManager;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -26,10 +26,10 @@ public class ActivitiesService extends JsonService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivitiesService.class);
     
-    private final ActivityManager activityManager;
+    private final ActivityStreamManager activityManager;
     
     @Inject
-    public ActivitiesService(final ActivityManager activityManager) {
+    public ActivitiesService(final ActivityStreamManager activityManager) {
     
         this.activityManager = activityManager;
     }
