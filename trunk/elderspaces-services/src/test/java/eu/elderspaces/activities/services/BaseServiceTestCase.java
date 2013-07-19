@@ -1,7 +1,6 @@
 package eu.elderspaces.activities.services;
 
 import it.cybion.commons.AbstractJerseyRESTTestCase;
-import eu.elderspaces.activities.TestServiceConfig;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )

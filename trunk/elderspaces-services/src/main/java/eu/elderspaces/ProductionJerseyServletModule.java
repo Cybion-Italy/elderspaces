@@ -1,4 +1,4 @@
-package eu.elderspaces.activities.services;
+package eu.elderspaces;
 
 import it.cybion.commons.PropertiesHelper;
 
@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 import com.sun.jersey.api.core.ClasspathResourceConfig;
@@ -38,6 +39,8 @@ import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 
 import eu.elderspaces.activities.core.ActivityStreamManager;
 import eu.elderspaces.activities.core.MultiLayerActivityStreamManager;
+import eu.elderspaces.activities.services.ActivitiesService;
+import eu.elderspaces.activities.services.StatusService;
 import eu.elderspaces.model.utils.ActivityStreamObjectMapper;
 import eu.elderspaces.persistence.ActivityStreamRepository;
 import eu.elderspaces.persistence.BluePrintsSocialNetworkRepository;
@@ -45,6 +48,11 @@ import eu.elderspaces.persistence.ElasticSearchActivityStreamRepository;
 import eu.elderspaces.persistence.EntitiesRepository;
 import eu.elderspaces.persistence.LuceneEntitiesRepository;
 import eu.elderspaces.persistence.SocialNetworkRepository;
+import eu.elderspaces.recommendations.core.FakeStaticRecommender;
+import eu.elderspaces.recommendations.core.Recommender;
+import eu.elderspaces.recommendations.core.SocialNetworkRecommender;
+import eu.elderspaces.recommendations.services.FakeRecommendationService;
+import eu.elderspaces.recommendations.services.RecommendationService;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -59,15 +67,14 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
     @Override
     protected void configureServlets() {
     
-        LOGGER.debug("configuring servlets");
+        LOGGER.debug("configuring servlets...");
         
         final Map<String, String> initParams = new HashMap<String, String>();
         
         initParams.put(ServletContainer.RESOURCE_CONFIG_CLASS,
                 ClasspathResourceConfig.class.getName());
         
-        final Properties properties = PropertiesHelper
-                .readFromClasspath("/activities-endpoint.properties");
+        final Properties properties = PropertiesHelper.readFromClasspath("/config.properties");
         // binds the keynames as @Named annotations
         Names.bindProperties(binder(), properties);
         this.properties = properties;
@@ -78,11 +85,8 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         bind(StatusService.class);
         bind(ActivitiesService.class);
         
-        bind(Node.class).asEagerSingleton();
-        bind(Client.class);
         bind(ActivityStreamRepository.class).to(ElasticSearchActivityStreamRepository.class);
         
-        bind(Neo4jGraph.class).asEagerSingleton();
         bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
         
         try {
@@ -90,13 +94,20 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
                     new SimpleFSDirectory(new File((String) properties
                             .get("eu.elderspaces.repository.entities"))));
         } catch (final IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         bind(Analyzer.class).toInstance(new WhitespaceAnalyzer(Version.LUCENE_36));
         bind(EntitiesRepository.class).to(LuceneEntitiesRepository.class);
         
         bind(ActivityStreamManager.class).to(MultiLayerActivityStreamManager.class);
+        
+        LOGGER.debug("configured activity servlets");
+        
+        // bind REST services
+        bind(RecommendationService.class);
+        bind(FakeRecommendationService.class);
+        bind(Recommender.class).to(SocialNetworkRecommender.class);
+        bind(FakeStaticRecommender.class);
         
         // add bindings for Jackson
         bind(JacksonJaxbJsonProvider.class).asEagerSingleton();
@@ -105,7 +116,7 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         // Route all requests through GuiceContainer
         serve("/rest/*").with(GuiceContainer.class);
         filter("/rest/*").through(GuiceContainer.class, initParams);
-        LOGGER.debug("configured servlets");
+        LOGGER.debug("configured recommendation servlets");
     }
     
     @Provides
@@ -117,7 +128,15 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
     }
     
     @Provides
-    private Node initElasticSearchNode(
+    @Singleton
+    private Client elasticsearchClientProvider(final Node node) {
+    
+        return node.client();
+    }
+    
+    @Provides
+    @Singleton
+    private Node elasticsearchNodeProvider(
             @Named("eu.elderspaces.repository.elasticsearch.cluster") final String clusterName,
             @Named("eu.elderspaces.repository.activity-streams") final String dataDirectory) {
     
@@ -130,7 +149,8 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
     }
     
     @Provides
-    Neo4jGraph neo4jGraphProvider(
+    @Singleton
+    Neo4jGraph graphProvider(
             @Named("eu.elderspaces.repository.social-network") final String socialNetworkRepository) {
     
         return new Neo4jGraph(socialNetworkRepository);

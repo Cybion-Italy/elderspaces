@@ -1,4 +1,4 @@
-package eu.elderspaces.activities;
+package eu.elderspaces.activities.services;
 
 import javax.servlet.ServletContextEvent;
 
@@ -6,7 +6,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 
-import eu.elderspaces.activities.services.TestJerseyServletModule;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )

@@ -38,7 +38,7 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
     private static final String PERSON_THUMBNAIL_URL = "http://thn1.elderspaces.iwiw.hu/0101//user/01/39/13/36/5/user_13913365_1301469612927_tn1";
     private static final String PERSON_DISPLAY_NAME = "Mr. Ederly Hans";
     private static final String PERSON_ID = "13913365:elderspaces.iwiw.hu";
-    private static final String POST_ID = null;
+    private static final String POST_ID = "asdasd35fwfe";
     private static final String POST_TITLE = "said :";
     private static final String POST_BODY = "Hello from Athens!";
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivitiesServiceTestCase.class);

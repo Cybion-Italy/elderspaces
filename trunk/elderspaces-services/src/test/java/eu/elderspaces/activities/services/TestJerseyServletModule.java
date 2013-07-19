@@ -1,27 +1,39 @@
 package eu.elderspaces.activities.services;
 
-import it.cybion.commons.PropertiesHelper;
-
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.elasticsearch.client.Client;
+import org.neo4j.test.TestGraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.name.Names;
+import com.google.inject.Provides;
 import com.sun.jersey.api.core.ClasspathResourceConfig;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 
 import eu.elderspaces.activities.core.ActivityStreamManager;
 import eu.elderspaces.activities.core.MultiLayerActivityStreamManager;
+import eu.elderspaces.persistence.ActivityStreamRepository;
+import eu.elderspaces.persistence.BluePrintsSocialNetworkRepository;
+import eu.elderspaces.persistence.ElasticSearchActivityStreamRepository;
+import eu.elderspaces.persistence.EmbeddedElasticsearchServer;
+import eu.elderspaces.persistence.EntitiesRepository;
+import eu.elderspaces.persistence.LuceneEntitiesRepository;
+import eu.elderspaces.persistence.SocialNetworkRepository;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
@@ -42,16 +54,27 @@ public class TestJerseyServletModule extends JerseyServletModule {
         initParams.put(ServletContainer.RESOURCE_CONFIG_CLASS,
                 ClasspathResourceConfig.class.getName());
         
-        final Properties properties = PropertiesHelper
-                .readFromClasspath("/activities-endpoint.properties");
-        // binds the keynames as @Named annotations
-        Names.bindProperties(binder(), properties);
-        
         // add bindings to mockups of backend classes
         
         // bind REST services
         bind(StatusService.class);
         bind(ActivitiesService.class);
+        
+        bind(EmbeddedElasticsearchServer.class).toInstance(
+                new EmbeddedElasticsearchServer("elderspaces.test.cluster",
+                        "target/unit-test-elasticsearch"));
+        bind(ActivityStreamRepository.class).to(ElasticSearchActivityStreamRepository.class);
+        
+        bind(Neo4jGraph.class).toInstance(
+                new Neo4jGraph(new TestGraphDatabaseFactory().newImpermanentDatabaseBuilder()
+                        .newGraphDatabase()));
+        
+        bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
+        
+        bind(Directory.class).toInstance(new RAMDirectory());
+        bind(Analyzer.class).toInstance(new WhitespaceAnalyzer(Version.LUCENE_36));
+        bind(EntitiesRepository.class).to(LuceneEntitiesRepository.class);
+        
         bind(ActivityStreamManager.class).to(MultiLayerActivityStreamManager.class);
         
         // add bindings for Jackson json serialization
@@ -62,5 +85,11 @@ public class TestJerseyServletModule extends JerseyServletModule {
         serve("/*").with(GuiceContainer.class);
         filter("/*").through(GuiceContainer.class, initParams);
         LOGGER.debug("configured servlets");
+    }
+    
+    @Provides
+    private Client elasticsearchClientProvider(final EmbeddedElasticsearchServer server) {
+    
+        return server.getClient();
     }
 }
