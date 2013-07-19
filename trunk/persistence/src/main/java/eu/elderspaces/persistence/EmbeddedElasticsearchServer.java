@@ -17,25 +17,18 @@ import org.elasticsearch.node.Node;
  */
 public class EmbeddedElasticsearchServer {
     
-    private static final String DEFAULT_DATA_DIRECTORY = "target/elasticsearch-data";
-    
     private final Node node;
     private final String dataDirectory;
     
-    public EmbeddedElasticsearchServer() {
-    
-        this(DEFAULT_DATA_DIRECTORY);
-    }
-    
-    public EmbeddedElasticsearchServer(final String dataDirectory) {
+    public EmbeddedElasticsearchServer(final String clusterName, final String dataDirectory) {
     
         this.dataDirectory = dataDirectory;
         
         final ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
                 .put("http.enabled", "false").put("path.data", dataDirectory);
         
-        node = nodeBuilder().local(true).client(false).settings(elasticsearchSettings.build())
-                .node();
+        node = nodeBuilder().clusterName(clusterName).local(true)
+                .settings(elasticsearchSettings.build()).node();
     }
     
     public Client getClient() {

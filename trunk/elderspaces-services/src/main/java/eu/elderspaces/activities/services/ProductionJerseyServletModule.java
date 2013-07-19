@@ -118,12 +118,13 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
     
     @Provides
     private Node initElasticSearchNode(
+            @Named("eu.elderspaces.repository.elasticsearch.cluster") final String clusterName,
             @Named("eu.elderspaces.repository.activity-streams") final String dataDirectory) {
     
         final ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
                 .put("http.enabled", "false").put("path.data", dataDirectory);
         
-        final Node node = NodeBuilder.nodeBuilder().local(true)
+        final Node node = NodeBuilder.nodeBuilder().local(true).clusterName(clusterName)
                 .settings(elasticsearchSettings.build()).node();
         return node;
     }

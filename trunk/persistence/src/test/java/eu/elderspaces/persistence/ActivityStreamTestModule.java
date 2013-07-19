@@ -18,7 +18,8 @@ public class ActivityStreamTestModule extends AbstractModule {
     protected void configure() {
     
         bind(EmbeddedElasticsearchServer.class).toInstance(
-                new EmbeddedElasticsearchServer("target/unit-test-elasticsearch"));
+                new EmbeddedElasticsearchServer("elderspaces.test.cluster",
+                        "target/unit-test-elasticsearch"));
         bind(ActivityStreamRepository.class).to(ElasticSearchActivityStreamRepository.class);
         
     }

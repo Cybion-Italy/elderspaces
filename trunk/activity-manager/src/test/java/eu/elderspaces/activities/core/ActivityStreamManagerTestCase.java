@@ -2,7 +2,7 @@ package eu.elderspaces.activities.core;
 
 import java.util.Date;
 
-import org.slf4j.Logger;
+import org.apache.log4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -19,8 +19,11 @@ import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.Verbs;
+import eu.elderspaces.persistence.EmbeddedElasticsearchServer;
 
 public class ActivityStreamManagerTestCase {
+    
+    private static Logger LOGGER = Logger.getLogger(ActivityStreamManagerTestCase.class);
     
     private static final Date PUBLISHED = new Date(); // "2013-03-29T3:41:48+0100";
     private static final String VERB = "create";
@@ -32,7 +35,7 @@ public class ActivityStreamManagerTestCase {
     private static final String FRIEND_DISPLAY_NAME = "Mr. Matt Eldy";
     private static final String FRIEND_ID = "13913366:elderspaces.iwiw.hu";
     
-    private static final String POST_ID = null;
+    private static final String POST_ID = "activityid:skdòakspora";
     private static final String POST_TITLE = "said :";
     private static final String POST_BODY = "Hello from Athens!";
     
@@ -54,8 +57,7 @@ public class ActivityStreamManagerTestCase {
     private Event event;
     private Club club;
     
-    protected static Logger LOGGER;
-    
+    EmbeddedElasticsearchServer server;
     protected ActivityStreamManager manager;
     
     @BeforeClass
@@ -69,12 +71,14 @@ public class ActivityStreamManagerTestCase {
         
         final Injector injector = Guice.createInjector(new ActivityStreamManagerTestModule());
         
+        server = injector.getInstance(EmbeddedElasticsearchServer.class);
         manager = injector.getInstance(ActivityStreamManager.class);
     }
     
     @AfterClass
     public void shutDown() {
     
+        server.shutdown();
         manager = null;
     }
     
@@ -93,7 +97,8 @@ public class ActivityStreamManagerTestCase {
     public void addFriend() throws ActivityManagerException {
     
         LOGGER.info("Adding friend");
-        final ActivityStream activity = new ActivityStream(user, "create", friend, null, new Date());
+        final ActivityStream activity = new ActivityStream(user, Verbs.MAKE_FRIEND, friend, null,
+                new Date());
         final boolean added = manager.storeActivity(activity);
         Assert.assertTrue(added);
     }
@@ -102,9 +107,10 @@ public class ActivityStreamManagerTestCase {
     public void removeFriend() throws ActivityManagerException {
     
         LOGGER.info("Removing non-existent friend");
-        final ActivityStream activity = new ActivityStream(user, "delete", friend, null, new Date());
+        final ActivityStream activity = new ActivityStream(user, Verbs.REMOVE_FRIEND, friend, null,
+                new Date());
         final boolean removed = manager.storeActivity(activity);
-        Assert.assertFalse(removed);
+        Assert.assertTrue(removed);
         
     }
     
@@ -114,7 +120,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Updating user");
         final Person updatedUser = user;
         updatedUser.setDisplayName("New display name");
-        final ActivityStream activity = new ActivityStream(user, "update", updatedUser, null,
+        final ActivityStream activity = new ActivityStream(user, Verbs.UPDATE, updatedUser, null,
                 new Date());
         final boolean updated = manager.storeActivity(activity);
         Assert.assertTrue(updated);
@@ -124,88 +130,137 @@ public class ActivityStreamManagerTestCase {
     public void deleteUser() throws ActivityManagerException {
     
         LOGGER.info("Deleting user");
-        final ActivityStream activity = new ActivityStream(user, "delete", user, null, new Date());
+        final ActivityStream activity = new ActivityStream(user, Verbs.DELETE, user, null,
+                new Date());
         final boolean deleted = manager.storeActivity(activity);
         Assert.assertTrue(deleted);
     }
-    /*
-     * @Test public void addPost() {
-     * 
-     * LOGGER.info("Creating post"); final boolean added = manager.addPost(user,
-     * post); Assert.assertTrue(added); }
-     * 
-     * @Test public void deletePost() {
-     * 
-     * LOGGER.info("Deleting non-existent post"); boolean deleted =
-     * manager.deletePost(user, post); Assert.assertFalse(deleted);
-     * 
-     * manager.addPost(user, post);
-     * 
-     * LOGGER.info("Deleting post"); deleted = manager.deletePost(user, post);
-     * Assert.assertTrue(deleted); }
-     * 
-     * @Test public void createEvent() {
-     * 
-     * LOGGER.info("Creating event"); final boolean added =
-     * manager.createEvent(user, event); Assert.assertTrue(added); }
-     * 
-     * @Test public void modifyEvent() {
-     * 
-     * manager.createEvent(user, event);
-     * 
-     * LOGGER.info("Modifying event"); final Event modifiedEvent = new
-     * Event(event.getId(), "New name", "New short description"); final boolean
-     * modified = manager.modifyEvent(user, modifiedEvent);
-     * Assert.assertTrue(modified); }
-     * 
-     * @Test public void deleteEvent() {
-     * 
-     * LOGGER.info("Deleting non-existent event"); boolean deleted =
-     * manager.deleteEvent(user, event); Assert.assertFalse(deleted);
-     * 
-     * manager.createEvent(user, event); LOGGER.info("Deleting existing event");
-     * deleted = manager.deleteEvent(user, event); Assert.assertTrue(deleted); }
-     * 
-     * @Test public void createClub() {
-     * 
-     * LOGGER.info("Creating club"); final boolean added =
-     * manager.createClub(user, club); Assert.assertTrue(added); }
-     * 
-     * @Test public void modifyClub() {
-     * 
-     * manager.createClub(user, club);
-     * 
-     * LOGGER.info("Modifying club"); final Club modifiedClub = new
-     * Club(club.getId(), "New name", CLUB_DESCRIPTION, "New short description",
-     * CLUB_CATEGORY); final boolean modified = manager.modifyClub(user,
-     * modifiedClub); Assert.assertTrue(modified); }
-     * 
-     * @Test public void deleteClub() {
-     * 
-     * LOGGER.info("Deleting non-existent club"); boolean deleted =
-     * manager.deleteClub(user, club); Assert.assertFalse(deleted);
-     * 
-     * manager.createClub(user, club); LOGGER.info("Deleting existing club");
-     * deleted = manager.deleteClub(user, club); Assert.assertTrue(deleted); }
-     * 
-     * @Test public void joinClub() {
-     * 
-     * LOGGER.info("Joining club"); final boolean joined =
-     * manager.joinClub(user, club); Assert.assertTrue(joined); }
-     * 
-     * @Test public void leaveClub() {
-     * 
-     * LOGGER.info("Leaving non-existent club"); boolean left =
-     * manager.leaveClub(user, club); Assert.assertFalse(left);
-     * 
-     * manager.joinClub(user, club); LOGGER.info("Leaving existing club"); left
-     * = manager.leaveClub(user, club); Assert.assertTrue(left); }
-     * 
-     * @Test public void createRSVPResponseToEvent() {
-     * 
-     * LOGGER.info("Creating RSVP response to an event");
-     * manager.createEvent(user, event); final boolean created =
-     * manager.createRSVPResponseToEvent(user, RSVP_RESPONSE, event);
-     * Assert.assertTrue(created); }
-     */
+    
+    @Test
+    public void addPost() throws ActivityManagerException {
+    
+        LOGGER.info("Creating post");
+        final ActivityStream activity = new ActivityStream(user, Verbs.CREATE, post, null,
+                new Date());
+        final boolean added = manager.storeActivity(activity);
+        Assert.assertTrue(added);
+    }
+    
+    @Test
+    public void deletePost() throws ActivityManagerException {
+    
+        LOGGER.info("Deleting non-existent post");
+        final ActivityStream deleteActivity = new ActivityStream(user, Verbs.DELETE, post, null,
+                new Date());
+        boolean deleted;
+        try {
+            deleted = manager.storeActivity(deleteActivity);
+        } catch (final Exception e) {
+            Assert.assertTrue(true);
+        }
+        
+        final ActivityStream postActivity = new ActivityStream(user, Verbs.CREATE, post, null,
+                new Date());
+        manager.storeActivity(postActivity);
+        
+        LOGGER.info("Deleting post");
+        deleted = manager.storeActivity(deleteActivity);
+        Assert.assertTrue(deleted);
+    }
+    
+    @Test
+    public void createEvent() throws ActivityManagerException {
+    
+        LOGGER.info("Creating event");
+        final ActivityStream activity = new ActivityStream(user, Verbs.CREATE, event, null,
+                new Date());
+        final boolean added = manager.storeActivity(activity);
+        Assert.assertTrue(added);
+    }
+    
+    @Test
+    public void modifyEvent() throws ActivityManagerException {
+    
+        LOGGER.info("Modifying event");
+        final Event modifiedEvent = new Event(event.getId(), "New name", "New short description");
+        final ActivityStream activity = new ActivityStream(user, Verbs.UPDATE, event, null,
+                new Date());
+        final boolean modified = manager.storeActivity(activity);
+        Assert.assertTrue(modified);
+    }
+    
+    @Test
+    public void deleteEvent() throws ActivityManagerException {
+    
+        LOGGER.info("Deleting existing event");
+        final ActivityStream activity = new ActivityStream(user, Verbs.DELETE, event, null,
+                new Date());
+        final boolean deleted = manager.storeActivity(activity);
+        Assert.assertTrue(deleted);
+    }
+    
+    @Test
+    public void createClub() throws ActivityManagerException {
+    
+        LOGGER.info("Creating club");
+        final ActivityStream activity = new ActivityStream(user, Verbs.CREATE, club, null,
+                new Date());
+        final boolean added = manager.storeActivity(activity);
+        Assert.assertTrue(added);
+    }
+    
+    @Test
+    public void modifyClub() throws ActivityManagerException {
+    
+        LOGGER.info("Modifying club");
+        final Club modifiedClub = new Club(club.getId(), "New name", CLUB_DESCRIPTION,
+                "New short description", CLUB_CATEGORY);
+        final ActivityStream activity = new ActivityStream(user, Verbs.UPDATE, modifiedClub, null,
+                new Date());
+        final boolean modified = manager.storeActivity(activity);
+        Assert.assertTrue(modified);
+    }
+    
+    @Test
+    public void deleteClub() throws ActivityManagerException {
+    
+        LOGGER.info("Deleting existing club");
+        final ActivityStream activity = new ActivityStream(user, Verbs.DELETE, club, null,
+                new Date());
+        final boolean deleted = manager.storeActivity(activity);
+        Assert.assertTrue(deleted);
+        
+    }
+    
+    @Test
+    public void joinClub() throws ActivityManagerException {
+    
+        LOGGER.info("Joining club");
+        final ActivityStream activity = new ActivityStream(user, Verbs.JOIN, club, null, new Date());
+        final boolean joined = manager.storeActivity(activity);
+        Assert.assertTrue(joined);
+    }
+    
+    @Test
+    public void leaveClub() throws ActivityManagerException {
+    
+        LOGGER.info("Leaving existing club");
+        final ActivityStream activity = new ActivityStream(user, Verbs.LEAVE, club, null,
+                new Date());
+        final boolean left = manager.storeActivity(activity);
+        Assert.assertTrue(left);
+        
+    }
+    
+    @Test
+    public void createRSVPResponseToEvent() throws ActivityManagerException {
+    
+        LOGGER.info("Creating RSVP response to an event");
+        final ActivityStream activity = new ActivityStream(user, Verbs.NO_RSVP_RESPONSE_TO_EVENT,
+                event, null, new Date());
+        manager.storeActivity(activity);
+        final boolean created = manager.storeActivity(activity);
+        Assert.assertTrue(created);
+    }
+    
 }
