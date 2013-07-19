@@ -1,36 +1,40 @@
 package eu.elderspaces.persistence;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Provides;
-import com.google.inject.name.Names;
-import eu.elderspaces.model.utils.ActivityStreamObjectMapper;
-import it.cybion.commons.PropertiesHelper;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.elasticsearch.client.Client;
 
-import java.util.Properties;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+
+import eu.elderspaces.model.utils.ActivityStreamObjectMapper;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
 public class ActivityStreamTestModule extends AbstractModule {
-
+    
     @Override
     protected void configure() {
-        final Properties properties = PropertiesHelper.readFromClasspath("/config.properties");
-        // binds the keynames as @Named annotations
-        Names.bindProperties(binder(), properties);
-
-//        bind(ObjectMapper.class);
+    
+        bind(EmbeddedElasticsearchServer.class).toInstance(
+                new EmbeddedElasticsearchServer("target/unit-test-elasticsearch"));
         bind(ActivityStreamRepository.class).to(ElasticSearchActivityStreamRepository.class);
-
+        
     }
-
+    
     @Provides
     public ObjectMapper loadTheObjectMapper() {
-
-        return ActivityStreamObjectMapper.getDefaultMapper();
+    
+        final ObjectMapper mapper = ActivityStreamObjectMapper.getDefaultMapper();
+        mapper.configure(Feature.WRITE_DATES_AS_TIMESTAMPS, true);
+        return mapper;
     }
-
+    
+    @Provides
+    public Client clientProvider(final EmbeddedElasticsearchServer server) {
+    
+        return server.getClient();
+    }
+    
 }

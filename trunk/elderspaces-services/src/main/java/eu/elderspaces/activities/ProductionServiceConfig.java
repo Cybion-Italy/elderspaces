@@ -2,6 +2,7 @@ package eu.elderspaces.activities;
 
 import javax.servlet.ServletContextEvent;
 
+import org.elasticsearch.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +21,19 @@ public class ProductionServiceConfig extends GuiceServletContextListener {
     
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(
-                new ProductionJerseyServletModule()
-                );
+    
+        return Guice.createInjector(new ProductionJerseyServletModule());
     }
     
     @Override
-    public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    public void contextDestroyed(final ServletContextEvent servletContextEvent) {
+    
+        // recreating injector still provides same istances
+        // http://stackoverflow.com/questions/8356640/guice-how-to-share-the-same-singleton-instance-through-multiple-injectors-modu
+        
+        final Injector injector = Guice.createInjector(new ProductionJerseyServletModule());
+        final Node node = injector.getInstance(Node.class);
+        node.stop();
     }
     
 }

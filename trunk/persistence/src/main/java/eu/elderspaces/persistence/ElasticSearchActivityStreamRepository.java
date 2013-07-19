@@ -1,94 +1,102 @@
 package eu.elderspaces.persistence;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.io.IOException;
+
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.elasticsearch.action.count.CountResponse;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.QueryBuilders;
+
+import com.google.inject.Inject;
 
 import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
 public class ElasticSearchActivityStreamRepository implements ActivityStreamRepository {
-
-    private static final Logger LOGGER = Logger.getLogger(
-            ElasticSearchActivityStreamRepository.class);
-
-    private static final String ELDERSPACES_DB = "es";
-
-    private static final String ACTIVITIES = "activities";
-
+    
+    private static final Logger LOGGER = Logger
+            .getLogger(ElasticSearchActivityStreamRepository.class);
+    
+    private static final String ELDERSPACES_INDEX = "elderspaces";
+    
+    private static final String ACTIVITY_STREAM_TYPE = ActivityStream.class.getSimpleName();
+    
     private final Client client;
-
-    private ObjectMapper mapper;
-
-    private final String host;
-
+    
+    private final ObjectMapper mapper;
+    
     @Inject
-    public ElasticSearchActivityStreamRepository(
-            @Named("eu.elderspaces.activitystream.repository.host") final String esHost,
-            @Named("eu.elderspaces.activitystream.repository.port") final int port,
-            final ObjectMapper mapper) {
-
-        this.host = esHost;
-
-        this.client = new TransportClient().addTransportAddress(new InetSocketTransportAddress(
-                this.host, port));
+    public ElasticSearchActivityStreamRepository(final Client client, final ObjectMapper mapper) {
+    
+        this.client = client;
         this.mapper = mapper;
     }
-
+    
     @Override
     public void shutDownRepository() {
-
+    
         client.close();
-
+        
     }
-
+    
     @Override
     public String store(final ActivityStream activityStream)
             throws ActivityStreamRepositoryException {
-
+    
         String activityJson;
         try {
             activityJson = mapper.writeValueAsString(activityStream);
         } catch (final Exception e) {
             throw new ActivityStreamRepositoryException(e);
         }
-
-        final IndexResponse indexResponse = client.prepareIndex(ELDERSPACES_DB, ACTIVITIES)
+        
+        final IndexResponse indexResponse = client
+                .prepareIndex(ELDERSPACES_INDEX, ACTIVITY_STREAM_TYPE).setOperationThreaded(false)
                 .setSource(activityJson).execute().actionGet();
         LOGGER.debug("ActivityStream stored with index: " + indexResponse.getId());
-
+        
         this.client.admin().indices().prepareRefresh().execute().actionGet();
-
+        
         return indexResponse.getId();
     }
-
+    
     @Override
     public ActivityStream getActivityStream(final String id)
             throws ActivityStreamRepositoryException {
-
-        return null; // To change body of implemented methods use File |
-        // Settings | File Templates.
+    
+        final GetResponse response = client.prepareGet(ELDERSPACES_INDEX, ACTIVITY_STREAM_TYPE, id)
+                .setOperationThreaded(false).setRefresh(true).execute().actionGet();
+        
+        ActivityStream activityStream;
+        try {
+            final String json = response.getSourceAsString();
+            activityStream = mapper.readValue(json, ActivityStream.class);
+        } catch (final JsonParseException e) {
+            throw new ActivityStreamRepositoryException(e.getMessage(), e);
+        } catch (final JsonMappingException e) {
+            throw new ActivityStreamRepositoryException(e.getMessage(), e);
+        } catch (final IOException e) {
+            throw new ActivityStreamRepositoryException(e.getMessage(), e);
+        }
+        
+        return activityStream;
     }
-
-    @Override
-    public boolean remove(final String id) throws ActivityStreamRepositoryException {
-
-        return false; // To change body of implemented methods use File |
-        // Settings | File Templates.
-    }
-
+    
     @Override
     public long getTotalActivityStreamSize() throws ActivityStreamRepositoryException {
-
-        return 0; // To change body of implemented methods use File | Settings |
-        // File Templates.
+    
+        final CountResponse response = client.prepareCount(ELDERSPACES_INDEX)
+                .setQuery(QueryBuilders.matchQuery("_type", ACTIVITY_STREAM_TYPE)).execute()
+                .actionGet();
+        
+        return response.count();
     }
 }

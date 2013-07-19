@@ -74,4 +74,68 @@ public class ActivityStream {
         this.published = published;
     }
     
+    @Override
+    public int hashCode() {
+    
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((actor == null) ? 0 : actor.hashCode());
+        result = (prime * result) + ((object == null) ? 0 : object.hashCode());
+        result = (prime * result) + ((published == null) ? 0 : published.hashCode());
+        result = (prime * result) + ((target == null) ? 0 : target.hashCode());
+        result = (prime * result) + ((verb == null) ? 0 : verb.hashCode());
+        return result;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+    
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ActivityStream other = (ActivityStream) obj;
+        if (actor == null) {
+            if (other.actor != null) {
+                return false;
+            }
+        } else if (!actor.equals(other.actor)) {
+            return false;
+        }
+        if (object == null) {
+            if (other.object != null) {
+                return false;
+            }
+        } else if (!object.equals(other.object)) {
+            return false;
+        }
+        if (published == null) {
+            if (other.published != null) {
+                return false;
+            }
+        } else if (!published.equals(other.published)) {
+            return false;
+        }
+        if (target == null) {
+            if (other.target != null) {
+                return false;
+            }
+        } else if (!target.equals(other.target)) {
+            return false;
+        }
+        if (verb == null) {
+            if (other.verb != null) {
+                return false;
+            }
+        } else if (!verb.equals(other.verb)) {
+            return false;
+        }
+        return true;
+    }
+    
 }

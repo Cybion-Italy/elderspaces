@@ -1,31 +1,49 @@
 package eu.elderspaces.persistence;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Date;
+
+import org.apache.log4j.Logger;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.ActivityStream;
+import eu.elderspaces.model.Person;
 import eu.elderspaces.persistence.exceptions.ActivityStreamRepositoryException;
 
 /**
  * @author Matteo Moci ( matteo (dot) moci (at) gmail (dot) com )
  */
-public class ElasticSearchActivityStreamRepositoryTestCase extends ElasticSearchNodeProvider {
+public class ElasticSearchActivityStreamRepositoryTestCase {
+    
+    private static final Logger LOGGER = Logger
+            .getLogger(ElasticSearchActivityStreamRepositoryTestCase.class);
     
     private ActivityStreamRepository elasticSearchActivityStream;
+    private EmbeddedElasticsearchServer server;
     
     @BeforeClass
     public void setUpModule() {
     
-        // the es node provider offers a local node for integration testing,
-        // where the repository is connected
         final Injector injector = Guice.createInjector(new ActivityStreamTestModule());
+        
+        this.server = injector.getInstance(EmbeddedElasticsearchServer.class);
         this.elasticSearchActivityStream = injector.getInstance(ActivityStreamRepository.class);
+    }
+    
+    @AfterClass
+    public void shutdown() throws ActivityStreamRepositoryException {
+    
+        elasticSearchActivityStream.shutDownRepository();
+        server.shutdown();
     }
     
     @Test
@@ -33,8 +51,40 @@ public class ElasticSearchActivityStreamRepositoryTestCase extends ElasticSearch
     
         assertTrue(true);
         assertNotNull(this.elasticSearchActivityStream);
-        // TODO major: activityStream should have 1) a String id 2) a timestamp?
-        final ActivityStream activity = null;
-        // this.elasticSearchActivityStream.store(activity);
+        
+        final ActivityStream activityStream = new ActivityStream();
+        activityStream.setActor(new Person("1", "url", "name"));
+        activityStream.setObject(new Activity("2", "body", "title"));
+        activityStream.setPublished(new Date());
+        activityStream.setTarget(null);
+        activityStream.setVerb("create");
+        
+        LOGGER.debug("storing...");
+        String id = this.elasticSearchActivityStream.store(activityStream);
+        assertNotNull(id);
+        
+        LOGGER.debug("counting...");
+        long count = elasticSearchActivityStream.getTotalActivityStreamSize();
+        assertEquals(count, 1);
+        LOGGER.debug("count: " + count);
+        
+        LOGGER.debug("storing...");
+        activityStream.setVerb("delete");
+        id = this.elasticSearchActivityStream.store(activityStream);
+        assertNotNull(id);
+        
+        LOGGER.debug("counting...");
+        count = elasticSearchActivityStream.getTotalActivityStreamSize();
+        assertEquals(count, 2);
+        LOGGER.debug("count: " + count);
+        
+        LOGGER.debug("getting last stored...");
+        final ActivityStream storedActivityStream = elasticSearchActivityStream
+                .getActivityStream(id);
+        
+        LOGGER.debug("checking stored object...");
+        assertNotNull(storedActivityStream);
+        assertTrue(activityStream.equals(storedActivityStream));
+        
     }
 }
