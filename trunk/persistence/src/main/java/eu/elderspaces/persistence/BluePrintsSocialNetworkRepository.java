@@ -2,9 +2,11 @@ package eu.elderspaces.persistence;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.testng.log4testng.Logger;
@@ -494,66 +496,90 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
     }
     
     @Override
-    public Set<String> getFriendsOfFriends(final String id) {
+    public Map<String, Double> getFriendsOfFriends(final String id) {
     
-        String[] ids = new String[0];
-        
         final Vertex personVertex = helper.getOrCreatePerson(id, new Date());
         
-        final GremlinPipeline<Vertex, String[]> pipe = new GremlinPipeline<Vertex, String[]>();
-        ids = pipe.start(personVertex).out(Costants.HAS_FRIEND).out(Costants.HAS_FRIEND)
-                .property(Costants.VERTEX_ID).toList().toArray(new String[0]);
+        final List<List> test = new GremlinPipeline<Vertex, List<List>>().start(personVertex)
+                .out(Costants.HAS_FRIEND).out(Costants.HAS_FRIEND).property(Costants.VERTEX_ID)
+                .path().toList();
         
-        final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        // count common friends of each friend of a friend (foaf)
+        final Map<String, Double> scores = new HashMap<String, Double>();
+        for (final List<String> path : test) {
+            if (!path.get(path.size() - 1).equals(id)) {
+                final String foafId = path.get(path.size() - 1);
+                Double score = scores.get(foafId);
+                if (score == null) {
+                    score = 1.0;
+                } else {
+                    score += 1.0;
+                }
+                
+                scores.put(foafId, score);
+            }
+            
         }
         
-        uniqueIds.remove(id);
-        
-        return uniqueIds;
+        return scores;
     }
     
     @Override
-    public Set<String> getClubsOfFriends(final String id) {
+    public Map<String, Double> getClubsOfFriends(final String id) {
     
-        List<String> ids = new ArrayList<String>();
-        
         final Vertex personVertex = helper.getOrCreatePerson(id, new Date());
         
-        final GremlinPipeline pipe = new GremlinPipeline();
-        ids = pipe.start(personVertex).out(Costants.HAS_FRIEND).out(Costants.HAS_CLUB)
-                .property(Costants.VERTEX_ID).toList();
+        final List<List> test = new GremlinPipeline<Vertex, List<List>>().start(personVertex)
+                .out(Costants.HAS_FRIEND).out(Costants.HAS_CLUB).property(Costants.VERTEX_ID)
+                .path().toList();
         
-        final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        // count common friends of each club of a friend (coaf)
+        final Map<String, Double> scores = new HashMap<String, Double>();
+        for (final List<String> path : test) {
+            if (!path.get(path.size() - 1).equals(id)) {
+                final String coafId = path.get(path.size() - 1);
+                Double score = scores.get(coafId);
+                if (score == null) {
+                    score = 1.0;
+                } else {
+                    score += 1.0;
+                }
+                
+                scores.put(coafId, score);
+            }
+            
         }
         
-        uniqueIds.remove(id);
-        
-        return uniqueIds;
+        return scores;
     }
     
     @Override
-    public Set<String> getEventsOfFriends(final String id) {
+    public Map<String, Double> getEventsOfFriends(final String id) {
     
-        List<String> ids = new ArrayList<String>();
-        
         final Vertex personVertex = helper.getOrCreatePerson(id, new Date());
         
-        final GremlinPipeline pipe = new GremlinPipeline();
-        ids = pipe.start(personVertex).out(Costants.HAS_FRIEND).out(Costants.HAS_EVENT)
-                .property(Costants.VERTEX_ID).toList();
+        final List<List> test = new GremlinPipeline<Vertex, List<List>>().start(personVertex)
+                .out(Costants.HAS_FRIEND).out(Costants.HAS_EVENT).property(Costants.VERTEX_ID)
+                .path().toList();
         
-        final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        // count common friends of each event of a friend (eoaf)
+        final Map<String, Double> scores = new HashMap<String, Double>();
+        for (final List<String> path : test) {
+            if (!path.get(path.size() - 1).equals(id)) {
+                final String eoafId = path.get(path.size() - 1);
+                Double score = scores.get(eoafId);
+                if (score == null) {
+                    score = 1.0;
+                } else {
+                    score += 1.0;
+                }
+                
+                scores.put(eoafId, score);
+            }
+            
         }
         
-        uniqueIds.remove(id);
-        
-        return uniqueIds;
+        return scores;
     }
     
 }

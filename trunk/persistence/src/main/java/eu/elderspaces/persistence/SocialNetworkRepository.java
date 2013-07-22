@@ -1,6 +1,7 @@
 package eu.elderspaces.persistence;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import eu.elderspaces.model.Event.InvitationAnswer;
@@ -69,13 +70,13 @@ public interface SocialNetworkRepository {
     
     // query methods
     
-    Set<String> getFriendsOfFriends(String id);
-    
     Set<String> getEventActivities(String id);
     
     Set<String> getClubActivities(String id);
     
-    Set<String> getClubsOfFriends(String id);
+    Map<String, Double> getFriendsOfFriends(String id);
     
-    Set<String> getEventsOfFriends(String id);
+    Map<String, Double> getClubsOfFriends(String id);
+    
+    Map<String, Double> getEventsOfFriends(String id);
 }

@@ -32,7 +32,7 @@
 		<slf4j-api.version>1.6.6</slf4j-api.version>
 		<guava.version>13.0.1</guava.version>
 		<jersey.version>1.16</jersey.version>
-		<guice.version>2.0</guice.version>
+		<guice.version>3.0</guice.version>
 		<jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
 		<elasticsearch.version>0.20.6</elasticsearch.version>
 		<jackson-xc.version>1.9.9</jackson-xc.version>
@@ -90,6 +90,11 @@
 			<dependency>
 				<groupId>it.cybion.commons</groupId>
 				<artifactId>utils</artifactId>
+				<version>${commons.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.cybion.commons.text</groupId>
+				<artifactId>text-analysis</artifactId>
 				<version>${commons.version}</version>
 			</dependency>
 			<dependency>
@@ -174,10 +179,10 @@
 				<version>${easymock.version}</version>
 			</dependency>
 			<dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

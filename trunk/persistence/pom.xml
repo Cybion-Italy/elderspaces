@@ -53,8 +53,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>it.cybion.commons.text</groupId>
+			<artifactId>text-analysis</artifactId>
+		</dependency>
 	</dependencies>
 </project>

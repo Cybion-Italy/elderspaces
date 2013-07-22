@@ -45,12 +45,14 @@ import eu.elderspaces.model.utils.ActivityStreamObjectMapper;
 import eu.elderspaces.persistence.ActivityStreamRepository;
 import eu.elderspaces.persistence.BluePrintsSocialNetworkRepository;
 import eu.elderspaces.persistence.ElasticSearchActivityStreamRepository;
+import eu.elderspaces.persistence.EnrichedEntitiesRepository;
 import eu.elderspaces.persistence.EntitiesRepository;
+import eu.elderspaces.persistence.LuceneEnrichedEntitiesRepository;
 import eu.elderspaces.persistence.LuceneEntitiesRepository;
 import eu.elderspaces.persistence.SocialNetworkRepository;
+import eu.elderspaces.recommendations.core.ContentNetworkRecommender;
 import eu.elderspaces.recommendations.core.FakeStaticRecommender;
 import eu.elderspaces.recommendations.core.Recommender;
-import eu.elderspaces.recommendations.core.SocialNetworkRecommender;
 import eu.elderspaces.recommendations.services.FakeRecommendationService;
 import eu.elderspaces.recommendations.services.RecommendationService;
 
@@ -87,18 +89,6 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         
         bind(ActivityStreamRepository.class).to(ElasticSearchActivityStreamRepository.class);
         
-        bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
-        
-        try {
-            bind(Directory.class).toInstance(
-                    new SimpleFSDirectory(new File((String) properties
-                            .get("eu.elderspaces.repository.entities"))));
-        } catch (final IOException e) {
-            e.printStackTrace();
-        }
-        bind(Analyzer.class).toInstance(new WhitespaceAnalyzer(Version.LUCENE_36));
-        bind(EntitiesRepository.class).to(LuceneEntitiesRepository.class);
-        
         bind(ActivityStreamManager.class).to(MultiLayerActivityStreamManager.class);
         
         LOGGER.debug("configured activity servlets");
@@ -106,7 +96,8 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         // bind REST services
         bind(RecommendationService.class);
         bind(FakeRecommendationService.class);
-        bind(Recommender.class).to(SocialNetworkRecommender.class);
+        bind(Recommender.class).to(ContentNetworkRecommender.class);
+        bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
         bind(FakeStaticRecommender.class);
         
         // add bindings for Jackson
@@ -125,6 +116,30 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         final ObjectMapper mapper = ActivityStreamObjectMapper.getDefaultMapper();
         mapper.configure(Feature.WRITE_DATES_AS_TIMESTAMPS, true);
         return mapper;
+    }
+    
+    @Provides
+    @Singleton
+    private EntitiesRepository entitiesRepositoryProvider(
+            @Named("eu.elderspaces.repository.entities") final String entitiesDirectoryPath)
+            throws IOException {
+    
+        final Directory directory = new SimpleFSDirectory(new File(entitiesDirectoryPath));
+        final Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
+        
+        return new LuceneEntitiesRepository(directory, analyzer);
+    }
+    
+    @Provides
+    @Singleton
+    private EnrichedEntitiesRepository enrichedEntitiesRepositoryProvider(
+            @Named("eu.elderspaces.repository.enriched-entities") final String enrichedEntitiesDirectoryPath)
+            throws IOException {
+    
+        final Directory directory = new SimpleFSDirectory(new File(enrichedEntitiesDirectoryPath));
+        final Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
+        
+        return new LuceneEnrichedEntitiesRepository(directory, analyzer);
     }
     
     @Provides

@@ -4,6 +4,7 @@ import it.cybion.commons.exceptions.RepositoryException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.testng.log4testng.Logger;
 
@@ -15,6 +16,7 @@ import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
+import eu.elderspaces.persistence.EnrichedEntitiesRepository;
 import eu.elderspaces.persistence.EntitiesRepository;
 import eu.elderspaces.persistence.SocialNetworkRepository;
 import eu.elderspaces.recommendations.core.helpers.MapSorter;
@@ -24,22 +26,25 @@ import eu.elderspaces.recommendations.exceptions.RecommenderException;
  * @author serxhiodaja (at) gmail (dot) com
  */
 
-public class SocialNetworkRecommender implements Recommender {
+public class ContentRecommender implements Recommender {
     
-    public static final Logger LOGGER = Logger.getLogger(SocialNetworkRecommender.class);
+    public static final Logger LOGGER = Logger.getLogger(ContentRecommender.class);
     
     private static final int TOTAL_RESULTS = 3;
     private static final int START_INDEX = 0;
     
-    private final SocialNetworkRepository socialNetworkRepository;
+    private final EnrichedEntitiesRepository enrichedEntitiesRepository;
     private final EntitiesRepository entityRepository;
+    private final SocialNetworkRepository socialNetworkRepository;
     
     @Inject
-    public SocialNetworkRecommender(final SocialNetworkRepository socialNetworkRepository,
-            final EntitiesRepository entityRepository) {
+    public ContentRecommender(final EntitiesRepository entityRepository,
+            final EnrichedEntitiesRepository enrichedEntitiesRepository,
+            final SocialNetworkRepository socialNetworkRepository) {
     
-        this.socialNetworkRepository = socialNetworkRepository;
         this.entityRepository = entityRepository;
+        this.enrichedEntitiesRepository = enrichedEntitiesRepository;
+        this.socialNetworkRepository = socialNetworkRepository;
     }
     
     @Override
@@ -49,7 +54,6 @@ public class SocialNetworkRecommender implements Recommender {
         final List<Entity> result = getRecommendations(userId, type);
         
         return new PaginatedResult(START_INDEX, TOTAL_RESULTS, result);
-        
     }
     
     private List<Entity> getRecommendations(final String userId, final Class<?> targetClass) {
@@ -57,12 +61,18 @@ public class SocialNetworkRecommender implements Recommender {
         final List<Entity> result = Lists.newArrayList();
         
         if (targetClass == Person.class) {
+            Map<String, Double> recommendedIds = enrichedEntitiesRepository
+                    .getPersonRecommendations(userId);
+            final Set<String> existingIds = socialNetworkRepository.getFriends(userId);
             
-            Map<String, Double> ids = socialNetworkRepository.getFriendsOfFriends(userId);
+            // remove persons that are friend already
+            for (final String id : existingIds) {
+                recommendedIds.remove(id);
+            }
             
-            ids = MapSorter.sortByValues(ids);
+            recommendedIds = MapSorter.sortByValues(recommendedIds);
             
-            for (final String id : ids.keySet()) {
+            for (final String id : recommendedIds.keySet()) {
                 Person person;
                 try {
                     person = entityRepository.getPerson(id);
@@ -75,11 +85,18 @@ public class SocialNetworkRecommender implements Recommender {
             
         } else if (targetClass == Event.class) {
             
-            Map<String, Double> ids = socialNetworkRepository.getEventsOfFriends(userId);
+            Map<String, Double> recommendedIds = enrichedEntitiesRepository
+                    .getEventRecommendations(userId);
+            final Set<String> existingIds = socialNetworkRepository.getEvents(userId);
             
-            ids = MapSorter.sortByValues(ids);
+            // remove events the user participates already
+            for (final String id : existingIds) {
+                recommendedIds.remove(id);
+            }
             
-            for (final String id : ids.keySet()) {
+            recommendedIds = MapSorter.sortByValues(recommendedIds);
+            
+            for (final String id : recommendedIds.keySet()) {
                 Event event;
                 try {
                     event = entityRepository.getEvent(id);
@@ -91,11 +108,18 @@ public class SocialNetworkRecommender implements Recommender {
             }
         } else if (targetClass == Club.class) {
             
-            Map<String, Double> ids = socialNetworkRepository.getClubsOfFriends(userId);
+            Map<String, Double> recommendedIds = enrichedEntitiesRepository
+                    .getClubRecommendations(userId);
+            final Set<String> existingIds = socialNetworkRepository.getClubs(userId);
             
-            ids = MapSorter.sortByValues(ids);
+            // remove clubs the user participates already
+            for (final String id : existingIds) {
+                recommendedIds.remove(id);
+            }
             
-            for (final String id : ids.keySet()) {
+            recommendedIds = MapSorter.sortByValues(recommendedIds);
+            
+            for (final String id : recommendedIds.keySet()) {
                 Club club;
                 try {
                     club = entityRepository.getClub(id);
@@ -109,4 +133,5 @@ public class SocialNetworkRecommender implements Recommender {
         
         return result;
     }
+    
 }

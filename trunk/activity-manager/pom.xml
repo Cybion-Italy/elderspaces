@@ -33,5 +33,9 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>it.cybion.commons.text</groupId>
+			<artifactId>text-analysis</artifactId>
+		</dependency>
 	</dependencies>
 </project>

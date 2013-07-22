@@ -6,15 +6,14 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import it.cybion.commons.exceptions.RepositoryException;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
-
-import com.google.inject.internal.Lists;
-import com.google.inject.internal.Sets;
 
 import eu.elderspaces.model.ActivityStream;
 import eu.elderspaces.model.Club;
@@ -139,7 +138,7 @@ public class SocialNetworkRecommenderTestCase extends AbstractRecommenderTestCas
         final ActivityStream joinClub1Activity2 = new ActivityStream(friend2, Verbs.JOIN, club1,
                 null, null);
         
-        final List<ActivityStream> activities = Lists.newArrayList();
+        final List<ActivityStream> activities = new ArrayList<ActivityStream>();
         
         activities.add(friendActivity1);
         activities.add(friendActivity11);
@@ -157,14 +156,14 @@ public class SocialNetworkRecommenderTestCase extends AbstractRecommenderTestCas
         activities.add(joinClub1Activity2);
         
         mockSocialNetworkRepository = createMock(SocialNetworkRepository.class);
-        final Set<String> friendSet = Sets.newHashSet();
-        friendSet.add(USER2_ID);
+        final Map<String, Double> friendSet = new HashMap<String, Double>();
+        friendSet.put(USER2_ID, 1.0);
         
-        final Set<String> clubSet = Sets.newHashSet();
-        clubSet.add(CLUB1_ID);
+        final Map<String, Double> clubSet = new HashMap<String, Double>();
+        clubSet.put(CLUB1_ID, 1.0);
         
-        final Set<String> eventSet = Sets.newHashSet();
-        eventSet.add(EVENT1_ID);
+        final Map<String, Double> eventSet = new HashMap<String, Double>();
+        eventSet.put(EVENT1_ID, 1.0);
         
         expect(mockSocialNetworkRepository.getFriendsOfFriends(USER_ID)).andReturn(friendSet);
         expect(mockSocialNetworkRepository.getClubsOfFriends(USER_ID)).andReturn(clubSet);

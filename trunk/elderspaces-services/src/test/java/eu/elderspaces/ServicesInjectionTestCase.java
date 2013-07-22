@@ -2,7 +2,7 @@ package eu.elderspaces;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
-import org.junit.Assert;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
@@ -21,10 +21,10 @@ public class ServicesInjectionTestCase {
     
     private Injector injector;
     
-    @Test
+    @Test(enabled = true)
     public void testInjection() {
     
-        final Injector injector = Guice.createInjector(new ProductionJerseyServletModule());
+        injector = Guice.createInjector(new ProductionJerseyServletModule());
         
         final RecommendationService recommendationsService = injector
                 .getInstance(RecommendationService.class);

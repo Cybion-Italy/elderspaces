@@ -5,7 +5,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -243,21 +243,30 @@ public class SocialNetworkRepositoryTestCase {
         repository.createClub("pp2", "cc1", new Date());
         repository.createEvent("pp2", "ee1", new Date());
         
-        Set<String> ids = repository.getFriendsOfFriends("pp1");
-        assertTrue(ids.contains("pp3"));
-        assertTrue(ids.contains("pp4"));
-        assertEquals(ids.size(), 2);
-        LOGGER.debug("found " + ids.size() + " friend recommendations");
+        repository.addNewFriend("pp1", "pp5", new Date());
+        repository.addNewFriend("pp5", "pp3", new Date());
+        repository.addNewFriend("pp1", "pp6", new Date());
+        repository.addNewFriend("pp6", "pp3", new Date());
         
-        ids = repository.getClubsOfFriends("pp1");
-        assertTrue(ids.contains("cc1"));
-        assertEquals(ids.size(), 1);
-        LOGGER.debug("found " + ids.size() + " club recommendations");
+        Map<String, Double> scores = repository.getFriendsOfFriends("pp1");
         
-        ids = repository.getEventsOfFriends("pp1");
-        assertTrue(ids.contains("ee1"));
-        assertEquals(ids.size(), 1);
-        LOGGER.debug("found " + ids.size() + " event recommendations");
+        assertEquals(scores.size(), 2);
+        assertTrue(scores.containsKey("pp3"));
+        assertTrue(scores.containsKey("pp4"));
+        assertEquals(scores.get("pp3"), 3.0);
+        assertEquals(scores.get("pp4"), 1.0);
+        
+        LOGGER.debug("found " + scores.size() + " friend recommendations");
+        
+        scores = repository.getClubsOfFriends("pp1");
+        assertTrue(scores.containsKey("cc1"));
+        assertEquals(scores.size(), 1);
+        LOGGER.debug("found " + scores.size() + " club recommendations");
+        
+        scores = repository.getEventsOfFriends("pp1");
+        assertTrue(scores.containsKey("ee1"));
+        assertEquals(scores.size(), 1);
+        LOGGER.debug("found " + scores.size() + " event recommendations");
     }
     
     private void printGraph(final Graph graph, final String relation) {
