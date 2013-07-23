@@ -108,7 +108,7 @@
 				<artifactId>tomcat6-maven-plugin</artifactId>
 				<version>2.0</version>
 				<configuration>
-					<url>http://gaia.cybion.eu/aal/manager</url>
+					<url>http://gaia.cybion.eu:8083/manager</url>
 					<server>${gaia.deploy.server}</server>
 					<path>/${project.build.finalName}</path>
 				</configuration>
