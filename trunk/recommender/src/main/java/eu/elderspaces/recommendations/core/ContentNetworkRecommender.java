@@ -19,7 +19,6 @@ import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.persistence.EnrichedEntitiesRepository;
 import eu.elderspaces.persistence.EntitiesRepository;
-import eu.elderspaces.persistence.LuceneEnrichedEntitiesRepository;
 import eu.elderspaces.persistence.SocialNetworkRepository;
 import eu.elderspaces.persistence.exceptions.EnrichedEntitiesRepositoryException;
 import eu.elderspaces.recommendations.core.helpers.MapSorter;
@@ -243,14 +242,4 @@ public class ContentNetworkRecommender implements Recommender {
         
     }
     
-    public void shutdownEnrichedRepository() {
-    
-        try {
-            ((LuceneEnrichedEntitiesRepository) enrichedEntitiesRepository).close();
-            enrichedEntitiesRepository = null;
-        } catch (final RepositoryException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
 }

@@ -635,4 +635,11 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             throw new RepositoryException("Couldn't cast entity with id: " + id + " to Activity");
         }
     }
+    
+    @Override
+    public void shutdown() throws RepositoryException {
+    
+        commit();
+        close();
+    }
 }

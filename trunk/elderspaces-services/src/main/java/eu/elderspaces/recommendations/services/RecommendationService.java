@@ -1,5 +1,6 @@
 package eu.elderspaces.recommendations.services;
 
+import it.cybion.commons.exceptions.RepositoryException;
 import it.cybion.commons.web.responses.ResponseStatus;
 import it.cybion.commons.web.services.base.JsonService;
 
@@ -14,19 +15,21 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 
-import eu.elderspaces.ProductionCacheModule;
+import eu.elderspaces.GuiceFactory;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.persistence.EnrichedEntitiesRepository;
+import eu.elderspaces.persistence.LuceneEnrichedEntitiesRepository;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
 import eu.elderspaces.recommendations.core.ContentNetworkRecommender;
 import eu.elderspaces.recommendations.core.Recommender;
@@ -107,28 +110,33 @@ public class RecommendationService extends JsonService {
             return error("Oooops got ya!");
         }
         
-        ((ContentNetworkRecommender) recommender).shutdownEnrichedRepository();
-        
-        final Injector injector = Guice.createInjector(new ProductionCacheModule());
-        
-        // clean cache directory (alias enrichedEntitiesRepository)
-        
-        final String cacheDirPath = injector.getInstance(Key.get(String.class,
-                Names.named("eu.elderspaces.repository.enriched-entities")));
+        final EnrichedEntitiesRepository repository = GuiceFactory.getInjector().getInstance(
+                EnrichedEntitiesRepository.class);
         try {
-            FileUtils.cleanDirectory(new File(cacheDirPath));
+            repository.shutdown();
+            
+            // clean cache directory (alias enrichedEntitiesRepository)
+            final String cacheDirPath = GuiceFactory.getInjector().getInstance(
+                    Key.get(String.class,
+                            Names.named("eu.elderspaces.repository.enriched-entities")));
+            try {
+                FileUtils.cleanDirectory(new File(cacheDirPath));
+            } catch (final IOException e) {
+                return error(e, "Could not clean cache directory located at: " + cacheDirPath);
+            }
+            
+            ((LuceneEnrichedEntitiesRepository) repository).switchToDirectory(
+                    new SimpleFSDirectory(new File(cacheDirPath)), new WhitespaceAnalyzer(
+                            Version.LUCENE_36));
+        } catch (final RepositoryException e1) {
+            return error(e1, "Could not reset directory");
         } catch (final IOException e) {
-            return error(e, "Could not clean cache directory located at: " + cacheDirPath);
+            return error(e, "Could not reset directory");
         }
-        
-        // get new instance from injector
-        final EnrichedEntitiesRepository enrichedEntitiesRepository = injector
-                .getInstance(EnrichedEntitiesRepository.class);
         
         // rebuild cache
         try {
-            ((ContentNetworkRecommender) recommender)
-                    .updateEnrichedEntitiesRepository(enrichedEntitiesRepository);
+            ((ContentNetworkRecommender) recommender).updateEnrichedEntitiesRepository(repository);
         } catch (final RecommenderException e) {
             return error(e, e.getMessage());
         }

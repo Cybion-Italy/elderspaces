@@ -50,4 +50,6 @@ public interface EntitiesRepository {
     public Entity get(final String documentId) throws RepositoryException;
     
     public List<String> getAllKeys() throws RepositoryException;
+    
+    public void shutdown() throws RepositoryException;
 }

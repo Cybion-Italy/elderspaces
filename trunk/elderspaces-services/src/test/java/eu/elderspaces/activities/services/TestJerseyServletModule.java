@@ -71,10 +71,6 @@ public class TestJerseyServletModule extends JerseyServletModule {
         
         bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
         
-        bind(Directory.class).toInstance(new RAMDirectory());
-        bind(Analyzer.class).toInstance(new WhitespaceAnalyzer(Version.LUCENE_36));
-        bind(EntitiesRepository.class).to(LuceneEntitiesRepository.class);
-        
         bind(ActivityStreamManager.class).to(MultiLayerActivityStreamManager.class);
         
         // add bindings for Jackson json serialization
@@ -91,5 +87,14 @@ public class TestJerseyServletModule extends JerseyServletModule {
     private Client elasticsearchClientProvider(final EmbeddedElasticsearchServer server) {
     
         return server.getClient();
+    }
+    
+    @Provides
+    private EntitiesRepository entitiesRepositoryProvider() {
+    
+        final Directory directory = new RAMDirectory();
+        final Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
+        
+        return new LuceneEntitiesRepository(directory, analyzer);
     }
 }

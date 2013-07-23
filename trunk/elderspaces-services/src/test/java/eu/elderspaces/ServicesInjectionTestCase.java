@@ -14,7 +14,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
@@ -63,8 +62,9 @@ public class ServicesInjectionTestCase {
     @BeforeClass
     public void testInjection() throws IOException {
     
+        injector = GuiceFactory.getInjector();
+        
         // clean entities directories
-        injector = Guice.createInjector(new ProductionCacheModule());
         final String entitiesDir = injector.getInstance(Key.get(String.class,
                 Names.named("eu.elderspaces.repository.entities")));
         FileUtils.cleanDirectory(new File(entitiesDir));
@@ -74,8 +74,6 @@ public class ServicesInjectionTestCase {
         final String snDir = injector.getInstance(Key.get(String.class,
                 Names.named("eu.elderspaces.repository.social-network")));
         FileUtils.cleanDirectory(new File(snDir));
-        
-        injector = Guice.createInjector(new ProductionJerseyServletModule());
         
         recommendationsService = injector.getInstance(RecommendationService.class);
         Assert.assertNotNull(recommendationsService);
@@ -93,11 +91,13 @@ public class ServicesInjectionTestCase {
     }
     
     @AfterClass
-    public void shutdown() {
+    public void shutdown() throws RepositoryException {
     
         injector.getInstance(Node.class).stop();
         injector.getInstance(Client.class).close();
         injector.getInstance(SocialNetworkRepository.class).shutdown();
+        injector.getInstance(EntitiesRepository.class).shutdown();
+        // injector.getInstance(EnrichedEntitiesRepository.class).shutdown();
     }
     
     @Test
@@ -113,7 +113,7 @@ public class ServicesInjectionTestCase {
         Assert.assertEquals(entities, 9);
     }
     
-    @Test(dependsOnMethods = "shouldTestCacheBuilding")
+    @Test(dependsOnMethods = { "shouldTestCacheBuilding" })
     public void shouldTestMultipleCacheBuildingFromRecommender()
             throws EnrichedEntitiesRepositoryException, RepositoryException {
     

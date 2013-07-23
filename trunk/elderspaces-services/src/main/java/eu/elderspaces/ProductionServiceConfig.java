@@ -6,7 +6,6 @@ import org.elasticsearch.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 
@@ -20,16 +19,17 @@ public class ProductionServiceConfig extends GuiceServletContextListener {
     @Override
     protected Injector getInjector() {
     
-        return Guice.createInjector(new ProductionJerseyServletModule());
+        return GuiceFactory.getInjector();
     }
     
     @Override
     public void contextDestroyed(final ServletContextEvent servletContextEvent) {
     
-        // recreating injector still provides same istances
+        // recreating injector still provides different instances even if
+        // defined @Singleton
         // http://stackoverflow.com/questions/8356640/guice-how-to-share-the-same-singleton-instance-through-multiple-injectors-modu
         
-        final Injector injector = Guice.createInjector(new ProductionJerseyServletModule());
+        final Injector injector = GuiceFactory.getInjector();
         final Node node = injector.getInstance(Node.class);
         node.stop();
     }

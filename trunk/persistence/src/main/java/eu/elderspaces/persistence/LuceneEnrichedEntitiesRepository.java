@@ -18,6 +18,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.TermVector;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -30,6 +32,8 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.similar.MoreLikeThis;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.LockObtainFailedException;
+import org.apache.lucene.util.Version;
 
 import com.google.inject.Inject;
 
@@ -59,7 +63,6 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
     public LuceneEnrichedEntitiesRepository(final Directory directory, final Analyzer analyzer) {
     
         super(directory, analyzer);
-        
     }
     
     @Override
@@ -460,5 +463,29 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
         }
         LOGGER.info("Updated reader!");
         LOGGER.info("Finished Enriching!");
+    }
+    
+    @Override
+    public void shutdown() throws RepositoryException {
+    
+        this.commit();
+        this.close();
+        
+    }
+    
+    public void switchToDirectory(final Directory directory, final Analyzer analyzer)
+            throws RepositoryException {
+    
+        try {
+            final IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+            writer = new IndexWriter(directory, conf);
+            reader = IndexReader.open(writer, false);
+        } catch (final CorruptIndexException e) {
+            throw new RepositoryException("Could not switch repository", e);
+        } catch (final LockObtainFailedException e) {
+            throw new RepositoryException("Could not switch repository", e);
+        } catch (final IOException e) {
+            throw new RepositoryException("Could not switch repository", e);
+        }
     }
 }

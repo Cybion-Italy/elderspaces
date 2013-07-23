@@ -137,9 +137,13 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
             throws IOException {
     
         final Directory directory = new SimpleFSDirectory(new File(enrichedEntitiesDirectoryPath));
+        
         final Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
         
-        return new LuceneEnrichedEntitiesRepository(directory, analyzer);
+        final LuceneEnrichedEntitiesRepository repository = new LuceneEnrichedEntitiesRepository(
+                directory, analyzer);
+        
+        return repository;
     }
     
     @Provides

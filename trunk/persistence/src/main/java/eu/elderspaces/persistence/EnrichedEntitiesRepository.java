@@ -1,5 +1,7 @@
 package eu.elderspaces.persistence;
 
+import it.cybion.commons.exceptions.RepositoryException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -32,4 +34,6 @@ public interface EnrichedEntitiesRepository {
     
     public void buildEnrichedEntities(final EntitiesRepository entitiesRepository,
             final SocialNetworkRepository snRepository) throws EnrichedEntitiesRepositoryException;
+    
+    public void shutdown() throws RepositoryException;
 }
