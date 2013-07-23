@@ -29,4 +29,7 @@ public interface EnrichedEntitiesRepository {
     public Map<String, Double> getClubRecommendations(String userId);
     
     public Map<String, Double> getEventRecommendations(String userId);
+    
+    public void buildEnrichedEntities(final EntitiesRepository entitiesRepository,
+            final SocialNetworkRepository snRepository) throws EnrichedEntitiesRepositoryException;
 }

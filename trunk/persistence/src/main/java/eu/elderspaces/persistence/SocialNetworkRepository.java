@@ -72,7 +72,11 @@ public interface SocialNetworkRepository {
     
     Set<String> getEventActivities(String id);
     
+    Set<String> getEventMembers(String id);
+    
     Set<String> getClubActivities(String id);
+    
+    Set<String> getClubMembers(String id);
     
     Map<String, Double> getFriendsOfFriends(String id);
     

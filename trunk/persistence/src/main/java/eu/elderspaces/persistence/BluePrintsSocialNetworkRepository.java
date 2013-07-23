@@ -406,8 +406,8 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
         ids = pipe.start(vertex).out(Costants.HAS_CLUB).property(Costants.VERTEX_ID).toList();
         
         final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        for (final String clubId : ids) {
+            uniqueIds.add(clubId);
         }
         
         uniqueIds.remove(id);
@@ -426,8 +426,8 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
         ids = pipe.start(vertex).out(Costants.HAS_EVENT).property(Costants.VERTEX_ID).toList();
         
         final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        for (final String eventId : ids) {
+            uniqueIds.add(eventId);
         }
         
         uniqueIds.remove(id);
@@ -446,8 +446,8 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
         ids = pipe.start(vertex).out(Costants.HAS_ACTIVITY).property(Costants.VERTEX_ID).toList();
         
         final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        for (final String activityId : ids) {
+            uniqueIds.add(activityId);
         }
         
         uniqueIds.remove(id);
@@ -466,8 +466,8 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
         ids = pipe.start(vertex).out(Costants.HAS_ACTIVITY).property(Costants.VERTEX_ID).toList();
         
         final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        for (final String activityId : ids) {
+            uniqueIds.add(activityId);
         }
         
         uniqueIds.remove(id);
@@ -486,8 +486,48 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
         ids = pipe.start(vertex).out(Costants.HAS_ACTIVITY).property(Costants.VERTEX_ID).toList();
         
         final Set<String> uniqueIds = new HashSet<String>();
-        for (final String friendId : ids) {
-            uniqueIds.add(friendId);
+        for (final String activityId : ids) {
+            uniqueIds.add(activityId);
+        }
+        
+        uniqueIds.remove(id);
+        
+        return uniqueIds;
+    }
+    
+    @Override
+    public Set<String> getEventMembers(final String id) {
+    
+        List<String> ids = new ArrayList<String>();
+        
+        final Vertex vertex = helper.getOrCreateEvent(id, new Date());
+        
+        final GremlinPipeline pipe = new GremlinPipeline();
+        ids = pipe.start(vertex).out(Costants.HAS_MEMBER).property(Costants.VERTEX_ID).toList();
+        
+        final Set<String> uniqueIds = new HashSet<String>();
+        for (final String memberId : ids) {
+            uniqueIds.add(memberId);
+        }
+        
+        uniqueIds.remove(id);
+        
+        return uniqueIds;
+    }
+    
+    @Override
+    public Set<String> getClubMembers(final String id) {
+    
+        List<String> ids = new ArrayList<String>();
+        
+        final Vertex vertex = helper.getOrCreateEvent(id, new Date());
+        
+        final GremlinPipeline pipe = new GremlinPipeline();
+        ids = pipe.start(vertex).out(Costants.HAS_MEMBER).property(Costants.VERTEX_ID).toList();
+        
+        final Set<String> uniqueIds = new HashSet<String>();
+        for (final String memberId : ids) {
+            uniqueIds.add(memberId);
         }
         
         uniqueIds.remove(id);

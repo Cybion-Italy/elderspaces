@@ -104,6 +104,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             }
             
             store(actor);
+            commit();
         } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
@@ -116,6 +117,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         try {
             if (!alreadyExists(object.getId())) {
                 store(object);
+                commit();
             }
         } catch (final RepositoryException e) {
             LOGGER.error("Could not store activity");
@@ -129,6 +131,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         try {
             if (!alreadyExists(object.getId())) {
                 store(object);
+                commit();
             }
             
         } catch (final RepositoryException e) {
@@ -146,6 +149,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             }
             
             store(club);
+            commit();
         } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
@@ -158,6 +162,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         try {
             if (!alreadyExists(object.getId())) {
                 store(object);
+                commit();
             }
         } catch (final RepositoryException e) {
             LOGGER.error("Could not store activity");
@@ -174,6 +179,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             }
             
             store(event);
+            commit();
         } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }

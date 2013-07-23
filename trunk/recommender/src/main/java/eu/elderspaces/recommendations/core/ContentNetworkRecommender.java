@@ -19,7 +19,9 @@ import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.persistence.EnrichedEntitiesRepository;
 import eu.elderspaces.persistence.EntitiesRepository;
+import eu.elderspaces.persistence.LuceneEnrichedEntitiesRepository;
 import eu.elderspaces.persistence.SocialNetworkRepository;
+import eu.elderspaces.persistence.exceptions.EnrichedEntitiesRepositoryException;
 import eu.elderspaces.recommendations.core.helpers.MapSorter;
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
 
@@ -37,7 +39,7 @@ public class ContentNetworkRecommender implements Recommender {
     private static final int TOTAL_RESULTS = 3;
     private static final int START_INDEX = 0;
     
-    private final EnrichedEntitiesRepository enrichedEntitiesRepository;
+    private EnrichedEntitiesRepository enrichedEntitiesRepository;
     private final EntitiesRepository entityRepository;
     private final SocialNetworkRepository socialNetworkRepository;
     
@@ -224,4 +226,31 @@ public class ContentNetworkRecommender implements Recommender {
         return orderedMap;
     }
     
+    public void updateEnrichedEntitiesRepository(
+            final EnrichedEntitiesRepository newEnrichedEntitiesRepository)
+            throws RecommenderException {
+    
+        LOGGER.info("Updating Enriched Entities Repository...");
+        
+        try {
+            enrichedEntitiesRepository = newEnrichedEntitiesRepository;
+            enrichedEntitiesRepository.buildEnrichedEntities(entityRepository,
+                    socialNetworkRepository);
+        } catch (final EnrichedEntitiesRepositoryException e) {
+            LOGGER.error(e.getMessage());
+            throw new RecommenderException("Could not rebuilt enriched entities repository", e);
+        }
+        
+    }
+    
+    public void shutdownEnrichedRepository() {
+    
+        try {
+            ((LuceneEnrichedEntitiesRepository) enrichedEntitiesRepository).close();
+            enrichedEntitiesRepository = null;
+        } catch (final RepositoryException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }

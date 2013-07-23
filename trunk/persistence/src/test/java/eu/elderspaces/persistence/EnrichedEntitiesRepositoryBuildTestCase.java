@@ -1,47 +1,37 @@
-package eu.elderspaces;
+package eu.elderspaces.persistence;
 
 import it.cybion.commons.exceptions.RepositoryException;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.node.Node;
-import org.testng.Assert;
+import junit.framework.Assert;
+
+import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.test.TestGraphDatabaseFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
+import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 
-import eu.elderspaces.activities.services.ActivitiesService;
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Event.InvitationAnswer;
 import eu.elderspaces.model.Person;
-import eu.elderspaces.persistence.EnrichedEntitiesRepository;
-import eu.elderspaces.persistence.EntitiesRepository;
-import eu.elderspaces.persistence.LuceneEnrichedEntitiesRepository;
-import eu.elderspaces.persistence.LuceneEntitiesRepository;
-import eu.elderspaces.persistence.SocialNetworkRepository;
 import eu.elderspaces.persistence.exceptions.EnrichedEntitiesRepositoryException;
-import eu.elderspaces.recommendations.services.RecommendationService;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
  */
 
-public class ServicesInjectionTestCase {
+public class EnrichedEntitiesRepositoryBuildTestCase {
     
-    private Injector injector;
-    
-    private RecommendationService recommendationsService;
+    public static final Logger LOGGER = Logger.getLogger(EntitiesRepositoryTestCase.class);
     
     private EnrichedEntitiesRepository enrichedRepository;
     private EntitiesRepository entitiesRepository;
@@ -61,73 +51,36 @@ public class ServicesInjectionTestCase {
     private Activity activity3;
     
     @BeforeClass
-    public void testInjection() throws IOException {
+    public void setup() {
     
-        // clean entities directories
-        injector = Guice.createInjector(new ProductionCacheModule());
-        final String entitiesDir = injector.getInstance(Key.get(String.class,
-                Names.named("eu.elderspaces.repository.entities")));
-        FileUtils.cleanDirectory(new File(entitiesDir));
-        final String enrichedDir = injector.getInstance(Key.get(String.class,
-                Names.named("eu.elderspaces.repository.enriched-entities")));
-        FileUtils.cleanDirectory(new File(enrichedDir));
-        final String snDir = injector.getInstance(Key.get(String.class,
-                Names.named("eu.elderspaces.repository.social-network")));
-        FileUtils.cleanDirectory(new File(snDir));
+        enrichedRepository = new LuceneEnrichedEntitiesRepository(new RAMDirectory(),
+                new WhitespaceAnalyzer(Version.LUCENE_36));
+        entitiesRepository = new LuceneEntitiesRepository(new RAMDirectory(),
+                new WhitespaceAnalyzer(Version.LUCENE_36));
         
-        injector = Guice.createInjector(new ProductionJerseyServletModule());
-        
-        recommendationsService = injector.getInstance(RecommendationService.class);
-        Assert.assertNotNull(recommendationsService);
-        
-        final ActivitiesService activitiesService = injector.getInstance(ActivitiesService.class);
-        Assert.assertNotNull(activitiesService);
-        
-        entitiesRepository = injector.getInstance(EntitiesRepository.class);
-        enrichedRepository = injector.getInstance(EnrichedEntitiesRepository.class);
-        snRepository = injector.getInstance(SocialNetworkRepository.class);
+        final GraphDatabaseService graphService = new TestGraphDatabaseFactory()
+                .newImpermanentDatabaseBuilder().newGraphDatabase();
+        snRepository = new BluePrintsSocialNetworkRepository(new Neo4jGraph(graphService));
         
         initEntities();
         initEntitiesRepository();
         initSocialNetworkRepository();
+        
     }
     
     @AfterClass
     public void shutdown() {
     
-        injector.getInstance(Node.class).stop();
-        injector.getInstance(Client.class).close();
-        injector.getInstance(SocialNetworkRepository.class).shutdown();
+        enrichedRepository = null;
     }
     
     @Test
-    public void shouldTestCacheBuilding() throws EnrichedEntitiesRepositoryException,
+    public void shouldTestRepositoryBuilding() throws EnrichedEntitiesRepositoryException,
             RepositoryException {
     
         enrichedRepository.buildEnrichedEntities(entitiesRepository, snRepository);
         
         int entities = ((LuceneEntitiesRepository) entitiesRepository).countDocuments();
-        Assert.assertEquals(entities, 12);
-        
-        entities = ((LuceneEnrichedEntitiesRepository) enrichedRepository).countDocuments();
-        Assert.assertEquals(entities, 9);
-    }
-    
-    @Test(dependsOnMethods = "shouldTestCacheBuilding")
-    public void shouldTestMultipleCacheBuildingFromRecommender()
-            throws EnrichedEntitiesRepositoryException, RepositoryException {
-    
-        recommendationsService.updateCache("BigBang1255");
-        
-        int entities = ((LuceneEntitiesRepository) entitiesRepository).countDocuments();
-        Assert.assertEquals(12, entities);
-        
-        entities = ((LuceneEnrichedEntitiesRepository) enrichedRepository).countDocuments();
-        Assert.assertEquals(9, entities);
-        
-        recommendationsService.updateCache("BigBang1255");
-        
-        entities = ((LuceneEntitiesRepository) entitiesRepository).countDocuments();
         Assert.assertEquals(12, entities);
         
         entities = ((LuceneEnrichedEntitiesRepository) enrichedRepository).countDocuments();

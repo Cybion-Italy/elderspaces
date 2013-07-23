@@ -14,4 +14,5 @@ final public class RecommendationsEndpoint {
     public static final String FRIENDS = "/friends";
     public static final String EVENTS = "/events";
     public static final String CLUBS = "/clubs";
+    public static final String UPDATE_CACHE = "/updateCache";
 }

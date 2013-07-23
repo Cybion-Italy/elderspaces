@@ -3,6 +3,9 @@ package eu.elderspaces.recommendations.services;
 import it.cybion.commons.web.responses.ResponseStatus;
 import it.cybion.commons.web.services.base.JsonService;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -10,14 +13,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 
+import eu.elderspaces.ProductionCacheModule;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.recommendations.PaginatedResult;
+import eu.elderspaces.persistence.EnrichedEntitiesRepository;
 import eu.elderspaces.recommendations.RecommendationsEndpoint;
+import eu.elderspaces.recommendations.core.ContentNetworkRecommender;
 import eu.elderspaces.recommendations.core.Recommender;
 import eu.elderspaces.recommendations.exceptions.RecommenderException;
 import eu.elderspaces.recommendations.responses.EntityRecommendationResponse;
@@ -82,4 +93,47 @@ public class RecommendationService extends JsonService {
                 "Events recommendations", recommendationReport));
     }
     
+    /*
+     * 1. shutdown existing enriched repository 2. get an injector with a custom
+     * module containing only properties and enrichedrepository provider 3.
+     * clean directory 4. get new instance 5. notify recommender to update
+     * enriched repository by providing new instance
+     */
+    @GET
+    @Path(RecommendationsEndpoint.UPDATE_CACHE + "/{password}")
+    public Response updateCache(@PathParam("password") final String password) {
+    
+        if (!password.equals("BigBang1255")) {
+            return error("Oooops got ya!");
+        }
+        
+        ((ContentNetworkRecommender) recommender).shutdownEnrichedRepository();
+        
+        final Injector injector = Guice.createInjector(new ProductionCacheModule());
+        
+        // clean cache directory (alias enrichedEntitiesRepository)
+        
+        final String cacheDirPath = injector.getInstance(Key.get(String.class,
+                Names.named("eu.elderspaces.repository.enriched-entities")));
+        try {
+            FileUtils.cleanDirectory(new File(cacheDirPath));
+        } catch (final IOException e) {
+            return error(e, "Could not clean cache directory located at: " + cacheDirPath);
+        }
+        
+        // get new instance from injector
+        final EnrichedEntitiesRepository enrichedEntitiesRepository = injector
+                .getInstance(EnrichedEntitiesRepository.class);
+        
+        // rebuild cache
+        try {
+            ((ContentNetworkRecommender) recommender)
+                    .updateEnrichedEntitiesRepository(enrichedEntitiesRepository);
+        } catch (final RecommenderException e) {
+            return error(e, e.getMessage());
+        }
+        
+        return success("Updated Cache");
+        
+    }
 }

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -16,6 +17,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.TermVector;
 import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -33,6 +35,7 @@ import com.google.inject.Inject;
 
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
+import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.persistence.exceptions.EnrichedEntitiesRepositoryException;
@@ -56,6 +59,7 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
     public LuceneEnrichedEntitiesRepository(final Directory directory, final Analyzer analyzer) {
     
         super(directory, analyzer);
+        
     }
     
     @Override
@@ -351,4 +355,110 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
         return content;
     }
     
+    /*
+     * BE SURE WHEN CALLING THIS METHOD THAT THE TARGET DIRECTORY IS CLEANED!!!
+     */
+    @Override
+    public void buildEnrichedEntities(final EntitiesRepository entitiesRepository,
+            final SocialNetworkRepository snRepository) throws EnrichedEntitiesRepositoryException {
+    
+        LOGGER.info("Building Enriched Entities Repository...");
+        final long start = System.currentTimeMillis();
+        
+        List<String> keys;
+        try {
+            keys = entitiesRepository.getAllKeys();
+        } catch (final RepositoryException e) {
+            throw new EnrichedEntitiesRepositoryException("Could not build enriched entities", e);
+        }
+        
+        LOGGER.info(keys.size() + " entities to enrich!");
+        
+        for (final String key : keys) {
+            
+            try {
+                final Entity entity = entitiesRepository.get(key);
+                
+                if (entity instanceof Person) {
+                    
+                    final Person person = (Person) entity;
+                    final List<Activity> activities = new ArrayList<Activity>();
+                    final List<Club> clubs = new ArrayList<Club>();
+                    final List<Event> events = new ArrayList<Event>();
+                    
+                    final Set<String> activityIDs = snRepository.getActivities(person.getId());
+                    final Set<String> clubIDs = snRepository.getClubs(person.getId());
+                    final Set<String> eventIDs = snRepository.getEvents(person.getId());
+                    
+                    for (final String id : activityIDs) {
+                        activities.add(entitiesRepository.getActivity(id));
+                    }
+                    for (final String id : clubIDs) {
+                        clubs.add(entitiesRepository.getClub(id));
+                    }
+                    for (final String id : eventIDs) {
+                        events.add(entitiesRepository.getEvent(id));
+                    }
+                    
+                    storeEnrichedPerson(person, activities, clubs, events);
+                    
+                } else if (entity instanceof Club) {
+                    
+                    final Club club = (Club) entity;
+                    final List<Person> members = new ArrayList<Person>();
+                    final Set<String> memberIDs = snRepository.getClubMembers(club.getId());
+                    
+                    for (final String id : memberIDs) {
+                        members.add(entitiesRepository.getPerson(id));
+                    }
+                    
+                    storeEnrichedClub(club, members);
+                } else if (entity instanceof Event) {
+                    final Event event = (Event) entity;
+                    final List<Person> members = new ArrayList<Person>();
+                    final Set<String> memberIDs = snRepository.getEventMembers(event.getId());
+                    
+                    for (final String id : memberIDs) {
+                        members.add(entitiesRepository.getPerson(id));
+                    }
+                    
+                    storeEnrichedEvent(event, members);
+                }
+            } catch (final RepositoryException e) {
+                LOGGER.error("skipping id: " + key + " " + e.getMessage());
+                continue;
+            }
+            
+        }
+        
+        // Commit everithing
+        try {
+            
+            final long commitStart = System.currentTimeMillis();
+            writer.commit();
+            final long commitEnd = System.currentTimeMillis();
+            LOGGER.info("finished commit in " + ((commitEnd - commitStart) / 1000.00) + " secs");
+            
+        } catch (final CorruptIndexException e) {
+            throw new EnrichedEntitiesRepositoryException("Could not commit during enriching", e);
+        } catch (final IOException e) {
+            throw new EnrichedEntitiesRepositoryException("Could not commit during enriching", e);
+        }
+        
+        final long end = System.currentTimeMillis();
+        LOGGER.info("Finished Enriching in total " + ((end - start) / 1000.00) + " secs");
+        
+        LOGGER.info("Updating reader...");
+        try {
+            final IndexReader newReader = IndexReader.openIfChanged(reader);
+            if (newReader != null) {
+                reader = newReader;
+            }
+        } catch (final IOException e) {
+            throw new EnrichedEntitiesRepositoryException(
+                    "Could not update reader after enriching", e);
+        }
+        LOGGER.info("Updated reader!");
+        LOGGER.info("Finished Enriching!");
+    }
 }
