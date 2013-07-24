@@ -2,8 +2,8 @@ package eu.elderspaces.model;
 
 public class Activity extends Entity {
     
-    private String body;
-    private String title;
+    private String body = "";
+    private String title = "";
     
     public Activity() {
     

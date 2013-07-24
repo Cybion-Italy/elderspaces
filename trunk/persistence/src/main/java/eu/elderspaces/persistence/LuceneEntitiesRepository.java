@@ -642,4 +642,5 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         commit();
         close();
     }
+    
 }

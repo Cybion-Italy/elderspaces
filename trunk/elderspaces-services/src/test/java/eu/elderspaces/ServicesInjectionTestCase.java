@@ -97,7 +97,7 @@ public class ServicesInjectionTestCase {
         injector.getInstance(Client.class).close();
         injector.getInstance(SocialNetworkRepository.class).shutdown();
         injector.getInstance(EntitiesRepository.class).shutdown();
-        // injector.getInstance(EnrichedEntitiesRepository.class).shutdown();
+        injector.getInstance(EnrichedEntitiesRepository.class).shutdown();
     }
     
     @Test

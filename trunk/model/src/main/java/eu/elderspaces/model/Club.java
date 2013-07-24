@@ -4,10 +4,10 @@ import com.google.common.base.Objects;
 
 public class Club extends Entity {
     
-    private String name;
-    private String description;
-    private String shortDescription;
-    private String category;
+    private String name = "";
+    private String description = "";
+    private String shortDescription = "";
+    private String category = "";
     
     public Club() {
     

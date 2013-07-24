@@ -4,21 +4,21 @@ import java.util.Arrays;
 
 public class Person extends Entity {
     
-    private int friendsCount;
-    private String[] interests;
-    private String[] movies;
-    private String aboutMe;
-    private String[] languagesSpoken;
-    private String[] tvShows;
-    private String thumbnailUrl;
+    private int friendsCount = 0;
+    private String[] interests = {};
+    private String[] movies = {};
+    private String aboutMe = "";
+    private String[] languagesSpoken = {};
+    private String[] tvShows = {};
+    private String thumbnailUrl = "";
     
-    private String name;
-    private String pets;
-    private String gender;
-    private String[] activities;
-    private String[] music;
-    private String[] books;
-    private String displayName;
+    private String name = "";
+    private String pets = "";
+    private String gender = "";
+    private String[] activities = {};
+    private String[] music = {};
+    private String[] books = {};
+    private String displayName = "";
     
     public Person() {
     

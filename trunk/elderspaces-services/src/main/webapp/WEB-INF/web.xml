@@ -16,7 +16,7 @@
 	</filter-mapping>
 
 	<listener>
-		<listener-class>eu.elderspaces.recommendations.services.ProductionServiceConfig</listener-class>
+		<listener-class>eu.elderspaces.ProductionServiceConfig</listener-class>
 	</listener>
 
 	<welcome-file-list>
