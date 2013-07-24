@@ -74,7 +74,7 @@ public class FakeRecommendationService extends JsonService {
         final PaginatedResult recommendationReport;
         
         try {
-            recommendationReport = recommender.getRecommendedEntities(userId, Event.class);
+            recommendationReport = recommender.getRecommendedEntities(userId, requestedClass);
         } catch (final RecommenderException e) {
             return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }

@@ -26,7 +26,9 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 
 import eu.elderspaces.GuiceFactory;
+import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
+import eu.elderspaces.model.Person;
 import eu.elderspaces.model.recommendations.PaginatedResult;
 import eu.elderspaces.persistence.EnrichedEntitiesRepository;
 import eu.elderspaces.persistence.LuceneEnrichedEntitiesRepository;
@@ -61,7 +63,7 @@ public class RecommendationService extends JsonService {
     public Response getFriends(@PathParam("userId") final String userId) {
     
         LOGGER.info("Friends recommendation service called with userId: " + userId);
-        return getRecommendationResponse(userId);
+        return getRecommendationResponse(userId, Person.class);
     }
     
     @GET
@@ -69,7 +71,7 @@ public class RecommendationService extends JsonService {
     public Response getEvents(@PathParam("userId") final String userId) {
     
         LOGGER.info("Events recommendation service called with userId: " + userId);
-        return getRecommendationResponse(userId);
+        return getRecommendationResponse(userId, Event.class);
     }
     
     @GET
@@ -77,15 +79,15 @@ public class RecommendationService extends JsonService {
     public Response getClubs(@PathParam("userId") final String userId) {
     
         LOGGER.info("Clubs recommendation service called with userId: " + userId);
-        return getRecommendationResponse(userId);
+        return getRecommendationResponse(userId, Club.class);
     }
     
-    private Response getRecommendationResponse(final String userId) {
+    private Response getRecommendationResponse(final String userId, final Class requestedClass) {
     
         final PaginatedResult recommendationReport;
         
         try {
-            recommendationReport = recommender.getRecommendedEntities(userId, Event.class);
+            recommendationReport = recommender.getRecommendedEntities(userId, requestedClass);
         } catch (final RecommenderException e) {
             return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
