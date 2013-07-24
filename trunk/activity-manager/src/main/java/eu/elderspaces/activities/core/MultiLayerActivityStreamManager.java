@@ -130,7 +130,7 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
             
         } else if (verb.equals(Verbs.UPDATE)) {
             
-            entitiesRepository.updateProfile(personObject, eventTime);
+            entitiesRepository.updateProfile(user, eventTime);
             socialNetworkRepository.createNewUser(personObject.getId(), eventTime);
             
         } else if (verb.equals(Verbs.DELETE)) {
