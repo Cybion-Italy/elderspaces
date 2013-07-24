@@ -95,7 +95,7 @@ public class RecommendationService extends JsonService {
         LOGGER.info("Event recommendations retrieved");
         
         return success(new EntityRecommendationResponse(ResponseStatus.OK,
-                "Events recommendations", recommendationReport));
+                requestedClass.getSimpleName() + " recommendations", recommendationReport));
     }
     
     /*
