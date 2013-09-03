@@ -27,6 +27,8 @@ public class DateJsonDateDeserializer extends JsonDeserializer<Date> {
             
             if (date.contains("T")) {
                 format = ActivityStreamObjectMapper.ACTIVITY_STREAM_FORMAT;
+            } else if (isTimeMillis(date)) {
+                return new Date(Long.parseLong(date));
             } else {
                 format = ActivityStreamObjectMapper.EVENT_DATE_FORMAT;
             }
@@ -38,4 +40,13 @@ public class DateJsonDateDeserializer extends JsonDeserializer<Date> {
         
     }
     
+    private boolean isTimeMillis(final String date) {
+    
+        try {
+            Long.parseLong(date);
+            return true;
+        } catch (final Exception e) {
+            return false;
+        }
+    }
 }
