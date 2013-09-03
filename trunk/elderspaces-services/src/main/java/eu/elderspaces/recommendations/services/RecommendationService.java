@@ -92,7 +92,7 @@ public class RecommendationService extends JsonService {
             return error(Response.Status.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         
-        LOGGER.info("Event recommendations retrieved");
+        LOGGER.info(requestedClass.getSimpleName() + " recommendations retrieved");
         
         return success(new EntityRecommendationResponse(ResponseStatus.OK,
                 requestedClass.getSimpleName() + " recommendations", recommendationReport));

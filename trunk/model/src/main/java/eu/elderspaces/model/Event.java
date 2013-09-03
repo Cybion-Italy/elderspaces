@@ -11,12 +11,12 @@ public class Event extends Entity {
         YES, NO, MAYBE
     };
     
-    private Date startDate = new Date(); // 2013-06-13 17:15
+    private Date startDate; // 2013-06-13 17:15
     private String category = "";
     private String shortDescription = "";
     private String description = "";
     private String name = "";
-    private Date endDate = new Date(); // 2013-06-13 19:15
+    private Date endDate; // 2013-06-13 19:15
     
     public Event() {
     
