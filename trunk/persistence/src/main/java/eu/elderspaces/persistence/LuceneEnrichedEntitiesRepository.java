@@ -394,13 +394,31 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                     final Set<String> eventIDs = snRepository.getEvents(person.getId());
                     
                     for (final String id : activityIDs) {
-                        activities.add(entitiesRepository.getActivity(id));
+                        try {
+                            activities.add(entitiesRepository.getActivity(id));
+                        } catch (final RepositoryException e) {
+                            LOGGER.error("skipping Activity: " + id + " while enriching Person: "
+                                    + person.getId());
+                            continue;
+                        }
                     }
                     for (final String id : clubIDs) {
-                        clubs.add(entitiesRepository.getClub(id));
+                        try {
+                            clubs.add(entitiesRepository.getClub(id));
+                        } catch (final RepositoryException e) {
+                            LOGGER.error("skipping Club: " + id + " while enriching Person: "
+                                    + person.getId());
+                            continue;
+                        }
                     }
                     for (final String id : eventIDs) {
-                        events.add(entitiesRepository.getEvent(id));
+                        try {
+                            events.add(entitiesRepository.getEvent(id));
+                        } catch (final RepositoryException e) {
+                            LOGGER.error("skipping Event: " + id + " while enriching Person: "
+                                    + person.getId());
+                            continue;
+                        }
                     }
                     
                     storeEnrichedPerson(person, activities, clubs, events);
@@ -412,7 +430,13 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                     final Set<String> memberIDs = snRepository.getClubMembers(club.getId());
                     
                     for (final String id : memberIDs) {
-                        members.add(entitiesRepository.getPerson(id));
+                        try {
+                            members.add(entitiesRepository.getPerson(id));
+                        } catch (final RepositoryException e) {
+                            LOGGER.error("skipping Person: " + id + " while enriching Club: "
+                                    + club.getId());
+                            continue;
+                        }
                     }
                     
                     storeEnrichedClub(club, members);
@@ -422,13 +446,19 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                     final Set<String> memberIDs = snRepository.getEventMembers(event.getId());
                     
                     for (final String id : memberIDs) {
-                        members.add(entitiesRepository.getPerson(id));
+                        try {
+                            members.add(entitiesRepository.getPerson(id));
+                        } catch (final RepositoryException e) {
+                            LOGGER.error("skipping Person: " + id + " while enriching Event: "
+                                    + event.getId());
+                            continue;
+                        }
                     }
                     
                     storeEnrichedEvent(event, members);
                 }
             } catch (final RepositoryException e) {
-                LOGGER.error("skipping id: " + key + " " + e.getMessage());
+                LOGGER.error("skipping Entity: " + key + " " + e.getMessage());
                 continue;
             }
             
