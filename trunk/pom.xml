@@ -93,9 +93,20 @@
 				<version>${commons.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>it.cybion.commons</groupId>
+				<artifactId>test-utils</artifactId>
+				<version>${commons.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>it.cybion.commons.text</groupId>
 				<artifactId>text-analysis</artifactId>
 				<version>${commons.version}</version>
+				<exclusions>
+				<exclusion>
+					<artifactId>bayes</artifactId>
+					<groupId>it.cybion.commons.ml</groupId>
+				</exclusion>
+			</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>eu.elderspaces</groupId>
@@ -121,11 +132,6 @@
 				<groupId>eu.elderspaces</groupId>
 				<artifactId>activities-endpoint</artifactId>
 				<version>${elderspaces.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>it.cybion.commons.text</groupId>
-				<artifactId>text-mining</artifactId>
-				<version>${commons.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.inject</groupId>
