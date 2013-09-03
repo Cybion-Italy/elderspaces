@@ -123,8 +123,8 @@
 				<version>${elderspaces.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>it.cybion.commons</groupId>
-				<artifactId>test-utils</artifactId>
+				<groupId>it.cybion.commons.text</groupId>
+				<artifactId>text-mining</artifactId>
 				<version>${commons.version}</version>
 			</dependency>
 			<dependency>

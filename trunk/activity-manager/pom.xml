@@ -35,7 +35,7 @@
 		</dependency>
 		<dependency>
 			<groupId>it.cybion.commons.text</groupId>
-			<artifactId>text-analysis</artifactId>
+			<artifactId>text-mining</artifactId>
 		</dependency>
 	</dependencies>
 </project>
