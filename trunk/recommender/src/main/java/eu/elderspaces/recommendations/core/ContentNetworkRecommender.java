@@ -35,7 +35,7 @@ public class ContentNetworkRecommender implements Recommender {
     private double SN_WEIGHT = 0.5;
     private double CONTENT_WEIGHT = 0.5;
     
-    private static final int TOTAL_RESULTS = 3;
+    private static final int TOTAL_RESULTS = 10;
     private static final int START_INDEX = 0;
     
     private EnrichedEntitiesRepository enrichedEntitiesRepository;
@@ -61,9 +61,12 @@ public class ContentNetworkRecommender implements Recommender {
     public PaginatedResult getRecommendedEntities(final String userId,
             final Class<? extends Entity> type) throws RecommenderException {
     
-        final List<Entity> result = getRecommendations(userId, type);
+        List<Entity> result = getRecommendations(userId, type);
         
-        return new PaginatedResult(START_INDEX, TOTAL_RESULTS, result);
+        if (result.size() > TOTAL_RESULTS)
+            result = result.subList(0, TOTAL_RESULTS);
+        
+        return new PaginatedResult(START_INDEX, result.size(), result);
     }
     
     private List<Entity> getRecommendations(final String userId, final Class<?> targetClass) {
@@ -95,7 +98,7 @@ public class ContentNetworkRecommender implements Recommender {
         final Map<String, Double> networkIds = socialNetworkRepository.getFriendsOfFriends(userId);
         
         // remove friends from content list that the user already knows
-        // it can't happend on the network recommendations thus we don't
+        // it can't happen on the network recommendations thus we don't
         // check
         final Set<String> existingIds = socialNetworkRepository.getFriends(userId);
         for (final String id : existingIds) {
