@@ -14,7 +14,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.TermVector;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.StaleReaderException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
@@ -96,6 +95,25 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     }
     
     @Override
+    public void storeIfNewEntity(Entity entity, Date eventTime) {
+    
+        try {
+            if (!alreadyExists(entity.getId())) {
+                
+                LOGGER.info("New unseen " + entity.getClass().getSimpleName()
+                        + " entity detected: " + entity.getId());
+                store(entity);
+                
+            }
+        } catch (final RepositoryException e) {
+            LOGGER.error(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        
+    }
+    
+    @Override
     public void updateProfile(final Person actor, final Date eventTime) {
     
         try {
@@ -104,7 +122,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             }
             
             store(actor);
-            commit();
+            
         } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
@@ -117,7 +135,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         try {
             if (!alreadyExists(object.getId())) {
                 store(object);
-                commit();
             }
         } catch (final RepositoryException e) {
             LOGGER.error("Could not store activity");
@@ -131,7 +148,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         try {
             if (!alreadyExists(object.getId())) {
                 store(object);
-                commit();
             }
             
         } catch (final RepositoryException e) {
@@ -149,7 +165,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             }
             
             store(club);
-            commit();
+            
         } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
@@ -162,7 +178,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         try {
             if (!alreadyExists(object.getId())) {
                 store(object);
-                commit();
             }
         } catch (final RepositoryException e) {
             LOGGER.error("Could not store activity");
@@ -179,7 +194,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
             }
             
             store(event);
-            commit();
+            
         } catch (final RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
@@ -191,7 +206,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         try {
             writer.deleteDocuments(new Term(ID, user.getId()));
-            writer.commit();
+            commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -199,6 +214,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
+            LOGGER.error(e.getMessage());
+        } catch (RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -209,7 +226,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         try {
             writer.deleteDocuments(new Term(ID, activity.getId()));
-            writer.commit();
+            commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -217,6 +234,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
+            LOGGER.error(e.getMessage());
+        } catch (RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -227,7 +246,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         try {
             writer.deleteDocuments(new Term(ID, club.getId()));
-            writer.commit();
+            commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -235,6 +254,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
+            LOGGER.error(e.getMessage());
+        } catch (RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -245,7 +266,7 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         try {
             writer.deleteDocuments(new Term(ID, event.getId()));
-            writer.commit();
+            commit();
         } catch (final StaleReaderException e) {
             LOGGER.error(e.getMessage());
         } catch (final CorruptIndexException e) {
@@ -253,6 +274,8 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         } catch (final LockObtainFailedException e) {
             LOGGER.error(e.getMessage());
         } catch (final IOException e) {
+            LOGGER.error(e.getMessage());
+        } catch (RepositoryException e) {
             LOGGER.error(e.getMessage());
         }
         
@@ -480,12 +503,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     private int searchUnique(final String documentId) throws RepositoryException {
     
         try {
-            final IndexReader newIndexReader = IndexReader.openIfChanged(reader);
-            if (newIndexReader != null) {
-                reader.close();
-                reader = newIndexReader;
-            }
-            
             final IndexSearcher searcher = new IndexSearcher(reader);
             
             final TermQuery query = new TermQuery(new Term(ID, documentId));
@@ -548,12 +565,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         try {
             
-            final IndexReader newIndexReader = IndexReader.openIfChanged(reader);
-            if (newIndexReader != null) {
-                reader.close();
-                reader = newIndexReader;
-            }
-            
             final List<String> keys = new ArrayList<String>(reader.maxDoc());
             
             for (int i = 0; i < reader.maxDoc(); i++) {
@@ -573,11 +584,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     public boolean alreadyExists(final String id) throws RepositoryException {
     
         try {
-            final IndexReader newIndexReader = IndexReader.openIfChanged(reader);
-            if (newIndexReader != null) {
-                reader.close();
-                reader = newIndexReader;
-            }
             
             final IndexSearcher searcher = new IndexSearcher(reader);
             
@@ -648,11 +654,6 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         commit();
         close();
-    }
-    
-    @Override
-    public void storeIfNewEntity(Entity entity, Date eventTime) {
-    
     }
     
 }
