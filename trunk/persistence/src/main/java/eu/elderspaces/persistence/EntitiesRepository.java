@@ -17,6 +17,8 @@ import eu.elderspaces.model.Person;
 
 public interface EntitiesRepository {
     
+    public void storeIfNewEntity(Entity entity, Date eventTime);
+    
     public void updateProfile(Person actor, Date eventTime);
     
     public void deleteUser(Person actor, Date eventTime);

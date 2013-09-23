@@ -547,6 +547,13 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     public List<String> getAllKeys() throws RepositoryException {
     
         try {
+            
+            final IndexReader newIndexReader = IndexReader.openIfChanged(reader);
+            if (newIndexReader != null) {
+                reader.close();
+                reader = newIndexReader;
+            }
+            
             final List<String> keys = new ArrayList<String>(reader.maxDoc());
             
             for (int i = 0; i < reader.maxDoc(); i++) {
@@ -641,6 +648,11 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
     
         commit();
         close();
+    }
+    
+    @Override
+    public void storeIfNewEntity(Entity entity, Date eventTime) {
+    
     }
     
 }
