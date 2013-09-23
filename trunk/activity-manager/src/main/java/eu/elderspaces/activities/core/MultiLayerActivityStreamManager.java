@@ -117,16 +117,29 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
     
         if (verb.equals(Verbs.REQUEST_FRIEND)) {
             
-            // Do nothing
+            // check for new entities
+            entitiesRepository.storeIfNewEntity(user, eventTime);
+            // personObject is actually a minimal person object, we can't store
+            // it
             
         } else if (verb.equals(Verbs.MAKE_FRIEND)) {
             
             socialNetworkRepository.addNewFriend(user.getId(), personObject.getId(), eventTime);
             
+            // check for new entities
+            entitiesRepository.storeIfNewEntity(user, eventTime);
+            // user is the person that actually accepted the request
+            // personObject is actually a minimal person object, we can't store
+            // it
+            
         } else if (verb.equals(Verbs.REMOVE_FRIEND)) {
             
             socialNetworkRepository.deleteFriendConnection(user.getId(), personObject.getId(),
                     eventTime);
+            
+            // check for new entities
+            entitiesRepository.storeIfNewEntity(user, eventTime);
+            entitiesRepository.storeIfNewEntity(personObject, eventTime);
             
         } else if (verb.equals(Verbs.UPDATE)) {
             
@@ -156,17 +169,28 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
                 entitiesRepository.postActivity(postObject, eventTime);
                 socialNetworkRepository.postActivity(user.getId(), postObject.getId(), eventTime);
                 
+                // check for new entities
+                entitiesRepository.storeIfNewEntity(user, eventTime);
+                
             } else if (target.getClass() == Event.class) {
                 
                 entitiesRepository.postActivity(postObject, eventTime);
                 socialNetworkRepository.postEventActivity(user.getId(), postObject.getId(),
                         target.getId(), eventTime);
                 
+                // check for new entities
+                entitiesRepository.storeIfNewEntity(user, eventTime);
+                entitiesRepository.storeIfNewEntity(target, eventTime);
+                
             } else if (target.getClass() == Club.class) {
                 
                 entitiesRepository.postActivity(postObject, eventTime);
                 socialNetworkRepository.postClubActivity(user.getId(), postObject.getId(),
                         target.getId(), eventTime);
+                
+                // check for new entities
+                entitiesRepository.storeIfNewEntity(user, eventTime);
+                entitiesRepository.storeIfNewEntity(target, eventTime);
                 
             } else {
                 throw new InvalidActivityStreamException("Invalid Target type");
@@ -179,17 +203,28 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
                 entitiesRepository.deleteActivity(postObject, eventTime);
                 socialNetworkRepository.deleteActivity(user.getId(), postObject.getId(), eventTime);
                 
+                // check for new entities
+                entitiesRepository.storeIfNewEntity(user, eventTime);
+                
             } else if (target.getClass() == Event.class) {
                 
                 entitiesRepository.deleteActivity(postObject, eventTime);
                 socialNetworkRepository.deleteEventActivity(user.getId(), postObject.getId(),
                         target.getId(), eventTime);
                 
+                // check for new entities
+                entitiesRepository.storeIfNewEntity(user, eventTime);
+                entitiesRepository.storeIfNewEntity(target, eventTime);
+                
             } else if (target.getClass() == Club.class) {
                 
                 entitiesRepository.deleteActivity(postObject, eventTime);
                 socialNetworkRepository.deleteClubActivity(user.getId(), postObject.getId(),
                         target.getId(), eventTime);
+                
+                // check for new entities
+                entitiesRepository.storeIfNewEntity(user, eventTime);
+                entitiesRepository.storeIfNewEntity(target, eventTime);
                 
             } else {
                 
