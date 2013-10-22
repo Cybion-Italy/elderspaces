@@ -43,6 +43,7 @@ import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.persistence.exceptions.EnrichedEntitiesRepositoryException;
+import eu.elderspaces.persistence.exceptions.ExpiredEventException;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
@@ -52,6 +53,8 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
         implements EnrichedEntitiesRepository {
     
     private static final Logger LOGGER = Logger.getLogger(LuceneEnrichedEntitiesRepository.class);
+    
+    private long SMOOTH_EXPIRE_DATES = 24 * 3600 * 1000L; // 1 day
     
     private static int MAX_RECOMMENDATIONS = 100;
     
@@ -133,12 +136,10 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
     
     @Override
     public void storeEnrichedEvent(final Event event, final List<Person> members)
-            throws EnrichedEntitiesRepositoryException {
+            throws EnrichedEntitiesRepositoryException, ExpiredEventException {
     
-        if (new Date().getTime() > event.getEndDate().getTime()) {
-            LOGGER.warn("Skipping event with id: " + event.getId() + " - Expired on "
-                    + event.getEndDate().toGMTString());
-            return;
+        if (new Date().getTime() > (event.getEndDate().getTime() + SMOOTH_EXPIRE_DATES)) {
+            throw new ExpiredEventException(event.getId(), event.getEndDate());
         }
         
         String content = getEventContent(event);
@@ -397,7 +398,7 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                         try {
                             activities.add(entitiesRepository.getActivity(id));
                         } catch (final RepositoryException e) {
-                            LOGGER.error("skipping Activity: " + id + " while enriching Person: "
+                            LOGGER.error("Skipping Activity: " + id + " while enriching Person: "
                                     + person.getId());
                             continue;
                         }
@@ -406,7 +407,7 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                         try {
                             clubs.add(entitiesRepository.getClub(id));
                         } catch (final RepositoryException e) {
-                            LOGGER.error("skipping Club: " + id + " while enriching Person: "
+                            LOGGER.error("Skipping Club: " + id + " while enriching Person: "
                                     + person.getId());
                             continue;
                         }
@@ -415,7 +416,7 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                         try {
                             events.add(entitiesRepository.getEvent(id));
                         } catch (final RepositoryException e) {
-                            LOGGER.error("skipping Event: " + id + " while enriching Person: "
+                            LOGGER.error("Skipping Event: " + id + " while enriching Person: "
                                     + person.getId());
                             continue;
                         }
@@ -433,7 +434,7 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                         try {
                             members.add(entitiesRepository.getPerson(id));
                         } catch (final RepositoryException e) {
-                            LOGGER.error("skipping Person: " + id + " while enriching Club: "
+                            LOGGER.error("Skipping Person: " + id + " while enriching Club: "
                                     + club.getId());
                             continue;
                         }
@@ -449,13 +450,21 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
                         try {
                             members.add(entitiesRepository.getPerson(id));
                         } catch (final RepositoryException e) {
-                            LOGGER.error("skipping Person: " + id + " while enriching Event: "
+                            LOGGER.error("Skipping Person: " + id + " while enriching Event: "
                                     + event.getId());
                             continue;
                         }
                     }
                     
-                    storeEnrichedEvent(event, members);
+                    try {
+                        storeEnrichedEvent(event, members);
+                    } catch (ExpiredEventException e) {
+                        LOGGER.warn("Skipping enriched Event " + e.eventId + ": expired on: "
+                                + e.expireDate.toGMTString());
+                        LOGGER.warn("Event " + e.eventId + " will be deleted from SN!");
+                        snRepository.deleteEvent("", e.eventId, new Date());
+                    }
+                    
                 }
             } catch (final RepositoryException e) {
                 LOGGER.error("skipping Entity: " + key + " " + e.getMessage());

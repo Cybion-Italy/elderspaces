@@ -23,6 +23,7 @@ import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.persistence.exceptions.EnrichedEntitiesRepositoryException;
+import eu.elderspaces.persistence.exceptions.ExpiredEventException;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
@@ -64,7 +65,8 @@ public class EnrichedEntitiesRepositoryTestCase {
     }
     
     @Test
-    public void shouldTestStorage() throws EnrichedEntitiesRepositoryException, RepositoryException {
+    public void shouldTestStorage() throws EnrichedEntitiesRepositoryException,
+            RepositoryException, ExpiredEventException {
     
         repository.storeEnrichedPerson(person1, Arrays.asList(new Activity[] { activity1 }),
                 Arrays.asList(new Club[] { club1 }), Arrays.asList(new Event[] { event1 }));

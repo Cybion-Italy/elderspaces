@@ -248,7 +248,7 @@ public class BluePrintsSocialNetworkRepository implements SocialNetworkRepositor
     @Override
     public void deleteEvent(final String actorId, final String objectId, final Date eventTime) {
     
-        // remove all aevent activities prior to remothe the event
+        // remove all event activities prior to remove the event
         final Set<String> ids = getEventActivities(objectId);
         for (final String id : ids) {
             helper.removeActivity(id);

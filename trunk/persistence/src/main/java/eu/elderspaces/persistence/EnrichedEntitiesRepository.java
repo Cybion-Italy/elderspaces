@@ -10,6 +10,7 @@ import eu.elderspaces.model.Club;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 import eu.elderspaces.persistence.exceptions.EnrichedEntitiesRepositoryException;
+import eu.elderspaces.persistence.exceptions.ExpiredEventException;
 
 /**
  * @author serxhiodaja (at) gmail (dot) com
@@ -24,7 +25,7 @@ public interface EnrichedEntitiesRepository {
             throws EnrichedEntitiesRepositoryException;
     
     public void storeEnrichedEvent(Event event, List<Person> members)
-            throws EnrichedEntitiesRepositoryException;
+            throws EnrichedEntitiesRepositoryException, ExpiredEventException;
     
     public Map<String, Double> getPersonRecommendations(String userId);
     
