@@ -97,15 +97,12 @@ public class ContentNetworkRecommender implements Recommender {
                 .getPersonRecommendations(userId);
         final Map<String, Double> networkIds = socialNetworkRepository.getFriendsOfFriends(userId);
         
-        // remove friends from content list that the user already knows
-        // it can't happen on the network recommendations thus we don't
-        // check
+        final Map<String, Double> finalRecommendations = processScores(contentIds, networkIds);
+        
         final Set<String> existingIds = socialNetworkRepository.getFriends(userId);
         for (final String id : existingIds) {
-            contentIds.remove(id);
+            finalRecommendations.remove(id);
         }
-        
-        final Map<String, Double> finalRecommendations = processScores(contentIds, networkIds);
         
         for (final String id : finalRecommendations.keySet()) {
             Person person;
@@ -129,15 +126,12 @@ public class ContentNetworkRecommender implements Recommender {
                 .getEventRecommendations(userId);
         final Map<String, Double> networkIds = socialNetworkRepository.getEventsOfFriends(userId);
         
-        // remove events from content list that the user already joined
-        // it can't happend on the network recommendations thus we don't
-        // check
+        final Map<String, Double> finalRecommendations = processScores(contentIds, networkIds);
+        
         final Set<String> existingIds = socialNetworkRepository.getEvents(userId);
         for (final String id : existingIds) {
-            contentIds.remove(id);
+            finalRecommendations.remove(id);
         }
-        
-        final Map<String, Double> finalRecommendations = processScores(contentIds, networkIds);
         
         for (final String id : finalRecommendations.keySet()) {
             Event event;
@@ -162,15 +156,12 @@ public class ContentNetworkRecommender implements Recommender {
                 .getClubRecommendations(userId);
         final Map<String, Double> networkIds = socialNetworkRepository.getClubsOfFriends(userId);
         
-        // remove clubs from content list that the user already joined
-        // it can't happend on the network recommendations thus we don't
-        // check
+        final Map<String, Double> finalRecommendations = processScores(contentIds, networkIds);
+        
         final Set<String> existingIds = socialNetworkRepository.getClubs(userId);
         for (final String id : existingIds) {
-            contentIds.remove(id);
+            finalRecommendations.remove(id);
         }
-        
-        final Map<String, Double> finalRecommendations = processScores(contentIds, networkIds);
         
         for (final String id : finalRecommendations.keySet()) {
             Club club;

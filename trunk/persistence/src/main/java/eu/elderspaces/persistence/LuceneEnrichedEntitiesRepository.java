@@ -464,7 +464,7 @@ public class LuceneEnrichedEntitiesRepository extends BaseLuceneRepository<Strin
             
         }
         
-        // Commit everithing
+        // Commit everything
         try {
             
             final long commitStart = System.currentTimeMillis();
