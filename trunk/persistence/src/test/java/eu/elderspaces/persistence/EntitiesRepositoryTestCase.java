@@ -57,23 +57,27 @@ public class EntitiesRepositoryTestCase {
     @Test
     public void shouldTestRandomPersons() throws RepositoryException {
     
-        repository.updateProfile(new Person("1", "url", "name"), new Date());
-        repository.updateProfile(new Person("2", "url", "name"), new Date());
-        repository.updateProfile(new Person("3", "url", "name"), new Date());
+        // mixed entities
+        repository.postActivity(activity, new Date());
+        repository.createClub(club, new Date());
+        repository.createEvent(event, new Date());
+        repository.updateProfile(new Person("id1", "url", "name"), new Date());
+        repository.updateProfile(new Person("id2", "url", "name"), new Date());
+        repository.updateProfile(new Person("id3", "url", "name"), new Date());
         
         List<Entity> persons = repository.getRandomPersons(100);
         assertTrue(persons.size() == 3);
         
-        assertTrue(persons.get(0).getId().equals("1"));
-        assertTrue(persons.get(1).getId().equals("2"));
-        assertTrue(persons.get(2).getId().equals("3"));
+        assertTrue(persons.get(0).getId().equals("id1"));
+        assertTrue(persons.get(1).getId().equals("id2"));
+        assertTrue(persons.get(2).getId().equals("id3"));
         
         persons = repository.getRandomPersons(2);
         assertTrue(persons.size() == 2);
         
-        repository.deleteUser(new Person("1", "url", "name"), new Date());
-        repository.deleteUser(new Person("2", "url", "name"), new Date());
-        repository.deleteUser(new Person("3", "url", "name"), new Date());
+        repository.deleteUser(new Person("id1", "url", "name"), new Date());
+        repository.deleteUser(new Person("id2", "url", "name"), new Date());
+        repository.deleteUser(new Person("id3", "url", "name"), new Date());
     }
     
     @Test
