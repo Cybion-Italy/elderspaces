@@ -91,7 +91,7 @@ public class ContentNetworkRecommender implements Recommender {
     
     private List<Entity> getPersonRecommendation(final String userId) {
     
-        final List<Entity> result = new ArrayList<Entity>();
+        List<Entity> result = new ArrayList<Entity>();
         
         final Map<String, Double> contentIds = enrichedEntitiesRepository
                 .getPersonRecommendations(userId);
@@ -113,6 +113,15 @@ public class ContentNetworkRecommender implements Recommender {
                 continue;
             }
             result.add(person);
+        }
+        
+        // if empty add random people
+        if (result.size() == 0) {
+            try {
+                result = entityRepository.getRandomPersons(TOTAL_RESULTS);
+            } catch (RepositoryException e) {
+                LOGGER.error(e.getMessage());
+            }
         }
         
         return result;

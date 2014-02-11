@@ -5,6 +5,7 @@ import static org.testng.Assert.assertTrue;
 import it.cybion.commons.exceptions.RepositoryException;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -19,6 +20,7 @@ import org.testng.annotations.Test;
 
 import eu.elderspaces.model.Activity;
 import eu.elderspaces.model.Club;
+import eu.elderspaces.model.Entity;
 import eu.elderspaces.model.Event;
 import eu.elderspaces.model.Person;
 
@@ -50,6 +52,28 @@ public class EntitiesRepositoryTestCase {
     public void shutdown() {
     
         repository = null;
+    }
+    
+    @Test
+    public void shouldTestRandomPersons() throws RepositoryException {
+    
+        repository.updateProfile(new Person("1", "url", "name"), new Date());
+        repository.updateProfile(new Person("2", "url", "name"), new Date());
+        repository.updateProfile(new Person("3", "url", "name"), new Date());
+        
+        List<Entity> persons = repository.getRandomPersons(100);
+        assertTrue(persons.size() == 3);
+        
+        assertTrue(persons.get(0).getId().equals("1"));
+        assertTrue(persons.get(1).getId().equals("2"));
+        assertTrue(persons.get(2).getId().equals("3"));
+        
+        persons = repository.getRandomPersons(2);
+        assertTrue(persons.size() == 2);
+        
+        repository.deleteUser(new Person("1", "url", "name"), new Date());
+        repository.deleteUser(new Person("2", "url", "name"), new Date());
+        repository.deleteUser(new Person("3", "url", "name"), new Date());
     }
     
     @Test

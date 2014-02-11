@@ -55,7 +55,7 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
         requestHeaderMap.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         final String emptyRequestEntity = "";
         final ExternalStringResponse stringResponse = CybionHttpClient.performPost(url,
-                requestHeaderMap, emptyRequestEntity);
+                requestHeaderMap, emptyRequestEntity, false);
         
         final String responseObject = stringResponse.getObject();
         LOGGER.debug("response body: " + responseObject);
@@ -81,7 +81,7 @@ public class ActivitiesServiceTestCase extends BaseServiceTestCase {
         final String activityString = mapper.writeValueAsString(activity);
         final String requestEntity = activityString;
         final ExternalStringResponse stringResponse = CybionHttpClient.performPost(url,
-                requestHeaderMap, requestEntity);
+                requestHeaderMap, requestEntity, true);
         
         LOGGER.debug("response body: " + stringResponse.getObject());
         assertTrue(ResponseStatus.OK == stringResponse.getStatus(), "Unexpected result: "

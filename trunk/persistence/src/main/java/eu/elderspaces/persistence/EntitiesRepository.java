@@ -54,4 +54,6 @@ public interface EntitiesRepository {
     public List<String> getAllKeys() throws RepositoryException;
     
     public void shutdown() throws RepositoryException;
+    
+    public List<Entity> getRandomPersons(int maxResults) throws RepositoryException;
 }

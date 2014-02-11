@@ -527,6 +527,40 @@ public class LuceneEntitiesRepository extends BaseLuceneRepository<String, Entit
         }
     }
     
+    public List<Entity> getRandomPersons(int maxResults) throws RepositoryException {
+    
+        try {
+            final IndexSearcher searcher = new IndexSearcher(reader);
+            
+            final TermQuery query = new TermQuery(new Term(OBJECT_TYPE, PERSON_TYPE));
+            final TopScoreDocCollector collector = TopScoreDocCollector.create(maxResults, true);
+            searcher.search(query, collector);
+            searcher.close();
+            
+            if (collector.getTotalHits() == 0) {
+                throw new RepositoryException("No match at all on random search");
+            }
+            
+            final ScoreDoc[] hits = collector.topDocs().scoreDocs;
+            List<Entity> randomPersons = new ArrayList<Entity>();
+            for (ScoreDoc doc : hits) {
+                try {
+                    randomPersons.add(buildPersonFromDoc(super.reader.document(doc.doc)));
+                } catch (Exception e) {
+                    LOGGER.error("doc #" + doc.doc + ": " + e.getMessage());
+                    continue;
+                }
+            }
+            
+            return randomPersons;
+            
+        } catch (final CorruptIndexException e) {
+            throw new RepositoryException(e.getMessage(), e);
+        } catch (final IOException e) {
+            throw new RepositoryException(e.getMessage(), e);
+        }
+    }
+    
     private Entity getEntityFromDoc(final Document doc) throws UnknownObjectTypeException {
     
         Entity entity;
