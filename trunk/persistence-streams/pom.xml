@@ -9,16 +9,13 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>activity-manager</artifactId>
-	<name>Elderspaces - Activity Manager</name>
+	<artifactId>persistence-streams</artifactId>
 
-	<url>http://www.cybion.it</url>
+	<name>Persistence - Streams</name>
+	<packaging>jar</packaging>
+
 
 	<dependencies>
-        <dependency>
-            <groupId>eu.elderspaces</groupId>
-            <artifactId>persistence-streams</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>eu.elderspaces</groupId>
 			<artifactId>model</artifactId>
@@ -28,18 +25,13 @@
 			<artifactId>guice</artifactId>
 		</dependency>
 		<dependency>
-            <groupId>eu.elderspaces</groupId>
-            <artifactId>persistence-entities</artifactId>
-        </dependency>
-        <dependency>
-			<groupId>eu.elderspaces</groupId>
-			<artifactId>persistence-graph</artifactId>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
 		</dependency>
-        <dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-kernel</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 	</dependencies>
+	
 </project>

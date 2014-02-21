@@ -6,11 +6,6 @@ import java.util.Map;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.elasticsearch.client.Client;
@@ -92,9 +87,6 @@ public class TestJerseyServletModule extends JerseyServletModule {
     @Provides
     private EntitiesRepository entitiesRepositoryProvider() {
     
-        final Directory directory = new RAMDirectory();
-        final Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
-        
-        return new LuceneEntitiesRepository(directory, analyzer);
+        return new LuceneEntitiesRepository();
     }
 }

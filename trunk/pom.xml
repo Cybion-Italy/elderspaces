@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>eu.elderspaces</groupId>
@@ -16,9 +15,11 @@
 		<module>activity-manager</module>
 		<module>recommender</module>
 		<module>model</module>
-		<module>persistence</module>
+		<module>persistence-streams</module>
 		<module>js-elderspaces</module>
-	</modules>
+    	<module>persistence-entities</module>
+    <module>persistence-graph</module>
+  </modules>
 
 	<properties>
 
@@ -34,7 +35,7 @@
 		<jersey.version>1.16</jersey.version>
 		<guice.version>3.0</guice.version>
 		<jackson-mapper-asl.version>1.9.12</jackson-mapper-asl.version>
-		<elasticsearch.version>0.20.6</elasticsearch.version>
+		<elasticsearch.version>0.90.7</elasticsearch.version>
 		<jackson-xc.version>1.9.9</jackson-xc.version>
 		<blueprints-core.version>2.3.0</blueprints-core.version>
 		<neo4j-kernel.version>1.9.M05</neo4j-kernel.version>
@@ -125,9 +126,19 @@
 			</dependency>
 			<dependency>
 				<groupId>eu.elderspaces</groupId>
-				<artifactId>persistence</artifactId>
+				<artifactId>persistence-streams</artifactId>
 				<version>${elderspaces.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>eu.elderspaces</groupId>
+				<artifactId>persistence-entities</artifactId>
+				<version>${elderspaces.version}</version>
+			</dependency>
+			<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>persistence-graph</artifactId>
+			<version>${elderspaces.version}</version>
+		</dependency>
 			<dependency>
 				<groupId>eu.elderspaces</groupId>
 				<artifactId>activities-endpoint</artifactId>

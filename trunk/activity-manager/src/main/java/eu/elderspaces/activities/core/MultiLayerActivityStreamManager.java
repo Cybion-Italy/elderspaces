@@ -1,6 +1,7 @@
 package eu.elderspaces.activities.core;
 
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -43,7 +44,8 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
     }
     
     @Override
-    public boolean storeActivity(final String activityContent) throws ActivityManagerException {
+    public boolean storeActivity(final String activityContent, boolean store)
+            throws ActivityManagerException {
     
         final ActivityStream activity;
         try {
@@ -53,11 +55,15 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
                     + "' to json", e);
         }
         
-        return storeActivity(activity);
+        if (store)
+            return playAndStoreActivity(activity);
+        else
+            return playActivity(activity);
     }
     
     @Override
-    public boolean storeActivity(final ActivityStream activity) throws ActivityManagerException {
+    public boolean playAndStoreActivity(final ActivityStream activity)
+            throws ActivityManagerException {
     
         final String userId = activity.getActor().getId();
         String activityId = "";
@@ -110,6 +116,51 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
         }
         
         return profileUpdated && activityStored;
+    }
+    
+    @Override
+    public boolean playActivity(final ActivityStream activity) throws ActivityManagerException {
+    
+        final Person user = activity.getActor();
+        final String verb = activity.getVerb();
+        final Entity target = activity.getTarget();
+        final Date eventTime = activity.getPublished();
+        
+        final Entity object = activity.getObject();
+        
+        boolean profileUpdated = false;
+        
+        try {
+            // entities and relations are stored according to the activity logic
+            if (object.getClass() == Person.class) {
+                
+                final Person personObject = (Person) object;
+                profileUpdated = handlePersonObject(user, verb, personObject, eventTime);
+                
+            } else if (object.getClass() == Activity.class) {
+                
+                final Activity postObject = (Activity) object;
+                profileUpdated = handlePostObject(user, verb, postObject, target, eventTime);
+                
+            } else if (object.getClass() == Event.class) {
+                
+                final Event eventObject = (Event) object;
+                profileUpdated = handleEventObject(user, verb, eventObject, eventTime);
+                
+            } else if (object.getClass() == Club.class) {
+                
+                final Club clubObject = (Club) object;
+                profileUpdated = handleClubObject(user, verb, clubObject, eventTime);
+                
+            } else {
+                throw new ActivityManagerException("Not managed class type: '"
+                        + object.getClass().getName() + "'");
+            }
+        } catch (final InvalidActivityStreamException e) {
+            throw new ActivityManagerException(e.getMessage(), e);
+        }
+        
+        return profileUpdated;
     }
     
     private boolean handlePersonObject(final Person user, final String verb,
@@ -309,4 +360,15 @@ public class MultiLayerActivityStreamManager implements ActivityStreamManager {
         
         return true;
     }
+    
+    @Override
+    public List<String> getAllActivities(int maxSize) throws ActivityManagerException {
+    
+        try {
+            return activityRepository.getAllActivityStreams(maxSize);
+        } catch (ActivityStreamRepositoryException e) {
+            throw new ActivityManagerException("Could not load all activity streams", e);
+        }
+    }
+    
 }

@@ -9,10 +9,16 @@ import com.google.inject.Injector;
 
 public class GuiceFactory {
     
-    private static final Injector inj = Guice.createInjector(new ProductionJerseyServletModule());
+    private static Injector inj = Guice.createInjector(new ProductionJerseyServletModule());
     
     public static Injector getInjector() {
     
+        return inj;
+    }
+    
+    public static Injector updateInjector() {
+    
+        inj = Guice.createInjector(new ProductionJerseyServletModule());
         return inj;
     }
 }

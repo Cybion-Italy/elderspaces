@@ -11,11 +11,6 @@ import java.util.Properties;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -35,7 +30,6 @@ import com.sun.jersey.api.core.ClasspathResourceConfig;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
 
 import eu.elderspaces.activities.core.ActivityStreamManager;
 import eu.elderspaces.activities.core.MultiLayerActivityStreamManager;
@@ -81,8 +75,6 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         Names.bindProperties(binder(), properties);
         this.properties = properties;
         
-        // add bindings of backend classes
-        
         // bind services classes
         bind(StatusService.class);
         bind(ActivitiesService.class);
@@ -97,7 +89,6 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
         bind(RecommendationService.class);
         bind(FakeRecommendationService.class);
         bind(Recommender.class).to(ContentNetworkRecommender.class);
-        bind(SocialNetworkRepository.class).to(BluePrintsSocialNetworkRepository.class);
         bind(FakeStaticRecommender.class);
         
         // add bindings for Jackson
@@ -124,10 +115,23 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
             @Named("eu.elderspaces.repository.entities") final String entitiesDirectoryPath)
             throws IOException {
     
-        final Directory directory = new SimpleFSDirectory(new File(entitiesDirectoryPath));
-        final Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
+        File directoryFile = new File(entitiesDirectoryPath);
+        if (!directoryFile.exists())
+            directoryFile.mkdirs();
         
-        return new LuceneEntitiesRepository(directory, analyzer);
+        return new LuceneEntitiesRepository(directoryFile);
+    }
+    
+    @Provides
+    @Singleton
+    private SocialNetworkRepository socialNetworkRepositoryProvider(
+            @Named("eu.elderspaces.repository.social-network") String socialNetworkRepository) {
+    
+        File directoryFile = new File(socialNetworkRepository);
+        if (!directoryFile.exists())
+            directoryFile.mkdirs();
+        
+        return new BluePrintsSocialNetworkRepository(socialNetworkRepository);
     }
     
     @Provides
@@ -136,12 +140,12 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
             @Named("eu.elderspaces.repository.enriched-entities") final String enrichedEntitiesDirectoryPath)
             throws IOException {
     
-        final Directory directory = new SimpleFSDirectory(new File(enrichedEntitiesDirectoryPath));
-        
-        final Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
+        File directoryFile = new File(enrichedEntitiesDirectoryPath);
+        if (!directoryFile.exists())
+            directoryFile.mkdirs();
         
         final LuceneEnrichedEntitiesRepository repository = new LuceneEnrichedEntitiesRepository(
-                directory, analyzer);
+                directoryFile);
         
         return repository;
     }
@@ -161,17 +165,13 @@ public class ProductionJerseyServletModule extends JerseyServletModule {
     
         final ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
                 .put("http.enabled", "false").put("path.data", dataDirectory);
+        // .put("index.number_of_replicas", "0");
         
         final Node node = NodeBuilder.nodeBuilder().local(true).clusterName(clusterName)
                 .settings(elasticsearchSettings.build()).node();
+        // node.client().admin().cluster().prepareHealth().setWaitForGreenStatus().execute()
+        // .actionGet();
         return node;
     }
     
-    @Provides
-    @Singleton
-    Neo4jGraph graphProvider(
-            @Named("eu.elderspaces.repository.social-network") final String socialNetworkRepository) {
-    
-        return new Neo4jGraph(socialNetworkRepository);
-    }
 }

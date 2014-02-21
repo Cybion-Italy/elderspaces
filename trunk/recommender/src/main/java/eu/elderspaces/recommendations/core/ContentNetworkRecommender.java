@@ -118,7 +118,12 @@ public class ContentNetworkRecommender implements Recommender {
         // if empty add random people
         if (result.size() == 0) {
             try {
-                result = entityRepository.getRandomPersons(TOTAL_RESULTS);
+                result = entityRepository.getRandomPersons(TOTAL_RESULTS * 10);
+                // remove friends
+                for (final String id : existingIds) {
+                    result.remove(id);
+                }
+                result.subList(0, Math.min(result.size(), TOTAL_RESULTS));
             } catch (RepositoryException e) {
                 LOGGER.error(e.getMessage());
             }

@@ -36,10 +36,6 @@
 			<artifactId>utils</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>it.cybion.commons.text</groupId>
-			<artifactId>text-analysis</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>it.cybion.commons</groupId>
 			<artifactId>test-utils</artifactId>
 			<scope>test</scope>
@@ -59,6 +55,18 @@
 		<dependency>
 			<groupId>eu.elderspaces</groupId>
 			<artifactId>activity-manager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>persistence-entities</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>persistence-streams</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>persistence-graph</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>

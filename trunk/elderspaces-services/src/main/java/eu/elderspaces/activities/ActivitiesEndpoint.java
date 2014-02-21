@@ -14,4 +14,5 @@ public class ActivitiesEndpoint {
     
     public static final String ACTIVITIES = "/activities";
     public static final String STORE = "/store";
+    public static final String REPLAY = "/replay";
 }

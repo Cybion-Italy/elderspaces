@@ -15,9 +15,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,13 +124,10 @@ public class RecommendationService extends JsonService {
                 return error(e, "Could not clean cache directory located at: " + cacheDirPath);
             }
             
-            ((LuceneEnrichedEntitiesRepository) repository).switchToDirectory(
-                    new SimpleFSDirectory(new File(cacheDirPath)), new WhitespaceAnalyzer(
-                            Version.LUCENE_36));
+            ((LuceneEnrichedEntitiesRepository) repository)
+                    .switchToDirectory(new File(cacheDirPath));
         } catch (final RepositoryException e1) {
             return error(e1, "Could not reset directory");
-        } catch (final IOException e) {
-            return error(e, "Could not reset directory");
         }
         
         // rebuild cache

@@ -27,6 +27,14 @@
 		</dependency>
 		<dependency>
 			<groupId>eu.elderspaces</groupId>
+			<artifactId>persistence-entities</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
+			<artifactId>persistence-graph</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.elderspaces</groupId>
 			<artifactId>activity-manager</artifactId>
 		</dependency>
 		<dependency>

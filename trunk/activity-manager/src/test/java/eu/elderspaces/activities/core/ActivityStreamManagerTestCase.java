@@ -88,7 +88,7 @@ public class ActivityStreamManagerTestCase {
         final Entity activityObject = new Activity(POST_ID, POST_BODY, POST_TITLE);
         final ActivityStream call = new ActivityStream(user, VERB, activityObject, null, PUBLISHED);
         
-        final boolean stored = manager.storeActivity(call);
+        final boolean stored = manager.playAndStoreActivity(call);
         LOGGER.info("Storing call: " + call);
         Assert.assertTrue(stored);
     }
@@ -99,7 +99,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Adding friend");
         final ActivityStream activity = new ActivityStream(user, Verbs.MAKE_FRIEND, friend, null,
                 new Date());
-        final boolean added = manager.storeActivity(activity);
+        final boolean added = manager.playAndStoreActivity(activity);
         Assert.assertTrue(added);
     }
     
@@ -109,7 +109,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Removing non-existent friend");
         final ActivityStream activity = new ActivityStream(user, Verbs.REMOVE_FRIEND, friend, null,
                 new Date());
-        final boolean removed = manager.storeActivity(activity);
+        final boolean removed = manager.playAndStoreActivity(activity);
         Assert.assertTrue(removed);
         
     }
@@ -122,7 +122,7 @@ public class ActivityStreamManagerTestCase {
         updatedUser.setDisplayName("New display name");
         final ActivityStream activity = new ActivityStream(user, Verbs.UPDATE, updatedUser, null,
                 new Date());
-        final boolean updated = manager.storeActivity(activity);
+        final boolean updated = manager.playAndStoreActivity(activity);
         Assert.assertTrue(updated);
     }
     
@@ -132,7 +132,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Deleting user");
         final ActivityStream activity = new ActivityStream(user, Verbs.DELETE, user, null,
                 new Date());
-        final boolean deleted = manager.storeActivity(activity);
+        final boolean deleted = manager.playAndStoreActivity(activity);
         Assert.assertTrue(deleted);
     }
     
@@ -142,7 +142,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Creating post");
         final ActivityStream activity = new ActivityStream(user, Verbs.CREATE, post, null,
                 new Date());
-        final boolean added = manager.storeActivity(activity);
+        final boolean added = manager.playAndStoreActivity(activity);
         Assert.assertTrue(added);
     }
     
@@ -154,17 +154,17 @@ public class ActivityStreamManagerTestCase {
                 new Date());
         boolean deleted;
         try {
-            deleted = manager.storeActivity(deleteActivity);
+            deleted = manager.playAndStoreActivity(deleteActivity);
         } catch (final Exception e) {
             Assert.assertTrue(true);
         }
         
         final ActivityStream postActivity = new ActivityStream(user, Verbs.CREATE, post, null,
                 new Date());
-        manager.storeActivity(postActivity);
+        manager.playAndStoreActivity(postActivity);
         
         LOGGER.info("Deleting post");
-        deleted = manager.storeActivity(deleteActivity);
+        deleted = manager.playAndStoreActivity(deleteActivity);
         Assert.assertTrue(deleted);
     }
     
@@ -174,7 +174,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Creating event");
         final ActivityStream activity = new ActivityStream(user, Verbs.CREATE, event, null,
                 new Date());
-        final boolean added = manager.storeActivity(activity);
+        final boolean added = manager.playAndStoreActivity(activity);
         Assert.assertTrue(added);
     }
     
@@ -185,7 +185,7 @@ public class ActivityStreamManagerTestCase {
         final Event modifiedEvent = new Event(event.getId(), "New name", "New short description");
         final ActivityStream activity = new ActivityStream(user, Verbs.UPDATE, event, null,
                 new Date());
-        final boolean modified = manager.storeActivity(activity);
+        final boolean modified = manager.playAndStoreActivity(activity);
         Assert.assertTrue(modified);
     }
     
@@ -195,7 +195,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Deleting existing event");
         final ActivityStream activity = new ActivityStream(user, Verbs.DELETE, event, null,
                 new Date());
-        final boolean deleted = manager.storeActivity(activity);
+        final boolean deleted = manager.playAndStoreActivity(activity);
         Assert.assertTrue(deleted);
     }
     
@@ -205,7 +205,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Creating club");
         final ActivityStream activity = new ActivityStream(user, Verbs.CREATE, club, null,
                 new Date());
-        final boolean added = manager.storeActivity(activity);
+        final boolean added = manager.playAndStoreActivity(activity);
         Assert.assertTrue(added);
     }
     
@@ -217,7 +217,7 @@ public class ActivityStreamManagerTestCase {
                 "New short description", CLUB_CATEGORY);
         final ActivityStream activity = new ActivityStream(user, Verbs.UPDATE, modifiedClub, null,
                 new Date());
-        final boolean modified = manager.storeActivity(activity);
+        final boolean modified = manager.playAndStoreActivity(activity);
         Assert.assertTrue(modified);
     }
     
@@ -227,7 +227,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Deleting existing club");
         final ActivityStream activity = new ActivityStream(user, Verbs.DELETE, club, null,
                 new Date());
-        final boolean deleted = manager.storeActivity(activity);
+        final boolean deleted = manager.playAndStoreActivity(activity);
         Assert.assertTrue(deleted);
         
     }
@@ -237,7 +237,7 @@ public class ActivityStreamManagerTestCase {
     
         LOGGER.info("Joining club");
         final ActivityStream activity = new ActivityStream(user, Verbs.JOIN, club, null, new Date());
-        final boolean joined = manager.storeActivity(activity);
+        final boolean joined = manager.playAndStoreActivity(activity);
         Assert.assertTrue(joined);
     }
     
@@ -247,7 +247,7 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Leaving existing club");
         final ActivityStream activity = new ActivityStream(user, Verbs.LEAVE, club, null,
                 new Date());
-        final boolean left = manager.storeActivity(activity);
+        final boolean left = manager.playAndStoreActivity(activity);
         Assert.assertTrue(left);
         
     }
@@ -258,8 +258,8 @@ public class ActivityStreamManagerTestCase {
         LOGGER.info("Creating RSVP response to an event");
         final ActivityStream activity = new ActivityStream(user, Verbs.NO_RSVP_RESPONSE_TO_EVENT,
                 event, null, new Date());
-        manager.storeActivity(activity);
-        final boolean created = manager.storeActivity(activity);
+        manager.playAndStoreActivity(activity);
+        final boolean created = manager.playAndStoreActivity(activity);
         Assert.assertTrue(created);
     }
     
