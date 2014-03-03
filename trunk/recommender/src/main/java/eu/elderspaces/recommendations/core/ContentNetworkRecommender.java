@@ -126,18 +126,21 @@ public class ContentNetworkRecommender implements Recommender {
                     result.remove(id);
                 }
                 
-                List<Entity> filteredEntities = new ArrayList<Entity>();
-                for (Entity entity : result) {
-                    
-                    if (entity.getId().contains("elderspaces.iwiw"))
-                        filteredEntities.add(entity);
-                    
-                }
-                
             } catch (RepositoryException e) {
                 LOGGER.error(e.getMessage());
             }
         }
+        
+        LOGGER.info("Removing old users...");
+        List<Entity> filteredEntities = new ArrayList<Entity>();
+        for (Entity entity : result) {
+            
+            if (entity.getId().contains("elderspaces.iwiw"))
+                filteredEntities.add(entity);
+            
+        }
+        result = filteredEntities;
+        LOGGER.info("Filtered! Now randomizing");
         
         Collections.shuffle(result, new Random(System.nanoTime()));
         
