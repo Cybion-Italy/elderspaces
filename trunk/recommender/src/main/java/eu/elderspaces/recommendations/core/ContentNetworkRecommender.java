@@ -3,8 +3,10 @@ package eu.elderspaces.recommendations.core;
 import it.cybion.commons.exceptions.RepositoryException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.testng.log4testng.Logger;
@@ -124,10 +126,20 @@ public class ContentNetworkRecommender implements Recommender {
                     result.remove(id);
                 }
                 
+                List<Entity> filteredEntities = new ArrayList<Entity>();
+                for (Entity entity : result) {
+                    
+                    if (entity.getId().contains("elderspaces.iwiw"))
+                        filteredEntities.add(entity);
+                    
+                }
+                
             } catch (RepositoryException e) {
                 LOGGER.error(e.getMessage());
             }
         }
+        
+        Collections.shuffle(result, new Random(System.nanoTime()));
         
         return result;
     }
